@@ -21,6 +21,7 @@ async function main() {
       image:
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
       emailVerified: new Date(),
+      password: "$2y$10$IWJXf1PnKiLhf5rW0uBJB.AYBGIGG/0SCNK64NApCw2bQHwrgEDYy",
     },
   });
 
