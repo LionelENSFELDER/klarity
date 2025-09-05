@@ -62,7 +62,7 @@ export default async function DashboardLayout({
                 Dashboard
               </a>
               <a
-                href="/dashboard/contracts"
+                href="/contracts"
                 className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Contrats

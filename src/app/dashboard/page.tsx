@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -76,10 +77,12 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0">
-            <Button className="shadow-sm">
-              <span className="mr-2">+</span>
-              Ajouter un contrat
-            </Button>
+            <Link href="/contracts">
+              <Button className="shadow-sm">
+                <span className="mr-2">+</span>
+                Ajouter un contrat
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
