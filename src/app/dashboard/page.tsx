@@ -63,7 +63,7 @@ export default async function DashboardPage() {
   const budgetProgress = Math.min((totalMonthly / budgetTarget) * 100, 100);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Welcome Header */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -194,7 +194,7 @@ export default async function DashboardPage() {
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="overview">Vue d&apos;ensemble</TabsTrigger>
           <TabsTrigger value="contracts">Contrats récents</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="alerts">Alertes</TabsTrigger>
@@ -434,7 +434,8 @@ export default async function DashboardPage() {
                   <AlertDescription className="text-blue-800">
                     <p className="font-medium">Nouveau contrat ajouté</p>
                     <p className="text-sm mt-1">
-                      Votre contrat "Assurance Auto" a été créé avec succès.
+                      Votre contrat &quot;Assurance Auto&quot; a été créé avec
+                      succès.
                     </p>
                   </AlertDescription>
                 </Alert>
