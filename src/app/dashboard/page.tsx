@@ -1,20 +1,37 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import MuiThemeProvider from "@/components/providers/MuiThemeProvider";
 import {
+  Box,
+  Container,
+  Typography,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  Button,
+  Chip,
+  LinearProgress,
+  Divider,
+  Alert,
+  AlertTitle,
+  Paper,
+  Stack,
+} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import {
+  Description as DescriptionIcon,
+  TrendingUp as TrendingUpIcon,
+  Assessment as AssessmentIcon,
+  Warning as WarningIcon,
+  Add as AddIcon,
+  Celebration as CelebrationIcon,
+  CheckCircle as CheckCircleIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
+  Info as InfoIcon,
+} from "@mui/icons-material";
 import Link from "next/link";
+import DashboardTabs from "@/components/dashboard/DashboardTabs";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -64,387 +81,550 @@ export default async function DashboardPage() {
   const budgetProgress = Math.min((totalMonthly / budgetTarget) * 100, 100);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              Bonjour, {session.user.name?.split(" ")[0]} !
-              <span className="ml-2">👋</span>
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Voici un aperçu de vos contrats et finances
-            </p>
-          </div>
-          <div className="mt-4 sm:mt-0">
-            <Link href="/contracts">
-              <Button className="shadow-sm">
-                <span className="mr-2">+</span>
-                Ajouter un contrat
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+    <MuiThemeProvider>
+      <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
+        <Container maxWidth="xl">
+          {/* Welcome Header */}
+          <Box sx={{ mb: 6 }}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={2}
+            >
+              <Box>
+                <Typography
+                  variant="h3"
+                  sx={{ fontWeight: 700, mb: 1, color: "text.primary" }}
+                >
+                  Bonjour, {session.user.name?.split(" ")[0]} ! 👋
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Voici un aperçu de vos contrats et finances
+                </Typography>
+              </Box>
+              <Link href="/contracts" style={{ textDecoration: "none" }}>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  size="large"
+                  sx={{ boxShadow: 2 }}
+                >
+                  Ajouter un contrat
+                </Button>
+              </Link>
+            </Stack>
+          </Box>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700">
-              Contrats actifs
-            </CardTitle>
-            <div className="h-8 w-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg">📄</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-blue-600">
-              {activeContracts}
-            </div>
-            <p className="text-xs text-blue-600/70 mt-1">
-              Sur {stats._count.id} au total
-            </p>
-            <div className="flex items-center mt-2">
-              <Badge
-                variant="secondary"
-                className="bg-blue-200 text-blue-700 text-xs"
-              >
-                +2 ce mois-ci
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Stats Cards */}
+          <Grid container spacing={3}>
+            <Grid size={3}>
+              <Card sx={{ height: "100%" }}>
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    mb={2}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Contrats actifs
+                    </Typography>
+                    <Box
+                      sx={{
+                        bgcolor: "primary.main",
+                        p: 1,
+                        borderRadius: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <DescriptionIcon sx={{ color: "white", fontSize: 24 }} />
+                    </Box>
+                  </Stack>
+                  <Typography
+                    variant="h3"
+                    fontWeight={700}
+                    color="primary.main"
+                    mb={1}
+                  >
+                    {activeContracts}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mb={1.5}
+                  >
+                    Sur {stats._count.id} au total
+                  </Typography>
+                  <Chip
+                    label="+2 ce mois-ci"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-700">
-              Coût mensuel
-            </CardTitle>
-            <div className="h-8 w-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg">💰</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-600">
-              {totalMonthly.toFixed(2)}€
-            </div>
-            <p className="text-xs text-green-600/70 mt-1">
-              Prélèvements mensuels
-            </p>
-            <div className="flex items-center mt-2">
-              <Progress value={budgetProgress} className="flex-1 h-2" />
-              <span className="ml-2 text-xs text-green-600">
-                {budgetProgress.toFixed(0)}%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+            <Grid size={3}>
+              <Card sx={{ height: "100%" }}>
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    mb={2}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Coût mensuel
+                    </Typography>
+                    <Box
+                      sx={{
+                        bgcolor: "success.main",
+                        p: 1,
+                        borderRadius: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <TrendingUpIcon sx={{ color: "white", fontSize: 24 }} />
+                    </Box>
+                  </Stack>
+                  <Typography
+                    variant="h3"
+                    fontWeight={700}
+                    color="success.main"
+                    mb={1}
+                  >
+                    {totalMonthly.toFixed(2)}€
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mb={1.5}
+                  >
+                    Prélèvements mensuels
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={budgetProgress}
+                      sx={{ flexGrow: 1, height: 6, borderRadius: 1 }}
+                    />
+                    <Typography variant="caption" color="text.secondary">
+                      {budgetProgress.toFixed(0)}%
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-700">
-              Coût annuel
-            </CardTitle>
-            <div className="h-8 w-8 bg-purple-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg">📊</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-purple-600">
-              {totalAnnual.toFixed(2)}€
-            </div>
-            <p className="text-xs text-purple-600/70 mt-1">
-              Budget total annuel
-            </p>
-            <div className="flex items-center mt-2">
-              <Badge
-                variant="outline"
-                className="border-purple-300 text-purple-700 text-xs"
-              >
-                Moyenne: {(totalAnnual / 12).toFixed(0)}€/mois
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+            <Grid size={3}>
+              <Card sx={{ height: "100%" }}>
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    mb={2}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Coût annuel
+                    </Typography>
+                    <Box
+                      sx={{
+                        bgcolor: "secondary.main",
+                        p: 1,
+                        borderRadius: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <AssessmentIcon sx={{ color: "white", fontSize: 24 }} />
+                    </Box>
+                  </Stack>
+                  <Typography
+                    variant="h3"
+                    fontWeight={700}
+                    color="secondary.main"
+                    mb={1}
+                  >
+                    {totalAnnual.toFixed(2)}€
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mb={1.5}
+                  >
+                    Budget total annuel
+                  </Typography>
+                  <Chip
+                    label={`Moyenne: ${(totalAnnual / 12).toFixed(0)}€/mois`}
+                    size="small"
+                    color="secondary"
+                    variant="outlined"
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700">
-              Alertes
-            </CardTitle>
-            <div className="h-8 w-8 bg-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg">⚠️</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-orange-600">3</div>
-            <p className="text-xs text-orange-600/70 mt-1">
-              Renouvellements proches
-            </p>
-            <div className="flex items-center mt-2">
-              <Badge variant="destructive" className="bg-orange-500 text-xs">
-                Action requise
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Grid size={3}>
+              <Card sx={{ height: "100%" }}>
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    mb={2}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Alertes
+                    </Typography>
+                    <Box
+                      sx={{
+                        bgcolor: "warning.main",
+                        p: 1,
+                        borderRadius: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <WarningIcon sx={{ color: "white", fontSize: 24 }} />
+                    </Box>
+                  </Stack>
+                  <Typography
+                    variant="h3"
+                    fontWeight={700}
+                    color="warning.main"
+                    mb={1}
+                  >
+                    3
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mb={1.5}
+                  >
+                    Renouvellements proches
+                  </Typography>
+                  <Chip label="Action requise" size="small" color="error" />
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Vue d&apos;ensemble</TabsTrigger>
-          <TabsTrigger value="contracts">Contrats récents</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="alerts">Alertes</TabsTrigger>
-        </TabsList>
+          {/* Main Content Tabs */}
+          <DashboardTabs
+            overviewContent={
+              <Grid container spacing={3}>
+                {/* Welcome Message */}
+                <Grid item xs={12} lg={6}>
+                  <Card>
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        mb={2}
+                      >
+                        <CelebrationIcon color="primary" />
+                        <Typography variant="h5" fontWeight={600}>
+                          Bienvenue sur Klarity !
+                        </Typography>
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary" mb={3}>
+                        Votre plateforme de gestion administrative est
+                        configurée
+                      </Typography>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Welcome Message */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <span className="mr-2">🎉</span>
-                  Bienvenue sur Klarity !
-                </CardTitle>
-                <CardDescription>
-                  Votre plateforme de gestion administrative est configurée
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {stats._count.id > 0 ? (
-                  <Alert className="bg-green-50 border-green-200">
-                    <span className="text-green-600">✅</span>
-                    <AlertDescription className="text-green-800">
-                      <div className="space-y-2">
-                        <p className="font-medium">
-                          Données chargées avec succès !
-                        </p>
-                        <p className="text-sm">
+                      {stats._count.id > 0 ? (
+                        <Alert severity="success" sx={{ mb: 3 }}>
+                          <AlertTitle>
+                            Données chargées avec succès !
+                          </AlertTitle>
                           Vous avez {stats._count.id} contrats dans votre base
                           de données. Explorez vos contrats, ajoutez-en de
                           nouveaux et suivez vos échéances.
-                        </p>
-                      </div>
-                    </AlertDescription>
-                  </Alert>
-                ) : (
-                  <Alert className="bg-blue-50 border-blue-200">
-                    <span className="text-blue-600">🚀</span>
-                    <AlertDescription className="text-blue-800">
-                      <div className="space-y-2">
-                        <p className="font-medium">Commencez votre gestion !</p>
-                        <p className="text-sm">
-                          Lancez{" "}
-                          <code className="bg-blue-100 px-2 py-1 rounded text-xs">
-                            npm run db:seed
-                          </code>{" "}
-                          pour charger des données de test.
-                        </p>
-                      </div>
-                    </AlertDescription>
-                  </Alert>
-                )}
+                        </Alert>
+                      ) : (
+                        <Alert severity="info" sx={{ mb: 3 }}>
+                          <AlertTitle>Commencez votre gestion !</AlertTitle>
+                          Lancez <code>npm run db:seed</code> pour charger des
+                          données de test.
+                        </Alert>
+                      )}
 
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-900">
-                    Actions rapides :
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="justify-start"
-                    >
-                      <span className="mr-2">📄</span>
-                      Nouveau contrat
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="justify-start"
-                    >
-                      <span className="mr-2">📊</span>
-                      Voir analytics
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="justify-start"
-                    >
-                      <span className="mr-2">🔔</span>
-                      Alertes (3)
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="justify-start"
-                    >
-                      <span className="mr-2">⚙️</span>
-                      Paramètres
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                      <Typography variant="subtitle2" mb={2} fontWeight={600}>
+                        Actions rapides :
+                      </Typography>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<DescriptionIcon />}
+                            sx={{ justifyContent: "flex-start" }}
+                          >
+                            Nouveau contrat
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<AssessmentIcon />}
+                            sx={{ justifyContent: "flex-start" }}
+                          >
+                            Voir analytics
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<NotificationsIcon />}
+                            sx={{ justifyContent: "flex-start" }}
+                          >
+                            Alertes (3)
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<SettingsIcon />}
+                            sx={{ justifyContent: "flex-start" }}
+                          >
+                            Paramètres
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
 
-            {/* Budget Overview */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Budget mensuel</CardTitle>
-                <CardDescription>
-                  Suivi de vos dépenses contractuelles
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Dépensé ce mois</span>
-                    <span className="font-medium">
-                      {totalMonthly.toFixed(2)}€
-                    </span>
-                  </div>
-                  <Progress value={budgetProgress} className="h-3" />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>0€</span>
-                    <span>Objectif: {budgetTarget}€</span>
-                  </div>
-                </div>
+                {/* Budget Overview */}
+                <Grid item xs={12} lg={6}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h5" fontWeight={600} mb={1}>
+                        Budget mensuel
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" mb={3}>
+                        Suivi de vos dépenses contractuelles
+                      </Typography>
 
-                <Separator />
+                      <Stack spacing={1} mb={2}>
+                        <Stack direction="row" justifyContent="space-between">
+                          <Typography variant="body2">
+                            Dépensé ce mois
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>
+                            {totalMonthly.toFixed(2)}€
+                          </Typography>
+                        </Stack>
+                        <LinearProgress
+                          variant="determinate"
+                          value={budgetProgress}
+                          sx={{ height: 8, borderRadius: 1 }}
+                        />
+                        <Stack direction="row" justifyContent="space-between">
+                          <Typography variant="caption" color="text.secondary">
+                            0€
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Objectif: {budgetTarget}€
+                          </Typography>
+                        </Stack>
+                      </Stack>
 
-                <div className="space-y-3">
-                  <h4 className="font-medium">Répartition par catégorie :</h4>
-                  <div className="space-y-2">
-                    {contractsByCategory.map((category) => (
-                      <div
-                        key={category.category}
-                        className="flex justify-between items-center"
-                      >
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                          <span className="text-sm capitalize">
-                            {category.category.replace(/-/g, " ")}
-                          </span>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {category._count.id}
-                        </Badge>
-                      </div>
+                      <Divider sx={{ my: 3 }} />
+
+                      <Typography variant="subtitle2" fontWeight={600} mb={2}>
+                        Répartition par catégorie :
+                      </Typography>
+                      <Stack spacing={2}>
+                        {contractsByCategory.map((category) => (
+                          <Stack
+                            key={category.category}
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={1.5}
+                            >
+                              <Box
+                                sx={{
+                                  width: 12,
+                                  height: 12,
+                                  bgcolor: "primary.main",
+                                  borderRadius: "50%",
+                                }}
+                              />
+                              <Typography
+                                variant="body2"
+                                sx={{ textTransform: "capitalize" }}
+                              >
+                                {category.category.replace(/-/g, " ")}
+                              </Typography>
+                            </Stack>
+                            <Chip
+                              label={category._count.id}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </Stack>
+                        ))}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            }
+            contractsContent={
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" fontWeight={600} mb={1}>
+                    Contrats récents
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" mb={3}>
+                    Vos 5 derniers contrats ajoutés
+                  </Typography>
+                  <Stack spacing={2}>
+                    {recentContracts.map((contract) => (
+                      <Paper key={contract.id} variant="outlined" sx={{ p: 2 }}>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                          >
+                            <Box
+                              sx={{
+                                width: 48,
+                                height: 48,
+                                bgcolor: "primary.dark",
+                                borderRadius: 2,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <DescriptionIcon
+                                sx={{ color: "primary.light" }}
+                              />
+                            </Box>
+                            <Box>
+                              <Typography variant="body1" fontWeight={600}>
+                                {contract.name}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {contract.provider}
+                              </Typography>
+                            </Box>
+                          </Stack>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                          >
+                            <Box textAlign="right">
+                              <Typography variant="body1" fontWeight={600}>
+                                {contract.monthlyAmount?.toFixed(2) || "N/A"}€
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                par mois
+                              </Typography>
+                            </Box>
+                            <Chip
+                              label={contract.status}
+                              color={
+                                contract.status === "active"
+                                  ? "success"
+                                  : "default"
+                              }
+                              size="small"
+                            />
+                          </Stack>
+                        </Stack>
+                      </Paper>
                     ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="contracts" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Contrats récents</CardTitle>
-              <CardDescription>Vos 5 derniers contrats ajoutés</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentContracts.map((contract) => (
-                  <div
-                    key={contract.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-600">📄</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">{contract.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {contract.provider}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {contract.monthlyAmount?.toFixed(2) || "N/A"}€
-                        </p>
-                        <p className="text-xs text-gray-500">par mois</p>
-                      </div>
-                      <Badge
-                        variant={
-                          contract.status === "active" ? "default" : "secondary"
-                        }
-                      >
-                        {contract.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics">
-          <Card>
-            <CardHeader>
-              <CardTitle>Analytics détaillées</CardTitle>
-              <CardDescription>
-                Analyse de vos dépenses et contrats (Fonctionnalité à venir)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <span className="text-6xl">📊</span>
-                <h3 className="text-lg font-medium mt-4">
-                  Analytics en développement
-                </h3>
-                <p className="text-gray-500 mt-2">
-                  Cette section contiendra des graphiques et analyses détaillées
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="alerts">
-          <Card>
-            <CardHeader>
-              <CardTitle>Alertes et notifications</CardTitle>
-              <CardDescription>
-                Gérez vos rappels et notifications importantes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Alert className="bg-orange-50 border-orange-200">
-                  <span className="text-orange-600">⚠️</span>
-                  <AlertDescription className="text-orange-800">
-                    <p className="font-medium">3 renouvellements approchent</p>
-                    <p className="text-sm mt-1">
+                  </Stack>
+                </CardContent>
+              </Card>
+            }
+            analyticsContent={
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" fontWeight={600} mb={1}>
+                    Analytics détaillées
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" mb={3}>
+                    Analyse de vos dépenses et contrats (Fonctionnalité à venir)
+                  </Typography>
+                  <Box textAlign="center" py={8}>
+                    <AssessmentIcon
+                      sx={{ fontSize: 80, color: "text.secondary", mb: 3 }}
+                    />
+                    <Typography variant="h6" fontWeight={600} mb={1}>
+                      Analytics en développement
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Cette section contiendra des graphiques et analyses
+                      détaillées
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            }
+            alertsContent={
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" fontWeight={600} mb={1}>
+                    Alertes et notifications
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" mb={3}>
+                    Gérez vos rappels et notifications importantes
+                  </Typography>
+                  <Stack spacing={2}>
+                    <Alert severity="warning">
+                      <AlertTitle>3 renouvellements approchent</AlertTitle>
                       Vérifiez vos contrats arrivant à échéance ce mois.
-                    </p>
-                  </AlertDescription>
-                </Alert>
-
-                <Alert className="bg-blue-50 border-blue-200">
-                  <span className="text-blue-600">ℹ️</span>
-                  <AlertDescription className="text-blue-800">
-                    <p className="font-medium">Nouveau contrat ajouté</p>
-                    <p className="text-sm mt-1">
+                    </Alert>
+                    <Alert severity="info">
+                      <AlertTitle>Nouveau contrat ajouté</AlertTitle>
                       Votre contrat &quot;Assurance Auto&quot; a été créé avec
                       succès.
-                    </p>
-                  </AlertDescription>
-                </Alert>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                    </Alert>
+                  </Stack>
+                </CardContent>
+              </Card>
+            }
+          />
+        </Container>
+      </Box>
+    </MuiThemeProvider>
   );
 }
