@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import "../../app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,14 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { signOut } from "@/lib/auth";
+import { SignOutButton } from "./sign-out-button";
 
 const Header = async () => {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
-  // Si pas de session, rediriger vers login
+  // Si pas de session, ne pas afficher le header
   if (!session) {
-    redirect("/auth/signin");
+    return null;
   }
 
   const userInitials: string =
@@ -138,22 +138,7 @@ const Header = async () => {
                   📚 Aide & Support
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signOut({ redirectTo: "/auth/signin" });
-                    }}
-                    className="w-full"
-                  >
-                    <button
-                      type="submit"
-                      className="w-full text-left flex items-center text-red-600 hover:text-red-700"
-                    >
-                      🚪 Déconnexion
-                    </button>
-                  </form>
-                </DropdownMenuItem>
+                <SignOutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

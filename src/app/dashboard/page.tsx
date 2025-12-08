@@ -1,4 +1,5 @@
-import { auth } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import {
   Card,
@@ -16,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return <div>Erreur de session</div>;

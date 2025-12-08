@@ -1,19 +1,19 @@
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
 
   providers: [
-    Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -56,13 +56,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   callbacks: {
-    session: ({ session, token }) => {
-      if (token.sub) {
+    async session({ session, token }) {
+      if (token.sub && session.user) {
         session.user.id = token.sub;
       }
       return session;
     },
-    jwt: ({ user, token }) => {
+    async jwt({ user, token }) {
       if (user) {
         token.sub = user.id;
       }
@@ -74,15 +74,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
 
+  secret: process.env.NEXTAUTH_SECRET,
+
   // Debug
   debug: process.env.NODE_ENV === "development",
-});
+};
 
 // Types pour TypeScript
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-    } & DefaultSession["user"];
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+    };
   }
 }
