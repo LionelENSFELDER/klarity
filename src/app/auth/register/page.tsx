@@ -3,15 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Box,
+  Container,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Stack,
+  Link as MuiLink,
+} from "@mui/material";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -49,81 +52,134 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
-            <span className="text-white font-bold text-xl">📋</span>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900">Créer un compte</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Rejoignez Klarity pour gérer vos contrats
-          </p>
-        </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
+        py: { xs: 6, md: 12 },
+        px: 2,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Stack spacing={4} alignItems="center">
+          {/* Logo & Title */}
+          <Stack spacing={3} alignItems="center">
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                borderRadius: 3,
+                bgcolor: "primary.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: 2,
+              }}
+            >
+              <Typography variant="h4" sx={{ color: "white" }}>
+                📋
+              </Typography>
+            </Box>
+            <Box textAlign="center">
+              <Typography variant="h4" fontWeight={700} gutterBottom>
+                Créer un compte
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Rejoignez Klarity pour gérer vos contrats
+              </Typography>
+            </Box>
+          </Stack>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Inscription</CardTitle>
-            <CardDescription>Créez votre compte pour commencer</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
+          {/* Card */}
+          <Card sx={{ width: "100%", maxWidth: 480 }}>
+            <CardContent sx={{ p: 4 }}>
+              <Stack spacing={3}>
+                <Box>
+                  <Typography variant="h5" fontWeight={600} gutterBottom>
+                    Inscription
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Créez votre compte pour commencer
+                  </Typography>
+                </Box>
 
-              <div className="space-y-2">
-                <Label htmlFor="name">Nom complet</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Jean Dupont"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
+                {/* Form */}
+                <Stack component="form" onSubmit={handleSubmit} spacing={3}>
+                  {error && (
+                    <Alert severity="error" sx={{ width: "100%" }}>
+                      {error}
+                    </Alert>
+                  )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="jean@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+                  <TextField
+                    fullWidth
+                    label="Nom complet"
+                    type="text"
+                    placeholder="Jean Dupont"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    autoComplete="name"
+                  />
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    type="email"
+                    placeholder="jean@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                  />
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Création..." : "Créer mon compte"}
-              </Button>
-            </form>
+                  <TextField
+                    fullWidth
+                    label="Mot de passe"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                  />
 
-            <div className="mt-4 text-center text-sm">
-              <span className="text-muted-foreground">Déjà un compte ? </span>
-              <a href="/auth/signin" className="text-blue-600 hover:underline">
-                Se connecter
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    disabled={loading}
+                  >
+                    {loading ? "Création..." : "Créer mon compte"}
+                  </Button>
+                </Stack>
+
+                <Box textAlign="center">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    component="span"
+                  >
+                    Déjà un compte ?{" "}
+                  </Typography>
+                  <MuiLink
+                    component={Link}
+                    href="/auth/signin"
+                    underline="hover"
+                    fontWeight={600}
+                  >
+                    Se connecter
+                  </MuiLink>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Stack>
+      </Container>
+    </Box>
   );
 }

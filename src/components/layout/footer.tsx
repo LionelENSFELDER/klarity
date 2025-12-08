@@ -1,30 +1,44 @@
-import { Badge } from "@/components/ui/badge";
+import { Box, Container, Stack, Typography, Chip, Button } from "@mui/material";
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
-            <span>© 2025 Klarity. Tous droits réservés.</span>
-            <Badge variant="outline" className="text-xs">
-              Alpha v0.1.0
-            </Badge>
-          </div>
-          <div className="flex items-center space-x-4 mt-2 sm:mt-0">
-            <a href="#" className="hover:text-gray-700 transition-colors">
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: "background.paper",
+        borderTop: 1,
+        borderColor: "divider",
+        py: 3,
+        mt: "auto",
+      }}
+    >
+      <Container maxWidth="xl">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body2" color="text.secondary">
+              © 2025 Klarity. Tous droits réservés.
+            </Typography>
+            <Chip label="Alpha v0.1.0" size="small" variant="outlined" />
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Button size="small" color="inherit">
               Confidentialité
-            </a>
-            <a href="#" className="hover:text-gray-700 transition-colors">
+            </Button>
+            <Button size="small" color="inherit">
               Conditions
-            </a>
-            <a href="#" className="hover:text-gray-700 transition-colors">
+            </Button>
+            <Button size="small" color="inherit">
               Support
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
+            </Button>
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
   );
 };
 
