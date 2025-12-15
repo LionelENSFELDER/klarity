@@ -1,17 +1,17 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
+  Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+  Alert,
+  Chip,
+  Divider,
+  Box,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 
 const errors = {
@@ -27,86 +27,118 @@ export default function AuthErrorPage() {
   const error = searchParams.get("error") as keyof typeof errors;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-rose-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%)",
+        py: { xs: 6, sm: 12 },
+        px: { xs: 2, sm: 3, lg: 4 },
+      }}
+    >
+      <Box sx={{ maxWidth: "28rem", width: "100%" }}>
         {/* Header */}
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center mb-6 shadow-lg">
-            <span className="text-white font-bold text-2xl">❌</span>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <Box
+            sx={{
+              mx: "auto",
+              height: 64,
+              width: 64,
+              background: "linear-gradient(135deg, #ef4444 0%, #f43f5e 100%)",
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 3,
+              boxShadow: 3,
+            }}
+          >
+            <Typography sx={{ fontSize: "1.5rem" }}>❌</Typography>
+          </Box>
+          <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
             Erreur de connexion
-          </h2>
-          <p className="mt-2 text-base text-gray-600">
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
             Un problème est survenu lors de l'authentification
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* Main Card */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-xl font-semibold text-red-600 flex items-center">
-              <span className="mr-2">🚫</span>
-              Connexion échouée
-            </CardTitle>
-            <CardDescription className="text-base">
-              {errors[error] || errors.Default}
-            </CardDescription>
-          </CardHeader>
+        <Card sx={{ boxShadow: 6, mb: 3 }}>
+          <CardHeader
+            title={
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <span>🚫</span>
+                <Typography variant="h6" component="span" sx={{ fontWeight: 600, color: "error.main" }}>
+                  Connexion échouée
+                </Typography>
+              </Box>
+            }
+            subheader={
+              <Typography variant="body1" sx={{ mt: 1 }}>
+                {errors[error] || errors.Default}
+              </Typography>
+            }
+            sx={{ pb: 3 }}
+          />
 
-          <CardContent className="space-y-6">
+          <CardContent sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Error Alert */}
-            <Alert className="bg-red-50 border-red-200">
-              <span className="text-red-500">ℹ️</span>
-              <AlertDescription className="text-red-800">
-                <div className="space-y-2">
-                  <p className="font-medium">Solutions recommandées :</p>
-                  <ul className="text-sm space-y-1 list-disc list-inside ml-2">
-                    <li>Vérifiez votre connexion internet</li>
-                    <li>Réessayez de vous connecter</li>
-                    <li>Videz le cache de votre navigateur</li>
-                    <li>Contactez le support si le problème persiste</li>
-                  </ul>
-                </div>
-              </AlertDescription>
-            </Alert>
-
-            <Separator />
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild className="flex-1 h-11">
-                <Link href="/auth/signin">
-                  <span className="mr-2">🔄</span>
-                  Réessayer la connexion
-                </Link>
+            <Alert severity="error" icon="ℹ️">
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  Solutions recommandées :
+                </Typography>
+                <Box component="ul" sx={{ fontSize: "0.875rem", pl: 3, m: 0 }}>
+                  <li>Vérifiez votre connexion internet</li>
+                  <li>Réessayez de vous connecter</li>
+                  <li>Videz le cache de votre navigateur</li>
+                  <li>Contactez le support si le problème persiste</li>
+                </Box>
+             Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
+              <Button
+                component={Link}
+                href="/auth/signin"
+                variant="contained"
+                fullWidth
+                sx={{ height: 44 }}
+              >
+                <span style={{ marginRight: 8 }}>🔄</span>
+                Réessayer la connexion
               </Button>
-              <Button variant="outline" asChild className="flex-1 h-11">
+              <Button
+                component={Link}
+                href="/"
+                variant="outlined"
+                fullWidth
+                sx={{ height: 44 }}
+              >
+                <span style={{ marginRight: 8 }}>🏠</span>
+                Retour à l'accueil
+              </Button>
+            </Boxtton variant="outline" asChild className="flex-1 h-11">
                 <Link href="/">
                   <span className="mr-2">🏠</span>
-                  Retour à l'accueil
-                </Link>
-              </Button>
-            </div>
-
-            {/* Dev Debug Info */}
-            {process.env.NODE_ENV === "development" && (
-              <>
-                <Separator />
-                <Alert className="bg-gray-50 border-gray-200">
-                  <span className="text-gray-500">🔧</span>
-                  <AlertDescription>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-700">
-                          Debug Info
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          Development
-                        </Badge>
-                      </div>
-                      <div className="bg-gray-100 rounded p-3">
-                        <code className="text-xs text-gray-700 block">
+                 Divider />
+                <Alert severity="info" icon="🔧">
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Debug Info
+                      </Typography>
+                      <Chip label="Development" size="small" variant="outlined" />
+                    </Box>
+                    <Box sx={{ bgcolor: "grey.100", borderRadius: 1, p: 2 }}>
+                      <Typography component="code" sx={{ fontSize: "0.75rem", display: "block" }}>
+                        Error Code: {error || "Unknown"}
+                      </Typography>
+                      <Typography component="code" sx={{ fontSize: "0.75rem", display: "block", mt: 0.5 }}>
+                        Timestamp: {new Date().toISOString()}
+                      </Typography>
+                    </Box>
+                  </Boxame="text-xs text-gray-700 block">
                           Error Code: {error || "Unknown"}
                         </code>
                         <code className="text-xs text-gray-700 block mt-1">
@@ -127,34 +159,22 @@ export default function AuthErrorPage() {
             <div className="text-center">
               <h4 className="font-medium text-blue-900 mb-2">
                 Besoin d'aide ?
-              </h4>
-              <p className="text-sm text-blue-800 mb-4">
+              sx={{ background: "linear-gradient(90deg, #eff6ff 0%, #eef2ff 100%)" }}>
+          <CardContent sx={{ pt: 3 }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h6" sx={{ fontWeight: 500, color: "primary.dark", mb: 1 }}>
+                Besoin d'aide ?
+              </Typography>
+              <Typography variant="body2" sx={{ color: "primary.dark", mb: 2 }}>
                 Si le problème persiste, voici quelques ressources utiles
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                <Badge
-                  variant="secondary"
-                  className="text-blue-700 bg-blue-100"
-                >
-                  📧 Support technique
-                </Badge>
-                <Badge
-                  variant="secondary"
-                  className="text-blue-700 bg-blue-100"
-                >
-                  📚 Documentation
-                </Badge>
-                <Badge
-                  variant="secondary"
-                  className="text-blue-700 bg-blue-100"
-                >
-                  💬 Chat en ligne
-                </Badge>
-              </div>
-            </div>
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 1 }}>
+                <Chip label="📧 Support technique" size="small" color="primary" variant="outlined" />
+                <Chip label="📚 Documentation" size="small" color="primary" variant="outlined" />
+                <Chip label="💬 Chat en ligne" size="small" color="primary" variant="outlined" />
+              </Box>
+            </Box>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
-}
+      </Box>
+    </Box

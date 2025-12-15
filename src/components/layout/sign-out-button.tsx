@@ -1,15 +1,22 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MenuItem } from "@mui/material";
 
 export function SignOutButton() {
   return (
-    <DropdownMenuItem
-      className="cursor-pointer text-red-600 hover:text-red-700"
+    <MenuItem
+      sx={{
+        cursor: "pointer",
+        color: "error.main",
+        "&:hover": {
+          color: "error.dark",
+          bgcolor: "error.lighter",
+        },
+      }}
       onClick={() => signOut({ callbackUrl: "/auth/signin" })}
     >
       🚪 Déconnexion
-    </DropdownMenuItem>
+    </MenuItem>
   );
 }
