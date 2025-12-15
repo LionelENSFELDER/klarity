@@ -57,10 +57,7 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenuOpen = (
-    event: React.MouseEvent<HTMLElement>,
-    contractId: string
-  ) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -249,10 +246,7 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                         <TableCell>{formatDate(contract.endDate)}</TableCell>
                         <TableCell>{getStatusBadge(contract.status)}</TableCell>
                         <TableCell align="right">
-                          <IconButton
-                            size="small"
-                            onClick={(e) => handleMenuOpen(e, contract.id)}
-                          >
+                          <IconButton size="small" onClick={handleMenuOpen}>
                             <MoreVertIcon />
                           </IconButton>
                         </TableCell>
@@ -349,10 +343,7 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                         <Button variant="outlined" size="small" fullWidth>
                           Modifier
                         </Button>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => handleMenuOpen(e, contract.id)}
-                        >
+                        <IconButton size="small" onClick={handleMenuOpen}>
                           <MoreVertIcon />
                         </IconButton>
                       </Stack>
