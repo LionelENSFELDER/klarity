@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-// GET /api/contracts - Lister tous les contrats de l'utilisateur
+// GET /api/contract - Lister tous les contrats de l'utilisateur
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/contracts - Créer un nouveau contrat
+// POST /api/contract - Créer un nouveau contrat
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -57,9 +57,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, startDate, endDate, value } = body;
+    const {
+      name,
+      provider,
+      contractNumber,
+      startDate,
+      endDate,
+      renewalDate,
+      monthlyAmount,
+      annualAmount,
+      clientPhone,
+      website,
+      advisorName,
+      notes,
+      status,
+    } = body;
 
-    if (!title) {
+    if (!name) {
       return NextResponse.json(
         { error: "Le titre est requis" },
         { status: 400 }
@@ -68,13 +82,20 @@ export async function POST(request: NextRequest) {
 
     const contract = await prisma.contract.create({
       data: {
-        title,
-        description,
-        startDate: startDate ? new Date(startDate) : null,
-        endDate: endDate ? new Date(endDate) : null,
-        value: value ? parseFloat(value) : null,
+        name,
+        provider: provider || null,
+        contractNumber: contractNumber || null,
+        renewalDate: renewalDate ? new Date(renewalDate) : null,
+        monthlyAmount: monthlyAmount ? parseFloat(monthlyAmount) : null,
+        annualAmount: annualAmount ? parseFloat(annualAmount) : null,
+        clientPhone: clientPhone || null,
+        website: website || null,
+        advisorName: advisorName || null,
+        notes: notes || null,
+        startDate: startDate ? new Date(startDate) : new Date(),
+        endDate: endDate ? new Date(endDate) : undefined,
         userId: session.user.id,
-        status: "DRAFT",
+        status: status || "DRAFT",
       },
     });
 
