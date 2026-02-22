@@ -4,6 +4,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { Providers } from "@/components/providers";
 import { Box } from "@mui/material";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
 export const metadata: Metadata = {
   title: "Klarity - Gestion de contrats simplifiée",
@@ -18,6 +19,7 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <body>
+        <AppRouterCacheProvider>
         <Providers>
           <Box
             sx={{
@@ -34,6 +36,7 @@ export default async function RootLayout({
             <Footer />
           </Box>
         </Providers>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

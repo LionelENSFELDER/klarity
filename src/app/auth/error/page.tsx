@@ -33,7 +33,8 @@ export default function AuthErrorPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%)",
+        background:
+          "linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%)",
         py: { xs: 6, sm: 12 },
         px: { xs: 2, sm: 3, lg: 4 },
       }}
@@ -71,7 +72,11 @@ export default function AuthErrorPage() {
             title={
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <span>🚫</span>
-                <Typography variant="h6" component="span" sx={{ fontWeight: 600, color: "error.main" }}>
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{ fontWeight: 600, color: "error.main" }}
+                >
                   Connexion échouée
                 </Typography>
               </Box>
@@ -84,7 +89,9 @@ export default function AuthErrorPage() {
             sx={{ pb: 3 }}
           />
 
-          <CardContent sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+          >
             {/* Error Alert */}
             <Alert severity="error" icon="ℹ️">
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -97,84 +104,120 @@ export default function AuthErrorPage() {
                   <li>Videz le cache de votre navigateur</li>
                   <li>Contactez le support si le problème persiste</li>
                 </Box>
-             Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
-              <Button
-                component={Link}
-                href="/auth/signin"
-                variant="contained"
-                fullWidth
-                sx={{ height: 44 }}
-              >
-                <span style={{ marginRight: 8 }}>🔄</span>
-                Réessayer la connexion
-              </Button>
-              <Button
-                component={Link}
-                href="/"
-                variant="outlined"
-                fullWidth
-                sx={{ height: 44 }}
-              >
-                <span style={{ marginRight: 8 }}>🏠</span>
-                Retour à l'accueil
-              </Button>
-            </Boxtton variant="outline" asChild className="flex-1 h-11">
-                <Link href="/">
-                  <span className="mr-2">🏠</span>
-                 Divider />
-                <Alert severity="info" icon="🔧">
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        Debug Info
-                      </Typography>
-                      <Chip label="Development" size="small" variant="outlined" />
-                    </Box>
-                    <Box sx={{ bgcolor: "grey.100", borderRadius: 1, p: 2 }}>
-                      <Typography component="code" sx={{ fontSize: "0.75rem", display: "block" }}>
-                        Error Code: {error || "Unknown"}
-                      </Typography>
-                      <Typography component="code" sx={{ fontSize: "0.75rem", display: "block", mt: 0.5 }}>
-                        Timestamp: {new Date().toISOString()}
-                      </Typography>
-                    </Box>
-                  </Boxame="text-xs text-gray-700 block">
-                          Error Code: {error || "Unknown"}
-                        </code>
-                        <code className="text-xs text-gray-700 block mt-1">
-                          Timestamp: {new Date().toISOString()}
-                        </code>
-                      </div>
-                    </div>
-                  </AlertDescription>
-                </Alert>
-              </>
-            )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    gap: 2,
+                  }}
+                >
+                  <Button
+                    component={Link}
+                    href="/auth/signin"
+                    variant="contained"
+                    fullWidth
+                    sx={{ height: 44 }}
+                  >
+                    <span style={{ marginRight: 8 }}>🔄</span>
+                    Réessayer la connexion
+                  </Button>
+                  <Button
+                    component={Link}
+                    href="/"
+                    variant="outlined"
+                    fullWidth
+                    sx={{ height: 44 }}
+                  >
+                    <span style={{ marginRight: 8 }}>🏠</span>
+                    Retour à l'accueil
+                  </Button>
+                </Box>
+              </Box>
+            </Alert>
+
+            <Divider />
+
+            <Alert severity="info" icon="🔧">
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    Debug Info
+                  </Typography>
+                  <Chip label="Development" size="small" variant="outlined" />
+                </Box>
+                <Box sx={{ bgcolor: "grey.100", borderRadius: 1, p: 2 }}>
+                  <Typography
+                    component="code"
+                    sx={{ fontSize: "0.75rem", display: "block" }}
+                  >
+                    Error Code: {error || "Unknown"}
+                  </Typography>
+                  <Typography
+                    component="code"
+                    sx={{ fontSize: "0.75rem", display: "block", mt: 0.5 }}
+                  >
+                    Timestamp: {new Date().toISOString()}
+                  </Typography>
+                </Box>
+              </Box>
+            </Alert>
           </CardContent>
         </Card>
 
         {/* Help Section */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <h4 className="font-medium text-blue-900 mb-2">
-                Besoin d'aide ?
-              sx={{ background: "linear-gradient(90deg, #eff6ff 0%, #eef2ff 100%)" }}>
+        <Card
+          sx={{
+            background: "linear-gradient(90deg, #eff6ff 0%, #eef2ff 100%)",
+          }}
+        >
           <CardContent sx={{ pt: 3 }}>
             <Box sx={{ textAlign: "center" }}>
-              <Typography variant="h6" sx={{ fontWeight: 500, color: "primary.dark", mb: 1 }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: 500, color: "primary.dark", mb: 1 }}
+              >
                 Besoin d'aide ?
               </Typography>
               <Typography variant="body2" sx={{ color: "primary.dark", mb: 2 }}>
                 Si le problème persiste, voici quelques ressources utiles
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 1 }}>
-                <Chip label="📧 Support technique" size="small" color="primary" variant="outlined" />
-                <Chip label="📚 Documentation" size="small" color="primary" variant="outlined" />
-                <Chip label="💬 Chat en ligne" size="small" color="primary" variant="outlined" />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  gap: 1,
+                }}
+              >
+                <Chip
+                  label="📧 Support technique"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+                <Chip
+                  label="📚 Documentation"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+                <Chip
+                  label="💬 Chat en ligne"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
               </Box>
             </Box>
           </CardContent>
         </Card>
       </Box>
-    </Box
+    </Box>
+  );
+}

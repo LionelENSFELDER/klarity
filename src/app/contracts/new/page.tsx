@@ -46,13 +46,15 @@ export default function NewContractPage() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // console.log("Form submitted with data:", formData);
+    // return;
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -227,11 +229,12 @@ export default function NewContractPage() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  disabled
                   fullWidth
                   type="number"
                   label="Montant annuel (€)"
                   name="annualAmount"
-                  value={formData.annualAmount}
+                  value={parseFloat(formData.monthlyAmount) * 12}
                   onChange={handleChange}
                   placeholder="Ex: 546.00"
                   inputProps={{ step: "0.01" }}
