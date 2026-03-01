@@ -20,17 +20,81 @@ import {
 } from "@mui/material";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import Link from "next/link";
+import { z } from "zod";
 import { CreateContract } from "@/modules/contracts/actions";
 import { ContractFormData } from "@/modules/contracts/types";
+
+// Type pour le formulaire (avec strings pour les dates)
+type FormData = {
+  name: string;
+  provider: string;
+  contractNumber: string;
+  category: string;
+  status: "ACTIVE" | "PENDING" | "EXPIRED" | "ARCHIVED";
+  monthlyAmount: number | null;
+  annualAmount: number | null;
+  startDate: string | null;
+  endDate: string | null;
+  renewalDate: string | null;
+  clientPhone: string;
+  website: string;
+  advisorName: string;
+  notes: string;
+};
+
+const contractSchema = z
+  .object({
+    name: z.string().min(1, "Le nom est requis"),
+    provider: z.string().min(1, "Le fournisseur est requis"),
+    contractNumber: z.string(),
+    category: z.string().min(1, "La catégorie est requise"),
+    status: z.enum(["ACTIVE", "PENDING", "EXPIRED", "ARCHIVED"]),
+    monthlyAmount: z
+      .number()
+      .positive("Le montant doit être positif")
+      .nullable(),
+    annualAmount: z.number().nullable(),
+    startDate: z
+      .date({ message: "La date de début doit être une date valide" })
+      .nullable(),
+    endDate: z
+      .date({ message: "La date de fin doit être une date valide" })
+      .nullable(),
+    renewalDate: z
+      .date({ message: "La date de renouvellement doit être une date valide" })
+      .nullable(),
+    clientPhone: z.string(),
+    website: z
+      .string()
+      .refine(
+        (val) => !val || val === "" || z.string().url().safeParse(val).success,
+        { message: "URL invalide" },
+      ),
+    advisorName: z.string(),
+    notes: z.string(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDate && data.endDate) {
+        return new Date(data.endDate) >= new Date(data.startDate);
+      }
+      return true;
+    },
+    {
+      message: "La date de fin doit être après la date de début",
+      path: ["endDate"],
+    },
+  );
 
 export default function NewContractPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Form state
-  const [formData, setFormData] = useState<ContractFormData>({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     provider: "",
     contractNumber: "",
@@ -47,11 +111,55 @@ export default function NewContractPage() {
     notes: "",
   });
 
+  const DATE_FIELDS = ["startDate", "endDate", "renewalDate"] as const;
+
+  // Convertit une string "YYYY-MM-DD" en Date ou null
+  const toDate = (value: string | null): Date | null => {
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  // Validation d'un champ individuel
+  const validateField = (
+    name: string,
+    value: string | number | Date | null,
+  ) => {
+    try {
+      const fieldSchema =
+        contractSchema.shape[name as keyof typeof contractSchema.shape];
+      if (fieldSchema) {
+        fieldSchema.parse(value);
+        setFieldErrors((prev) => {
+          const copy = { ...prev };
+          delete copy[name];
+          return copy;
+        });
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          [name]: err.issues[0].message,
+        }));
+      }
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if ((DATE_FIELDS as readonly string[]).includes(name)) {
+      // Garder la string dans le state UI, valider avec un objet Date
+      const dateValue = value === "" ? null : value;
+      setFormData((prev) => ({ ...prev, [name]: dateValue }));
+      validateField(name, toDate(dateValue));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      validateField(name, value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,21 +167,42 @@ export default function NewContractPage() {
     setLoading(true);
     setError("");
     setSuccess(false);
-    console.log("Submitting form with data:", formData);
+    setFieldErrors({});
 
     try {
-      const result = await CreateContract(formData);
-      if (result?.error) {
-        setError(result.error.message || "Erreur inconnue");
-      } else {
-        setSuccess(true);
-        setTimeout(() => {
-          router.push("/contracts");
-        }, 2000);
-      }
+      // Convertir les strings en Date avant la validation Zod
+      const dataToValidate = {
+        ...formData,
+        startDate: toDate(formData.startDate),
+        endDate: toDate(formData.endDate),
+        renewalDate: toDate(formData.renewalDate),
+      };
+
+      const validatedData = contractSchema.parse(dataToValidate);
+
+      // CreateContract gère la conversion des dates
+      await CreateContract(validatedData as unknown as ContractFormData);
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/contracts");
+      }, 1500);
     } catch (err) {
-      console.error("Erreur lors de la création du contrat:", err);
-      setError("Erreur lors de la création du contrat", err.message);
+      if (err instanceof z.ZodError) {
+        // Mapper toutes les erreurs de validation
+        const errors: Record<string, string> = {};
+        err.issues.forEach((issue) => {
+          if (issue.path[0]) {
+            errors[issue.path[0].toString()] = issue.message;
+          }
+        });
+        setFieldErrors(errors);
+        setError("Veuillez corriger les erreurs dans le formulaire");
+      } else if (err instanceof Error) {
+        console.error("Erreur création contrat:", err);
+        setError(err.message || "Erreur lors de la création du contrat");
+      } else {
+        setError("Erreur lors de la création du contrat");
+      }
     } finally {
       setLoading(false);
     }
@@ -128,6 +257,8 @@ export default function NewContractPage() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Ex: Assurance Habitation"
+                  error={!!fieldErrors.name}
+                  helperText={fieldErrors.name}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -138,6 +269,8 @@ export default function NewContractPage() {
                   value={formData.provider}
                   onChange={handleChange}
                   placeholder="Ex: MAIF"
+                  error={!!fieldErrors.provider}
+                  helperText={fieldErrors.provider}
                 />
               </Grid>
             </Grid>
@@ -151,20 +284,24 @@ export default function NewContractPage() {
                   value={formData.contractNumber}
                   onChange={handleChange}
                   placeholder="Ex: AH-2024-051234"
+                  error={!!fieldErrors.contractNumber}
+                  helperText={fieldErrors.contractNumber}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!fieldErrors.category}>
                   <InputLabel>Catégorie</InputLabel>
                   <Select
                     name="category"
                     value={formData.category}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const value = e.target.value;
                       setFormData((prev) => ({
                         ...prev,
-                        category: e.target.value,
-                      }))
-                    }
+                        category: value,
+                      }));
+                      validateField("category", value);
+                    }}
                     label="Catégorie"
                   >
                     <MenuItem value="">Sélectionner...</MenuItem>
@@ -216,14 +353,18 @@ export default function NewContractPage() {
                   label="Montant mensuel (€)"
                   name="monthlyAmount"
                   value={formData.monthlyAmount ?? ""}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === "" ? null : Number(e.target.value);
                     setFormData((prev) => ({
                       ...prev,
-                      monthlyAmount:
-                        e.target.value === "" ? null : Number(e.target.value),
-                    }))
-                  }
+                      monthlyAmount: value,
+                    }));
+                    validateField("monthlyAmount", value);
+                  }}
                   placeholder="Ex: 45.50"
+                  error={!!fieldErrors.monthlyAmount}
+                  helperText={fieldErrors.monthlyAmount}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -258,6 +399,9 @@ export default function NewContractPage() {
                   name="startDate"
                   value={formData.startDate ?? ""}
                   onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  error={!!fieldErrors.startDate}
+                  helperText={fieldErrors.startDate}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 4 }}>
@@ -268,6 +412,9 @@ export default function NewContractPage() {
                   name="endDate"
                   value={formData.endDate ?? ""}
                   onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  error={!!fieldErrors.endDate}
+                  helperText={fieldErrors.endDate}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 4 }}>
@@ -278,6 +425,9 @@ export default function NewContractPage() {
                   name="renewalDate"
                   value={formData.renewalDate ?? ""}
                   onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  error={!!fieldErrors.renewalDate}
+                  helperText={fieldErrors.renewalDate}
                 />
               </Grid>
             </Grid>
@@ -296,6 +446,8 @@ export default function NewContractPage() {
                   value={formData.clientPhone}
                   onChange={handleChange}
                   placeholder="Ex: 05 49 73 73 73"
+                  error={!!fieldErrors.clientPhone}
+                  helperText={fieldErrors.clientPhone}
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -306,6 +458,8 @@ export default function NewContractPage() {
                   value={formData.website}
                   onChange={handleChange}
                   placeholder="Ex: https://www.example.com"
+                  error={!!fieldErrors.website}
+                  helperText={fieldErrors.website}
                 />
               </Grid>
             </Grid>
@@ -317,6 +471,8 @@ export default function NewContractPage() {
               value={formData.advisorName}
               onChange={handleChange}
               placeholder="Ex: Marie Dupont"
+              error={!!fieldErrors.advisorName}
+              helperText={fieldErrors.advisorName}
             />
 
             {/* Notes */}

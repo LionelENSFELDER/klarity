@@ -35,18 +35,8 @@ function parseAmount(value: unknown): number | null {
   return isNaN(parsed) ? null : parsed;
 }
 
-function ValidateContract(input: ContractFormData) {
-  if (!input.name?.trim()) throw new Error("Le nom est requis");
-  if (!input.provider?.trim()) throw new Error("Le fournisseur est requis");
-  if (!input.category) throw new Error("La catégorie est requise");
-  if (!input.startDate || !parseDate(input.startDate))
-    throw new Error("La date de début est requise et doit être valide");
-}
-
-// ✅ Actions publiques
 export async function CreateContract(input: ContractFormData) {
   const userId = await getSessionUserId();
-  ValidateContract(input);
 
   await prisma.contract.create({
     data: {
@@ -56,9 +46,9 @@ export async function CreateContract(input: ContractFormData) {
       contractNumber: input.contractNumber,
       category: input.category,
       status: input.status ?? "active",
-      startDate: parseDate(input.startDate)!,
-      endDate: parseDate(input.endDate),
-      renewalDate: parseDate(input.renewalDate),
+      startDate: input.startDate || null,
+      endDate: input.endDate || null,
+      renewalDate: input.renewalDate || null,
       monthlyAmount: parseAmount(input.monthlyAmount),
       annualAmount: parseAmount(input.annualAmount),
       clientPhone: input.clientPhone,
@@ -83,9 +73,9 @@ export async function EditContract(id: string, input: ContractFormData) {
       contractNumber: input.contractNumber,
       category: input.category,
       status: input.status,
-      startDate: parseDate(input.startDate) ?? undefined,
-      endDate: parseDate(input.endDate) ?? undefined,
-      renewalDate: parseDate(input.renewalDate) ?? undefined,
+      startDate: input.startDate || undefined,
+      endDate: input.endDate || undefined,
+      renewalDate: input.renewalDate || undefined,
       monthlyAmount: parseAmount(input.monthlyAmount),
       annualAmount: parseAmount(input.annualAmount),
       clientPhone: input.clientPhone,

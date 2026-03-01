@@ -18,7 +18,6 @@ export type Contract = {
   updatedAt: Date;
 };
 
-// build form data interface based on Contract but with all fields optional except name and startDate
 export type ContractFormData = Omit<
   Contract,
   "id" | "createdAt" | "updatedAt"
@@ -39,13 +38,6 @@ export type ContractStatus =
   | "EXPIRED"
   | "ARCHIVED";
 
-// export type ContractCategory =
-//   | "Insurance"
-//   | "Subscription"
-//   | "Loan"
-//   | "Service"
-//   | "Other";
-
 export type ContractProvider =
   | "Netflix"
   | "Spotify"
@@ -54,23 +46,6 @@ export type ContractProvider =
   | "Google"
   | "Microsoft"
   | "Other";
-
-// export interface ContractFormData {
-//   name: string;
-//   provider?: string;
-//   contractNumber?: string;
-//   category?: string;
-//   status?: string;
-//   startDate: string;
-//   endDate?: string;
-//   renewalDate?: string;
-//   monthlyAmount?: string;
-//   annualAmount?: string;
-//   clientPhone?: string;
-//   website?: string;
-//   advisorName?: string;
-//   notes?: string;
-// }
 
 export interface ContractCreateData {
   userId: string;
