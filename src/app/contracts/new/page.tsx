@@ -38,9 +38,9 @@ export default function NewContractPage() {
     status: "ACTIVE",
     monthlyAmount: null,
     annualAmount: null,
-    startDate: new Date().toISOString().split("T")[0],
-    endDate: new Date().toISOString().split("T")[0],
-    renewalDate: new Date().toISOString().split("T")[0],
+    startDate: null,
+    endDate: null,
+    renewalDate: null,
     clientPhone: "",
     website: "",
     advisorName: "",
@@ -56,26 +56,26 @@ export default function NewContractPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // setLoading(true);
+    setLoading(true);
     setError("");
     setSuccess(false);
     console.log("Submitting form with data:", formData);
 
     try {
-      const response = await CreateContract(formData);
-      if (response.ok) {
+      const result = await CreateContract(formData);
+      if (result?.error) {
+        setError(result.error.message || "Erreur inconnue");
+      } else {
         setSuccess(true);
         setTimeout(() => {
           router.push("/contracts");
-        }, 1500);
-      } else {
-        const data = await response.json();
-        setError(data.error || "Une erreur s'est produite");
+        }, 2000);
       }
     } catch (err) {
-      setError("Erreur lors de la création du contrat");
+      console.error("Erreur lors de la création du contrat:", err);
+      setError("Erreur lors de la création du contrat", err.message);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 

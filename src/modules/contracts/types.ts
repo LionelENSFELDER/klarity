@@ -5,7 +5,7 @@ export type Contract = {
   contractNumber: string;
   category: string;
   status: string;
-  startDate: Date | undefined;
+  startDate: Date | null;
   endDate: Date | null;
   renewalDate: Date | null;
   monthlyAmount: number | null;
@@ -22,12 +22,7 @@ export type Contract = {
 export type ContractFormData = Omit<
   Contract,
   "id" | "createdAt" | "updatedAt"
-> & {
-  name: string;
-  startDate: string;
-  endDate?: string;
-  renewalDate?: string;
-};
+> & {};
 
 export interface ContractStats {
   total: number;
