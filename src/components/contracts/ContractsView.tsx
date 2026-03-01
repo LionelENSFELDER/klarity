@@ -31,20 +31,28 @@ import {
 import Grid from "@mui/material/Grid";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import Link from "next/link";
+import type { Contract } from "@/modules/contracts/types";
+import { getContrats } from "@/modules/contracts/queries";
+import {
+  CreateContract,
+  EditContract,
+  ArchiveContract,
+  DeleteContract,
+} from "@/modules/contracts/actions";
 
-interface Contract {
-  id: string;
-  name: string;
-  provider: string;
-  category: string;
-  status: string;
-  monthlyAmount: number | null;
-  annualAmount: number | null;
-  startDate: Date | null;
-  endDate: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// interface Contract {
+//   id: string;
+//   name: string;
+//   provider: string;
+//   category: string;
+//   status: string;
+//   monthlyAmount: number | null;
+//   annualAmount: number | null;
+//   startDate: Date | null;
+//   endDate: Date | null;
+//   createdAt: Date;
+//   updatedAt: Date;
+// }
 
 interface ContractsViewProps {
   contracts: Contract[];
@@ -56,13 +64,21 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(
+    null,
+  );
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    contractId: string,
+  ) => {
     setAnchorEl(event.currentTarget);
+    setSelectedContractId(contractId);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setSelectedContractId(null);
   };
 
   const getStatusBadge = (status: string) => {
@@ -246,7 +262,10 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                         <TableCell>{formatDate(contract.endDate)}</TableCell>
                         <TableCell>{getStatusBadge(contract.status)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="small" onClick={handleMenuOpen}>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleMenuOpen(e, contract.id)}
+                          >
                             <MoreVertIcon />
                           </IconButton>
                         </TableCell>
@@ -343,7 +362,10 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                         <Button variant="outlined" size="small" fullWidth>
                           Modifier
                         </Button>
-                        <IconButton size="small" onClick={handleMenuOpen}>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMenuOpen(e, contract.id)}
+                        >
                           <MoreVertIcon />
                         </IconButton>
                       </Stack>
@@ -375,8 +397,16 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
         <MenuItemMui onClick={handleMenuClose}>
           <Typography>📁 Archiver</Typography>
         </MenuItemMui>
-        <MenuItemMui onClick={handleMenuClose}>
-          <Typography color="error">🗑️ Supprimer</Typography>
+        <MenuItemMui
+          onClick={() => {
+            console.log("ID du contrat à supprimer:", selectedContractId);
+            if (selectedContractId) {
+              DeleteContract(selectedContractId);
+            }
+            handleMenuClose();
+          }}
+        >
+          🗑️ Supprimer
         </MenuItemMui>
       </Menu>
     </Box>

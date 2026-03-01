@@ -20,6 +20,8 @@ import {
 } from "@mui/material";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import Link from "next/link";
+import { CreateContract } from "@/modules/contracts/actions";
+import { ContractFormData } from "@/modules/contracts/types";
 
 export default function NewContractPage() {
   const router = useRouter();
@@ -28,17 +30,17 @@ export default function NewContractPage() {
   const [success, setSuccess] = useState(false);
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContractFormData>({
     name: "",
     provider: "",
     contractNumber: "",
     category: "",
-    status: "active",
-    monthlyAmount: "",
-    annualAmount: "",
-    startDate: "",
-    endDate: "",
-    renewalDate: "",
+    status: "ACTIVE",
+    monthlyAmount: null,
+    annualAmount: null,
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
+    renewalDate: new Date().toISOString().split("T")[0],
     clientPhone: "",
     website: "",
     advisorName: "",
@@ -53,22 +55,14 @@ export default function NewContractPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // console.log("Form submitted with data:", formData);
-    // return;
     e.preventDefault();
-    setLoading(true);
+    // setLoading(true);
     setError("");
     setSuccess(false);
+    console.log("Submitting form with data:", formData);
 
     try {
-      const response = await fetch("/api/contrat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
+      const response = await CreateContract(formData);
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {
@@ -81,7 +75,7 @@ export default function NewContractPage() {
     } catch (err) {
       setError("Erreur lors de la création du contrat");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -125,7 +119,7 @@ export default function NewContractPage() {
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   required
@@ -136,7 +130,7 @@ export default function NewContractPage() {
                   placeholder="Ex: Assurance Habitation"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label="Fournisseur"
@@ -149,7 +143,7 @@ export default function NewContractPage() {
             </Grid>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label="Numéro de contrat"
@@ -159,7 +153,7 @@ export default function NewContractPage() {
                   placeholder="Ex: AH-2024-051234"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>Catégorie</InputLabel>
                   <Select
@@ -202,10 +196,10 @@ export default function NewContractPage() {
                 }
                 label="Statut"
               >
-                <MenuItem value="active">Actif</MenuItem>
-                <MenuItem value="pending">En attente</MenuItem>
-                <MenuItem value="expired">Expiré</MenuItem>
-                <MenuItem value="archived">Archivé</MenuItem>
+                <MenuItem value="ACTIVE">Actif</MenuItem>
+                <MenuItem value="PENDING">En attente</MenuItem>
+                <MenuItem value="EXPIRED">Expiré</MenuItem>
+                <MenuItem value="ARCHIVED">Archivé</MenuItem>
               </Select>
             </FormControl>
 
@@ -215,29 +209,37 @@ export default function NewContractPage() {
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   type="number"
                   label="Montant mensuel (€)"
                   name="monthlyAmount"
-                  value={formData.monthlyAmount}
-                  onChange={handleChange}
+                  value={formData.monthlyAmount ?? ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      monthlyAmount:
+                        e.target.value === "" ? null : Number(e.target.value),
+                    }))
+                  }
                   placeholder="Ex: 45.50"
-                  inputProps={{ step: "0.01" }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   disabled
                   fullWidth
                   type="number"
                   label="Montant annuel (€)"
                   name="annualAmount"
-                  value={parseFloat(formData.monthlyAmount) * 12}
+                  value={
+                    formData.monthlyAmount == null
+                      ? ""
+                      : (formData.monthlyAmount * 12).toFixed(2)
+                  }
                   onChange={handleChange}
                   placeholder="Ex: 546.00"
-                  inputProps={{ step: "0.01" }}
                 />
               </Grid>
             </Grid>
@@ -248,37 +250,34 @@ export default function NewContractPage() {
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <TextField
                   fullWidth
                   type="date"
                   label="Date de début"
                   name="startDate"
-                  value={formData.startDate}
+                  value={formData.startDate ?? ""}
                   onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <TextField
                   fullWidth
                   type="date"
                   label="Date de fin"
                   name="endDate"
-                  value={formData.endDate}
+                  value={formData.endDate ?? ""}
                   onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <TextField
                   fullWidth
                   type="date"
                   label="Date de renouvellement"
                   name="renewalDate"
-                  value={formData.renewalDate}
+                  value={formData.renewalDate ?? ""}
                   onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
             </Grid>
@@ -289,7 +288,7 @@ export default function NewContractPage() {
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label="Téléphone"
@@ -299,7 +298,7 @@ export default function NewContractPage() {
                   placeholder="Ex: 05 49 73 73 73"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label="Site web"

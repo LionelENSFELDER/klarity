@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     console.error("Erreur lors de la récupération des contrats:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     if (!name) {
       return NextResponse.json(
         { error: "Le titre est requis" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -104,7 +104,35 @@ export async function POST(request: NextRequest) {
     console.error("Erreur lors de la création du contrat:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
+    );
+  }
+}
+
+// DELETE /api/contract - Supprimer un contrat de l'utilisateur (soft delete)
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+    const { searchParams } = new URL(request.url);
+    const contractId = searchParams.get("id");
+    if (!contractId) {
+      return NextResponse.json(
+        { error: "ID du contrat requis" },
+        { status: 400 },
+      );
+    }
+    await prisma.contract.delete({
+      where: { id: contractId },
+    });
+    return NextResponse.json({ message: "Contrat supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du contrat:", error);
+    return NextResponse.json(
+      { error: "Erreur interne du serveur" },
+      { status: 500 },
     );
   }
 }
