@@ -32,6 +32,7 @@ import {
 } from "@mui/icons-material";
 import Link from "next/link";
 import DashboardTabs from "@/components/dashboard/DashboardTabs";
+import StatsCard from "@/components/dashboard/StatsCard";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -56,6 +57,21 @@ export default async function DashboardPage() {
     where: {
       userId: session.user.id,
       status: "active",
+    },
+  });
+
+  const totalContracts = await prisma.contract.count({
+    where: {
+      userId: session.user.id,
+    },
+  });
+
+  const newConstratsThisMonth = await prisma.contract.count({
+    where: {
+      userId: session.user.id,
+      createdAt: {
+        gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      },
     },
   });
 
@@ -118,207 +134,32 @@ export default async function DashboardPage() {
 
           {/* Stats Cards */}
           <Grid container spacing={3}>
-            <Grid size={3}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={2}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      Contrats actifs
-                    </Typography>
-                    <Box
-                      sx={{
-                        bgcolor: "primary.main",
-                        p: 1,
-                        borderRadius: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <DescriptionIcon sx={{ color: "white", fontSize: 24 }} />
-                    </Box>
-                  </Stack>
-                  <Typography
-                    variant="h3"
-                    fontWeight={700}
-                    color="primary.main"
-                    mb={1}
-                  >
-                    {activeContracts}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    mb={1.5}
-                  >
-                    Sur {stats._count.id} au total
-                  </Typography>
-                  <Chip
-                    label="+2 ce mois-ci"
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                </CardContent>
-              </Card>
+            <Grid size={3} mb={4}>
+              <StatsCard
+                title="Contrats actifs"
+                icon="DescriptionIcon"
+                line1={activeContracts}
+              />
             </Grid>
 
             <Grid size={3}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={2}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      Coût mensuel
-                    </Typography>
-                    <Box
-                      sx={{
-                        bgcolor: "success.main",
-                        p: 1,
-                        borderRadius: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <TrendingUpIcon sx={{ color: "white", fontSize: 24 }} />
-                    </Box>
-                  </Stack>
-                  <Typography
-                    variant="h3"
-                    fontWeight={700}
-                    color="success.main"
-                    mb={1}
-                  >
-                    {totalMonthly.toFixed(2)}€
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    mb={1.5}
-                  >
-                    Prélèvements mensuels
-                  </Typography>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <LinearProgress
-                      variant="determinate"
-                      value={budgetProgress}
-                      sx={{ flexGrow: 1, height: 6, borderRadius: 1 }}
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                      {budgetProgress.toFixed(0)}%
-                    </Typography>
-                  </Stack>
-                </CardContent>
-              </Card>
+              <StatsCard
+                title="Coût mensuel"
+                icon="TrendingUpIcon"
+                line1={totalMonthly.toFixed(2) + " €"}
+              />
             </Grid>
 
             <Grid size={3}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={2}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      Coût annuel
-                    </Typography>
-                    <Box
-                      sx={{
-                        bgcolor: "secondary.main",
-                        p: 1,
-                        borderRadius: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <AssessmentIcon sx={{ color: "white", fontSize: 24 }} />
-                    </Box>
-                  </Stack>
-                  <Typography
-                    variant="h3"
-                    fontWeight={700}
-                    color="secondary.main"
-                    mb={1}
-                  >
-                    {totalAnnual.toFixed(2)}€
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    mb={1.5}
-                  >
-                    Budget total annuel
-                  </Typography>
-                  <Chip
-                    label={`Moyenne: ${(totalAnnual / 12).toFixed(0)}€/mois`}
-                    size="small"
-                    color="secondary"
-                    variant="outlined"
-                  />
-                </CardContent>
-              </Card>
+              <StatsCard
+                title="Coût annuel"
+                icon="AssessmentIcon"
+                line1={totalAnnual.toFixed(2) + " €"}
+              />
             </Grid>
 
             <Grid size={3}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={2}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      Alertes
-                    </Typography>
-                    <Box
-                      sx={{
-                        bgcolor: "warning.main",
-                        p: 1,
-                        borderRadius: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <WarningIcon sx={{ color: "white", fontSize: 24 }} />
-                    </Box>
-                  </Stack>
-                  <Typography
-                    variant="h3"
-                    fontWeight={700}
-                    color="warning.main"
-                    mb={1}
-                  >
-                    3
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    mb={1.5}
-                  >
-                    Renouvellements proches
-                  </Typography>
-                  <Chip label="Action requise" size="small" color="error" />
-                </CardContent>
-              </Card>
+              <StatsCard title="Alertes" icon="WarningIcon" line1="3" />
             </Grid>
           </Grid>
 
