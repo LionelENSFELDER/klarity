@@ -7,9 +7,10 @@ export interface CalendarContract {
   contractNumber: string | null;
   category: string;
   amount: number;
-  frequency: string; // monthly | quarterly | annual
+  frequency: string; // once | monthly | quarterly | annual
   debitDay: number; // 1-31
   anchorMonth: number | null; // 0-11
+  startDate: string | null; // ISO — date du prélèvement unique (frequency "once")
   renewalDate: string | null; // ISO
   documentUrl: string | null;
   documentName: string | null;
@@ -27,9 +28,18 @@ export function daysInMonth(year: number, month: number): number {
 }
 
 /** Le contrat est-il prélevé sur ce mois (month: 0-11) ? */
-export function isDebitedInMonth(c: CalendarContract, month: number): boolean {
+export function isDebitedInMonth(
+  c: CalendarContract,
+  year: number,
+  month: number,
+): boolean {
   const anchor = c.anchorMonth ?? 0;
   switch (c.frequency) {
+    case "once": {
+      if (!c.startDate) return false;
+      const date = new Date(c.startDate);
+      return date.getFullYear() === year && date.getMonth() === month;
+    }
     case "quarterly":
       return (12 + month - anchor) % 3 === 0;
     case "annual":
@@ -56,7 +66,7 @@ export function getMonthDebits(
 ): Map<number, DayDebit> {
   const map = new Map<number, DayDebit>();
   for (const c of contracts) {
-    if (!isDebitedInMonth(c, month)) continue;
+    if (!isDebitedInMonth(c, year, month)) continue;
     const day = effectiveDebitDay(c, year, month);
     const entry = map.get(day) ?? { day, contracts: [], total: 0 };
     entry.contracts.push(c);
@@ -69,10 +79,11 @@ export function getMonthDebits(
 /** Total prélevé sur le mois. */
 export function getMonthTotal(
   contracts: CalendarContract[],
+  year: number,
   month: number,
 ): number {
   return contracts
-    .filter((c) => isDebitedInMonth(c, month))
+    .filter((c) => isDebitedInMonth(c, year, month))
     .reduce((sum, c) => sum + c.amount, 0);
 }
 

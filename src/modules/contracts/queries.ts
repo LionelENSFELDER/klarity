@@ -23,6 +23,7 @@ export async function getCalendarContracts(): Promise<CalendarContract[]> {
     frequency: c.frequency,
     debitDay: c.debitDay,
     anchorMonth: c.anchorMonth,
+    startDate: c.startDate?.toISOString() ?? null,
     renewalDate: c.renewalDate?.toISOString() ?? null,
     documentUrl: c.documentUrl,
     documentName: c.documentName,

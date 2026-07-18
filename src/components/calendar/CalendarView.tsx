@@ -58,8 +58,8 @@ export default function CalendarView({
     [contracts, year, month],
   );
   const monthTotal = useMemo(
-    () => getMonthTotal(contracts, month),
-    [contracts, month],
+    () => getMonthTotal(contracts, year, month),
+    [contracts, year, month],
   );
 
   // Catégories présentes ce mois-ci (pour la légende)

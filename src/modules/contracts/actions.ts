@@ -117,15 +117,30 @@ export async function DeleteContract(id: string) {
 // Création d'une souscription (vue calendrier)
 // ============================================
 
-const subscriptionSchema = z.object({
-  name: z.string().trim().min(1, "Le fournisseur / nom du contrat est requis"),
-  category: z.string().min(1, "La catégorie est requise"),
-  amount: z.number().positive("Le montant doit être positif"),
-  frequency: z.enum(["monthly", "quarterly", "annual"]),
-  debitDay: z.number().int().min(1).max(31),
-  contractNumber: z.string().trim().optional(),
-  renewalDate: z.string().optional(),
-});
+const subscriptionSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, "Le fournisseur / nom du contrat est requis"),
+    category: z.string().min(1, "La catégorie est requise"),
+    amount: z.number().positive("Le montant doit être positif"),
+    frequency: z.enum(["once", "monthly", "quarterly", "annual"]),
+    debitDay: z.number().int().min(1).max(31).nullable(),
+    debitDate: z.string().optional(), // date complète pour "une fois"
+    contractNumber: z.string().trim().optional(),
+    renewalDate: z.string().optional(),
+  })
+  .refine(
+    (data) =>
+      data.frequency === "once"
+        ? Boolean(data.debitDate)
+        : data.debitDay !== null,
+    {
+      message: "Le jour de prélèvement est requis",
+      path: ["debitDay"],
+    },
+  );
 
 const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10 Mo
 
@@ -148,6 +163,7 @@ export async function CreateSubscription(formData: FormData) {
     amount: parseAmount(formData.get("amount")),
     frequency: formData.get("frequency"),
     debitDay: parseAmount(formData.get("debitDay")),
+    debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
   });
@@ -178,9 +194,19 @@ export async function CreateSubscription(formData: FormData) {
     documentName = file.name;
   }
 
+  // "Une fois" : date complète du prélèvement stockée dans startDate
+  const debitDate =
+    data.frequency === "once" ? parseDate(data.debitDate) : null;
+  if (data.frequency === "once" && !debitDate) {
+    return { error: "La date du prélèvement est invalide" };
+  }
+  const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
+
   // Mois de référence pour les fréquences trimestrielle / annuelle
   const anchorMonth =
-    data.frequency === "monthly" ? null : new Date().getMonth();
+    data.frequency === "quarterly" || data.frequency === "annual"
+      ? new Date().getMonth()
+      : null;
 
   await prisma.contract.create({
     data: {
@@ -191,8 +217,9 @@ export async function CreateSubscription(formData: FormData) {
       status: "active",
       amount: data.amount,
       frequency: data.frequency,
-      debitDay: data.debitDay,
+      debitDay,
       anchorMonth,
+      startDate: debitDate,
       contractNumber: data.contractNumber || null,
       renewalDate: parseDate(data.renewalDate),
       documentUrl,

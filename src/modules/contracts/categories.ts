@@ -76,6 +76,7 @@ export function getCategory(id: string): Category {
 }
 
 export const FREQUENCIES = [
+  { id: "once", label: "Une fois" },
   { id: "monthly", label: "Mensuel" },
   { id: "quarterly", label: "Trimestriel" },
   { id: "annual", label: "Annuel" },

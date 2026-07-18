@@ -43,20 +43,22 @@ export default function NewContractPage() {
   const [amount, setAmount] = useState("");
   const [frequency, setFrequency] = useState("monthly");
   const [debitDay, setDebitDay] = useState<number | null>(null);
+  const [debitDate, setDebitDate] = useState(""); // date complète pour "une fois"
   const [contractNumber, setContractNumber] = useState("");
   const [renewalDate, setRenewalDate] = useState("");
   const [document, setDocument] = useState<File | null>(null);
 
+  const isOnce = frequency === "once";
   const parsedAmount = parseFloat(amount.replace(",", "."));
   const isValid =
     name.trim().length > 0 &&
     category !== "" &&
     !isNaN(parsedAmount) &&
     parsedAmount > 0 &&
-    debitDay !== null;
+    (isOnce ? debitDate !== "" : debitDay !== null);
 
   const handleSubmit = async () => {
-    if (!isValid || debitDay === null) return;
+    if (!isValid) return;
     setLoading(true);
     setError("");
 
@@ -65,7 +67,11 @@ export default function NewContractPage() {
     formData.set("category", category);
     formData.set("amount", String(parsedAmount));
     formData.set("frequency", frequency);
-    formData.set("debitDay", String(debitDay));
+    if (isOnce) {
+      formData.set("debitDate", debitDate);
+    } else if (debitDay !== null) {
+      formData.set("debitDay", String(debitDay));
+    }
     if (contractNumber.trim())
       formData.set("contractNumber", contractNumber.trim());
     if (renewalDate) formData.set("renewalDate", renewalDate);
@@ -86,6 +92,18 @@ export default function NewContractPage() {
   };
 
   const selectedCategory = category ? getCategory(category) : null;
+  const previewDay = isOnce
+    ? debitDate
+      ? new Date(debitDate).getDate()
+      : null
+    : debitDay;
+  const previewWhen = isOnce
+    ? debitDate
+      ? ` · le ${new Date(debitDate).toLocaleDateString("fr-FR")}`
+      : ""
+    : debitDay
+      ? ` · le ${debitDay} du mois`
+      : "";
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100%", py: 4 }}>
@@ -205,59 +223,71 @@ export default function NewContractPage() {
                 </ToggleButtonGroup>
               </Stack>
 
-              {/* Jour de prélèvement : mini-grille 1-31 */}
-              <Box>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  Jour de prélèvement *
-                </Typography>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(7, 1fr)",
-                    gap: 0.5,
-                    maxWidth: 320,
-                  }}
-                >
-                  {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
-                    const selected = debitDay === day;
-                    return (
-                      <Box
-                        key={day}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setDebitDay(day)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setDebitDay(day);
-                          }
-                        }}
-                        sx={{
-                          aspectRatio: "1 / 1",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: 1.5,
-                          cursor: "pointer",
-                          fontSize: 13,
-                          fontFamily: "var(--font-display)",
-                          color: selected ? "#fff" : "text.secondary",
-                          background: selected
-                            ? "linear-gradient(135deg, #8b5cf6, #3b82f6)"
-                            : "rgba(255,255,255,0.04)",
-                          "&:hover": {
+              {/* Jour de prélèvement : date unique ou mini-grille 1-31 */}
+              {isOnce ? (
+                <TextField
+                  label="Date du prélèvement"
+                  type="date"
+                  value={debitDate}
+                  onChange={(e) => setDebitDate(e.target.value)}
+                  required
+                  slotProps={{ inputLabel: { shrink: true } }}
+                  fullWidth
+                />
+              ) : (
+                <Box>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    Jour de prélèvement *
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(7, 1fr)",
+                      gap: 0.5,
+                      maxWidth: 320,
+                    }}
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
+                      const selected = debitDay === day;
+                      return (
+                        <Box
+                          key={day}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setDebitDay(day)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setDebitDay(day);
+                            }
+                          }}
+                          sx={{
+                            aspectRatio: "1 / 1",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: 1.5,
+                            cursor: "pointer",
+                            fontSize: 13,
+                            fontFamily: "var(--font-display)",
+                            color: selected ? "#fff" : "text.secondary",
                             background: selected
                               ? "linear-gradient(135deg, #8b5cf6, #3b82f6)"
-                              : "rgba(255,255,255,0.1)",
-                          },
-                        }}
-                      >
-                        {day}
-                      </Box>
-                    );
-                  })}
+                              : "rgba(255,255,255,0.04)",
+                            "&:hover": {
+                              background: selected
+                                ? "linear-gradient(135deg, #8b5cf6, #3b82f6)"
+                                : "rgba(255,255,255,0.1)",
+                            },
+                          }}
+                        >
+                          {day}
+                        </Box>
+                      );
+                    })}
+                  </Box>
                 </Box>
-              </Box>
+              )}
 
               {/* Champs optionnels */}
               <TextField
@@ -356,7 +386,7 @@ export default function NewContractPage() {
                         color: "text.secondary",
                       }}
                     >
-                      {debitDay ?? "–"}
+                      {previewDay ?? "–"}
                     </Typography>
                     <Box
                       sx={{
@@ -386,7 +416,7 @@ export default function NewContractPage() {
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {selectedCategory?.label ?? "Catégorie"}
-                      {debitDay ? ` · le ${debitDay} du mois` : ""}
+                      {previewWhen}
                     </Typography>
                   </Box>
                 </Stack>
