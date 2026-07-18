@@ -90,13 +90,23 @@ model Contract {
   status           String   @default("active")
   
   // Dates
-  startDate        DateTime @map("start_date")
+  startDate        DateTime? @map("start_date")
   endDate          DateTime? @map("end_date")
   renewalDate      DateTime? @map("renewal_date")
   
-  // Financier
+  // Prélèvement
+  amount           Float    @default(0)
+  frequency        String   @default("monthly") // monthly | quarterly | annual
+  debitDay         Int      @default(1) @map("debit_day") // jour du mois (1-31)
+  anchorMonth      Int?     @map("anchor_month") // mois de référence (0-11) pour trimestriel/annuel
+  
+  // Financier (legacy)
   monthlyAmount    Float?   @map("monthly_amount")
   annualAmount     Float?   @map("annual_amount")
+  
+  // Document
+  documentUrl      String?  @map("document_url")
+  documentName     String?  @map("document_name")
   
   // Contact
   clientPhone      String?  @map("client_phone")

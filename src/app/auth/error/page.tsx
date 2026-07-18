@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Button,
@@ -22,7 +23,7 @@ const errors = {
   Default: "Une erreur inattendue s'est produite.",
 };
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error") as keyof typeof errors;
 
@@ -62,7 +63,7 @@ export default function AuthErrorPage() {
             Erreur de connexion
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Un problème est survenu lors de l'authentification
+            Un problème est survenu lors de l&apos;authentification
           </Typography>
         </Box>
 
@@ -129,7 +130,7 @@ export default function AuthErrorPage() {
                     sx={{ height: 44 }}
                   >
                     <span style={{ marginRight: 8 }}>🏠</span>
-                    Retour à l'accueil
+                    Retour à l&apos;accueil
                   </Button>
                 </Box>
               </Box>
@@ -182,7 +183,7 @@ export default function AuthErrorPage() {
                 variant="h6"
                 sx={{ fontWeight: 500, color: "primary.dark", mb: 1 }}
               >
-                Besoin d'aide ?
+                Besoin d&apos;aide ?
               </Typography>
               <Typography variant="body2" sx={{ color: "primary.dark", mb: 2 }}>
                 Si le problème persiste, voici quelques ressources utiles
@@ -219,5 +220,13 @@ export default function AuthErrorPage() {
         </Card>
       </Box>
     </Box>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense>
+      <AuthErrorContent />
+    </Suspense>
   );
 }

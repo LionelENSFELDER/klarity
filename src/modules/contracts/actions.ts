@@ -4,6 +4,10 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { promises as fs } from "fs";
+import path from "path";
+import crypto from "crypto";
 import type { ContractFormData } from "./types";
 
 // 🔒 Helpers privés
@@ -107,4 +111,98 @@ export async function DeleteContract(id: string) {
   await assertIsUserOwnContrat(id, userId);
   await prisma.contract.delete({ where: { id } });
   revalidatePath("/contracts");
+}
+
+// ============================================
+// Création d'une souscription (vue calendrier)
+// ============================================
+
+const subscriptionSchema = z.object({
+  name: z.string().trim().min(1, "Le fournisseur / nom du contrat est requis"),
+  category: z.string().min(1, "La catégorie est requise"),
+  amount: z.number().positive("Le montant doit être positif"),
+  frequency: z.enum(["monthly", "quarterly", "annual"]),
+  debitDay: z.number().int().min(1).max(31),
+  contractNumber: z.string().trim().optional(),
+  renewalDate: z.string().optional(),
+});
+
+const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10 Mo
+
+export async function CreateSubscription(formData: FormData) {
+  const userId = await getSessionUserId();
+
+  // Vérifier que l'utilisateur de la session existe toujours
+  // (session obsolète après un reset de la base par exemple)
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    return {
+      error:
+        "Session expirée. Veuillez vous déconnecter puis vous reconnecter.",
+    };
+  }
+
+  const parsed = subscriptionSchema.safeParse({
+    name: formData.get("name"),
+    category: formData.get("category"),
+    amount: parseAmount(formData.get("amount")),
+    frequency: formData.get("frequency"),
+    debitDay: parseAmount(formData.get("debitDay")),
+    contractNumber: formData.get("contractNumber") ?? undefined,
+    renewalDate: formData.get("renewalDate") ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide" };
+  }
+
+  const data = parsed.data;
+
+  // Document PDF optionnel
+  let documentUrl: string | null = null;
+  let documentName: string | null = null;
+  const file = formData.get("document");
+  if (file instanceof File && file.size > 0) {
+    if (file.type !== "application/pdf") {
+      return { error: "Le document doit être un PDF" };
+    }
+    if (file.size > MAX_DOCUMENT_SIZE) {
+      return { error: "Le document ne doit pas dépasser 10 Mo" };
+    }
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const dir = path.join(process.cwd(), "public", "uploads", userId);
+    await fs.mkdir(dir, { recursive: true });
+    const filename = `${crypto.randomUUID()}.pdf`;
+    await fs.writeFile(path.join(dir, filename), buffer);
+    documentUrl = `/uploads/${userId}/${filename}`;
+    documentName = file.name;
+  }
+
+  // Mois de référence pour les fréquences trimestrielle / annuelle
+  const anchorMonth =
+    data.frequency === "monthly" ? null : new Date().getMonth();
+
+  await prisma.contract.create({
+    data: {
+      userId,
+      name: data.name,
+      provider: data.name,
+      category: data.category,
+      status: "active",
+      amount: data.amount,
+      frequency: data.frequency,
+      debitDay: data.debitDay,
+      anchorMonth,
+      contractNumber: data.contractNumber || null,
+      renewalDate: parseDate(data.renewalDate),
+      documentUrl,
+      documentName,
+      monthlyAmount: data.frequency === "monthly" ? data.amount : null,
+      annualAmount: data.frequency === "annual" ? data.amount : null,
+    },
+  });
+
+  revalidatePath("/calendar");
+  revalidatePath("/contracts");
+  return { success: true };
 }

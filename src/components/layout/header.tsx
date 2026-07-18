@@ -13,8 +13,7 @@ import {
 import {
   Dashboard as DashboardIcon,
   Description as ContractsIcon,
-  Assessment as AnalyticsIcon,
-  Settings as SettingsIcon,
+  CalendarMonth as CalendarIcon,
   Notifications as NotificationsIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
@@ -92,11 +91,11 @@ const Header = async () => {
         >
           <Button
             component={Link}
-            href="/dashboard"
-            startIcon={<DashboardIcon />}
+            href="/calendar"
+            startIcon={<CalendarIcon />}
             sx={{ color: "text.primary" }}
           >
-            Dashboard
+            Calendrier
           </Button>
           <Button
             component={Link}
@@ -108,19 +107,11 @@ const Header = async () => {
           </Button>
           <Button
             component={Link}
-            href="/dashboard/analytics"
-            startIcon={<AnalyticsIcon />}
+            href="/dashboard"
+            startIcon={<DashboardIcon />}
             sx={{ color: "text.secondary" }}
           >
-            Analytics
-          </Button>
-          <Button
-            component={Link}
-            href="/dashboard/settings"
-            startIcon={<SettingsIcon />}
-            sx={{ color: "text.secondary" }}
-          >
-            Paramètres
+            Dashboard
           </Button>
         </Stack>
 
@@ -128,6 +119,8 @@ const Header = async () => {
         <Stack direction="row" spacing={1} alignItems="center">
           {/* Add Contract Button */}
           <Button
+            component={Link}
+            href="/contracts/new"
             variant="contained"
             size="small"
             startIcon={<AddIcon />}

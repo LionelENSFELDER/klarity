@@ -6,9 +6,10 @@ import { prisma } from "@/lib/db";
 // GET /api/contracts/[id] - Récupérer un contrat spécifique
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
@@ -16,7 +17,7 @@ export async function GET(
 
     const contract = await prisma.contract.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     });
@@ -24,7 +25,7 @@ export async function GET(
     if (!contract) {
       return NextResponse.json(
         { error: "Contrat non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -33,7 +34,7 @@ export async function GET(
     console.error("Erreur lors de la récupération du contrat:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -41,20 +42,21 @@ export async function GET(
 // PUT /api/contracts/[id] - Modifier un contrat
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { title, description, startDate, endDate, value, status } = body;
+    const { name, notes, startDate, endDate, monthlyAmount, status } = body;
 
     const existingContract = await prisma.contract.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     });
@@ -62,18 +64,18 @@ export async function PUT(
     if (!existingContract) {
       return NextResponse.json(
         { error: "Contrat non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const contract = await prisma.contract.update({
-      where: { id: params.id },
+      where: { id },
       data: {
-        title,
-        description,
+        name,
+        notes,
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,
-        value: value ? parseFloat(value) : null,
+        monthlyAmount: monthlyAmount ? parseFloat(monthlyAmount) : null,
         status,
         updatedAt: new Date(),
       },
@@ -84,7 +86,7 @@ export async function PUT(
     console.error("Erreur lors de la modification du contrat:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -92,9 +94,10 @@ export async function PUT(
 // DELETE /api/contracts/[id] - Supprimer un contrat
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
@@ -102,7 +105,7 @@ export async function DELETE(
 
     const existingContract = await prisma.contract.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     });
@@ -110,12 +113,12 @@ export async function DELETE(
     if (!existingContract) {
       return NextResponse.json(
         { error: "Contrat non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     await prisma.contract.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Contrat supprimé avec succès" });
@@ -123,7 +126,7 @@ export async function DELETE(
     console.error("Erreur lors de la suppression du contrat:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

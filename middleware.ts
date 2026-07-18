@@ -11,7 +11,7 @@ export default withAuth(
       token &&
       (pathname === "/auth/signin" || pathname === "/auth/register")
     ) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/calendar", req.url));
     }
 
     return NextResponse.next();
@@ -30,6 +30,7 @@ export default withAuth(
         if (
           pathname.startsWith("/dashboard") ||
           pathname.startsWith("/contracts") ||
+          pathname.startsWith("/calendar") ||
           pathname === "/"
         ) {
           return !!token;
@@ -41,7 +42,7 @@ export default withAuth(
     pages: {
       signIn: "/auth/signin",
     },
-  }
+  },
 );
 
 export const config = {

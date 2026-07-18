@@ -25,9 +25,9 @@ import Grid from "@mui/material/Grid";
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
-  // Si l'utilisateur est connecté, rediriger vers le dashboard
+  // Si l'utilisateur est connecté, rediriger vers le calendrier
   if (session) {
-    redirect("/dashboard");
+    redirect("/calendar");
   }
 
   const features = [
@@ -183,7 +183,7 @@ export default async function Home() {
 
         <Grid container spacing={4}>
           {features.map((feature, index) => (
-            <Grid item xs={12} md={6} lg={4} key={index}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
               <Card
                 sx={{
                   height: "100%",
@@ -230,8 +230,8 @@ export default async function Home() {
               Prêt à simplifier votre gestion administrative ?
             </Typography>
             <Typography variant="h6" sx={{ opacity: 0.9 }}>
-              Rejoignez Klarity dès aujourd'hui et prenez le contrôle de vos
-              contrats
+              Rejoignez Klarity dès aujourd&apos;hui et prenez le contrôle de
+              vos contrats
             </Typography>
             <Button
               component={Link}

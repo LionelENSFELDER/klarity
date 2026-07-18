@@ -19,20 +19,6 @@ import {
 import Link from "next/link";
 import ContractsView from "@/components/contracts/ContractsView";
 
-interface Contract {
-  id: string;
-  name: string;
-  provider: string;
-  category: string;
-  status: string;
-  monthlyAmount: number | null;
-  annualAmount: number | null;
-  startDate: Date | null;
-  endDate: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export default async function ContractsPage() {
   const session = await getServerSession(authOptions);
 
@@ -41,10 +27,10 @@ export default async function ContractsPage() {
   }
 
   // Récupérer tous les contrats de l'utilisateur
-  const contracts = (await prisma.contract.findMany({
+  const contracts = await prisma.contract.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
-  })) as Contract[];
+  });
 
   // Statistiques par statut
   const statsCount = {

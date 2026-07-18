@@ -15,8 +15,8 @@ import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
   Description as ContractsIcon,
-  Assessment as AnalyticsIcon,
-  Settings as SettingsIcon,
+  CalendarMonth as CalendarIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 
@@ -24,14 +24,10 @@ export default function MobileNav() {
   const [open, setOpen] = useState(false);
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, href: "/dashboard" },
+    { text: "Calendrier", icon: <CalendarIcon />, href: "/calendar" },
     { text: "Contrats", icon: <ContractsIcon />, href: "/contracts" },
-    {
-      text: "Analytics",
-      icon: <AnalyticsIcon />,
-      href: "/dashboard/analytics",
-    },
-    { text: "Paramètres", icon: <SettingsIcon />, href: "/dashboard/settings" },
+    { text: "Nouveau contrat", icon: <AddIcon />, href: "/contracts/new" },
+    { text: "Dashboard", icon: <DashboardIcon />, href: "/dashboard" },
   ];
 
   return (

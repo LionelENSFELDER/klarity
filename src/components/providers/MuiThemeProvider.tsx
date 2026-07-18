@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { darkTheme, lightTheme } from "@/lib/theme";
+import { darkTheme } from "@/lib/theme";
 
 export default function MuiThemeProvider({
   children,
@@ -10,7 +10,7 @@ export default function MuiThemeProvider({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>

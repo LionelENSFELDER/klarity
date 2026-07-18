@@ -185,7 +185,7 @@ export default function SignInPage() {
                     underline="hover"
                     fontWeight={600}
                   >
-                    S'inscrire
+                    S&apos;inscrire
                   </MuiLink>
                 </Box>
               </Stack>
@@ -201,7 +201,7 @@ export default function SignInPage() {
           >
             En vous connectant, vous acceptez nos{" "}
             <MuiLink href="#" underline="hover">
-              conditions d'utilisation
+              conditions d&apos;utilisation
             </MuiLink>{" "}
             et notre{" "}
             <MuiLink href="#" underline="hover">

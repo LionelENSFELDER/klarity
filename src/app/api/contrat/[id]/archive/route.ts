@@ -6,9 +6,10 @@ import { prisma } from "@/lib/db";
 // PATCH /api/contracts/[id]/archive - Archiver/désarchiver un contrat
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
@@ -19,7 +20,7 @@ export async function PATCH(
 
     const existingContract = await prisma.contract.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     });
@@ -27,14 +28,14 @@ export async function PATCH(
     if (!existingContract) {
       return NextResponse.json(
         { error: "Contrat non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const contract = await prisma.contract.update({
-      where: { id: params.id },
+      where: { id },
       data: {
-        status: archived ? "ARCHIVED" : "ACTIVE",
+        status: archived ? "archived" : "active",
         updatedAt: new Date(),
       },
     });
@@ -44,7 +45,7 @@ export async function PATCH(
     console.error("Erreur lors de l'archivage du contrat:", error);
     return NextResponse.json(
       { error: "Erreur interne du serveur" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

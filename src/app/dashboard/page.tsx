@@ -168,7 +168,7 @@ export default async function DashboardPage() {
             overviewContent={
               <Grid container spacing={3}>
                 {/* Welcome Message */}
-                <Grid item xs={12} lg={6}>
+                <Grid size={{ xs: 12, lg: 6 }}>
                   <Card>
                     <CardContent>
                       <Stack
@@ -208,7 +208,7 @@ export default async function DashboardPage() {
                         Actions rapides :
                       </Typography>
                       <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Button
                             variant="outlined"
                             fullWidth
@@ -218,7 +218,7 @@ export default async function DashboardPage() {
                             Nouveau contrat
                           </Button>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Button
                             variant="outlined"
                             fullWidth
@@ -228,7 +228,7 @@ export default async function DashboardPage() {
                             Voir analytics
                           </Button>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Button
                             variant="outlined"
                             fullWidth
@@ -238,7 +238,7 @@ export default async function DashboardPage() {
                             Alertes (3)
                           </Button>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Button
                             variant="outlined"
                             fullWidth
@@ -254,7 +254,7 @@ export default async function DashboardPage() {
                 </Grid>
 
                 {/* Budget Overview */}
-                <Grid item xs={12} lg={6}>
+                <Grid size={{ xs: 12, lg: 6 }}>
                   <Card>
                     <CardContent>
                       <Typography variant="h5" fontWeight={600} mb={1}>
