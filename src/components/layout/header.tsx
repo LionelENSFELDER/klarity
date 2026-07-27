@@ -97,28 +97,28 @@ const Header = async () => {
           >
             Calendrier
           </Button>
-          <Button
+          {/* <Button
             component={Link}
             href="/contracts"
             startIcon={<ContractsIcon />}
             sx={{ color: "text.secondary" }}
           >
             Contrats
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             component={Link}
             href="/dashboard"
             startIcon={<DashboardIcon />}
             sx={{ color: "text.secondary" }}
           >
             Dashboard
-          </Button>
+          </Button> */}
         </Stack>
 
         {/* Actions */}
         <Stack direction="row" spacing={1} alignItems="center">
           {/* Add Contract Button */}
-          <Button
+          {/* <Button
             component={Link}
             href="/contracts/new"
             variant="contained"
@@ -127,7 +127,7 @@ const Header = async () => {
             sx={{ display: { xs: "none", sm: "flex" } }}
           >
             Nouveau contrat
-          </Button>
+          </Button> */}
 
           {/* Notifications */}
           <IconButton size="small">

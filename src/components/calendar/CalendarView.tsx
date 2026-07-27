@@ -25,6 +25,7 @@ import {
 } from "@/modules/contracts/calendar";
 import { CATEGORIES, getCategory } from "@/modules/contracts/categories";
 import DayDetailPanel from "./DayDetailPanel";
+import { statsType } from "@modules/contracts/types";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
@@ -45,8 +46,10 @@ const MONTHS = [
 
 export default function CalendarView({
   contracts,
+  stats,
 }: {
   contracts: CalendarContract[];
+  stats: statsType;
 }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -117,6 +120,42 @@ export default function CalendarView({
         >
           <Stack direction="row" alignItems="baseline" spacing={1.5}>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              Contrats actifs
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: "var(--font-mono)",
+                background: "linear-gradient(135deg, #a78bfa, #60a5fa)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              {stats.activeContracts} / {stats.totalContracts}
+            </Typography>
+          </Stack>
+
+          <Stack direction="row" alignItems="baseline" spacing={1.5}>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              Total annuel
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: "var(--font-mono)",
+                background: "linear-gradient(135deg, #a78bfa, #60a5fa)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              {stats.totalAnnual}
+            </Typography>
+          </Stack>
+
+          <Stack direction="row" alignItems="baseline" spacing={1.5}>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
               {MONTHS[month]} {year}
             </Typography>
             <Typography
@@ -131,23 +170,6 @@ export default function CalendarView({
             >
               {formatEuro(monthTotal)}
             </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <IconButton onClick={goToPreviousMonth} aria-label="Mois précédent">
-              <ChevronLeftIcon />
-            </IconButton>
-            <IconButton onClick={goToNextMonth} aria-label="Mois suivant">
-              <ChevronRightIcon />
-            </IconButton>
-            <Button
-              component={Link}
-              href="/contracts/new"
-              variant="contained"
-              startIcon={<AddIcon />}
-              sx={{ ml: 1, display: { xs: "none", sm: "inline-flex" } }}
-            >
-              Ajouter
-            </Button>
           </Stack>
         </Stack>
 
@@ -183,12 +205,31 @@ export default function CalendarView({
           </Stack>
         )}
 
+        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+          <IconButton onClick={goToPreviousMonth} aria-label="Mois précédent">
+            <ChevronLeftIcon />
+          </IconButton>
+          <IconButton onClick={goToNextMonth} aria-label="Mois suivant">
+            <ChevronRightIcon />
+          </IconButton>
+          <Button
+            component={Link}
+            href="/contracts/new"
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{ ml: 1, display: { xs: "none", sm: "inline-flex" } }}
+          >
+            Ajouter
+          </Button>
+        </Stack>
+
         {/* Grille calendrier */}
         <Paper
           variant="outlined"
           sx={{
+            mt: 2,
             p: { xs: 1, sm: 2 },
-            borderRadius: 4,
+            borderRadius: 1,
             bgcolor: "background.paper",
           }}
         >
@@ -243,7 +284,7 @@ export default function CalendarView({
                     sx={{
                       position: "relative",
                       aspectRatio: "1 / 1",
-                      borderRadius: 2.5,
+                      borderRadius: 1,
                       cursor: "pointer",
                       display: "flex",
                       flexDirection: "column",
