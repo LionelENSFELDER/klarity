@@ -191,7 +191,7 @@ export default function NewContractPage() {
               </Box>
 
               {/* Montant + fréquence */}
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <Stack spacing={2}>
                 <TextField
                   label="Montant"
                   placeholder="0,00"
@@ -213,7 +213,6 @@ export default function NewContractPage() {
                   exclusive
                   onChange={(_, v) => v && setFrequency(v)}
                   size="small"
-                  sx={{ alignSelf: { sm: "center" } }}
                 >
                   {FREQUENCIES.map((f) => (
                     <ToggleButton key={f.id} value={f.id} sx={{ px: 2 }}>
