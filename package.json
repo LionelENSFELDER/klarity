@@ -18,7 +18,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^5.2.1",
-    "@mui/icons-material": "^7.3.6",
+    "@mui/icons-material": "^7.3.11",
     "@mui/material": "^7.3.6",
     "@mui/material-nextjs": "^7.3.8",
     "@next-auth/prisma-adapter": "^1.0.7",
@@ -32,6 +32,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
+    "simple-icons": "^16.28.0",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.3.6"
   },

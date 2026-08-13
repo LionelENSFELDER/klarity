@@ -30,6 +30,7 @@ import {
   getCategory,
 } from "@/modules/contracts/categories";
 import { formatEuro } from "@/modules/contracts/calendar";
+import FullIconSearchSelector from "@/components/icons/FullIconSearchSelector";
 
 export default function NewContractPage() {
   const router = useRouter();
@@ -341,6 +342,9 @@ export default function NewContractPage() {
                   </Button>
                 )}
               </Box>
+
+              {/*Icon search selector*/}
+              <FullIconSearchSelector />
 
               {/* Aperçu live */}
               <Paper
