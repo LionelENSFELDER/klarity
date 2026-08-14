@@ -27,6 +27,8 @@ export async function getCalendarContracts(): Promise<CalendarContract[]> {
     renewalDate: c.renewalDate?.toISOString() ?? null,
     documentUrl: c.documentUrl,
     documentName: c.documentName,
+    iconType: c.iconType,
+    iconValue: c.iconValue,
   }));
 }
 

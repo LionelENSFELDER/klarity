@@ -31,6 +31,7 @@ import {
 } from "@/modules/contracts/categories";
 import { formatEuro } from "@/modules/contracts/calendar";
 import FullIconSearchSelector from "@/components/icons/FullIconSearchSelector";
+import { IconOption } from "@/components/icons/FullIconSearchSelector";
 
 export default function NewContractPage() {
   const router = useRouter();
@@ -58,6 +59,8 @@ export default function NewContractPage() {
     parsedAmount > 0 &&
     (isOnce ? debitDate !== "" : debitDay !== null);
 
+  const [selectedIcon, setSelectedIcon] = useState<IconOption | null>(null);
+
   const handleSubmit = async () => {
     if (!isValid) return;
     setLoading(true);
@@ -77,6 +80,14 @@ export default function NewContractPage() {
       formData.set("contractNumber", contractNumber.trim());
     if (renewalDate) formData.set("renewalDate", renewalDate);
     if (document) formData.set("document", document);
+
+    if (selectedIcon) {
+      formData.set("iconType", selectedIcon.type);
+      formData.set("iconValue", selectedIcon.slugOrName);
+    }
+
+    console.log("formData iconType = ", formData.get("iconType"));
+    console.log("formData iconValue = ", formData.get("iconValue"));
 
     try {
       const result = await CreateSubscription(formData);
@@ -344,7 +355,10 @@ export default function NewContractPage() {
               </Box>
 
               {/*Icon search selector*/}
-              <FullIconSearchSelector />
+              <FullIconSearchSelector
+                value={selectedIcon}
+                onChange={setSelectedIcon}
+              />
 
               {/* Aperçu live */}
               <Paper

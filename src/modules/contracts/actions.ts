@@ -59,6 +59,8 @@ export async function CreateContract(input: ContractFormData) {
       website: input.website,
       advisorName: input.advisorName,
       notes: input.notes,
+      iconType: input.iconType || null,
+      iconValue: input.iconValue || null,
     },
   });
 
@@ -87,6 +89,8 @@ export async function EditContract(id: string, input: ContractFormData) {
       advisorName: input.advisorName,
       notes: input.notes,
       updatedAt: new Date(),
+      iconType: input.iconType || null,
+      iconValue: input.iconValue || null,
     },
   });
 
@@ -130,6 +134,8 @@ const subscriptionSchema = z
     debitDate: z.string().optional(), // date complète pour "une fois"
     contractNumber: z.string().trim().optional(),
     renewalDate: z.string().optional(),
+    iconType: z.string().optional().nullable(),
+    iconValue: z.string().optional().nullable(),
   })
   .refine(
     (data) =>
@@ -166,6 +172,8 @@ export async function CreateSubscription(formData: FormData) {
     debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
+    iconType: formData.get("iconType") ?? undefined,
+    iconValue: formData.get("iconValue") ?? undefined,
   });
 
   if (!parsed.success) {
@@ -226,6 +234,8 @@ export async function CreateSubscription(formData: FormData) {
       documentName,
       monthlyAmount: data.frequency === "monthly" ? data.amount : null,
       annualAmount: data.frequency === "annual" ? data.amount : null,
+      iconType: data.iconType || null,
+      iconValue: data.iconValue || null,
     },
   });
 

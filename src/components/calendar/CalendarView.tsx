@@ -26,6 +26,7 @@ import {
 import { CATEGORIES, getCategory } from "@/modules/contracts/categories";
 import DayDetailPanel from "./DayDetailPanel";
 import { statsType } from "@modules/contracts/types";
+import ContractInlineIcon from "@components/icons/ContratInlineIcon";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
@@ -55,6 +56,7 @@ export default function CalendarView({
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth()); // 0-11
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  console.log(contracts);
 
   const debitsByDay = useMemo(
     () => getMonthDebits(contracts, year, month),
@@ -331,17 +333,34 @@ export default function CalendarView({
                         justifyContent="center"
                         sx={{ maxWidth: "80%", mt: 1 }}
                       >
-                        {debit.contracts.slice(0, 4).map((c) => (
-                          <Box
-                            key={c.id}
-                            sx={{
-                              width: { xs: 8, sm: 10 },
-                              height: { xs: 8, sm: 10 },
-                              borderRadius: "50%",
-                              bgcolor: getCategory(c.category).color,
-                            }}
-                          />
-                        ))}
+                        {debit.contracts.slice(0, 4).map((c) => {
+                          const categoryInfo = getCategory(c.category);
+
+                          return (
+                            <Box
+                              key={c.id}
+                              sx={{
+                                width: { xs: 18, sm: 22 },
+                                height: { xs: 18, sm: 22 },
+                                borderRadius: "50%",
+                                bgcolor: categoryInfo.color,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: "10px",
+                                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                              }}
+                            >
+                              <ContractInlineIcon
+                                iconType={c.iconType}
+                                iconValue={c.iconValue}
+                                name={c.name}
+                              />
+                            </Box>
+                          );
+                        })}
+
                         {debit.contracts.length > 4 && (
                           <Typography
                             variant="caption"

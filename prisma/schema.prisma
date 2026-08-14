@@ -124,5 +124,9 @@ model Contract {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
+  // Icônes
+  iconType  String? @map("icon_type") // "brand" ou "generic"
+  iconValue String? @map("icon_value") // slug (ex: "netflix") ou nom (ex: "Cloud")
+
   @@map("contracts")
 }

@@ -22,6 +22,8 @@ export type Contract = {
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
+  iconType?: string | null;
+  iconValue?: string | null;
 };
 
 export type ContractFormData = Omit<
@@ -69,6 +71,8 @@ export interface ContractCreateData {
   website?: string;
   advisorName?: string;
   notes?: string;
+  iconType?: string | null;
+  iconValue?: string | null;
 }
 
 export interface ContractUpdateData {
@@ -102,6 +106,8 @@ export interface CalendarContract {
   renewalDate: string | null; // ISO
   documentUrl: string | null;
   documentName: string | null;
+  iconType?: string | null;
+  iconValue?: string | null;
 }
 
 export interface statsType {

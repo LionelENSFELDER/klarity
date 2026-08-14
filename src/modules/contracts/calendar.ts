@@ -14,6 +14,8 @@ export interface CalendarContract {
   renewalDate: string | null; // ISO
   documentUrl: string | null;
   documentName: string | null;
+  iconType?: string | null;
+  iconValue?: string | null;
 }
 
 export interface DayDebit {

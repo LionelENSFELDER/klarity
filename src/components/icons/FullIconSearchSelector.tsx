@@ -9,10 +9,15 @@ import {
 import * as simpleIcons from "simple-icons";
 import * as MuiIcons from "@mui/icons-material";
 
-interface IconOption {
+export interface IconOption {
   label: string;
   type: "brand" | "generic";
   slugOrName: string;
+}
+
+interface FullIconSearchSelectorProps {
+  value: IconOption | null;
+  onChange: (newValue: IconOption | null) => void;
 }
 
 const popularDefaults: IconOption[] = [
@@ -23,9 +28,10 @@ const popularDefaults: IconOption[] = [
   { label: "Credit Card", type: "generic", slugOrName: "CreditCard" },
 ];
 
-export default function UniversalIconSearchSelector() {
-  const [selectedOption, setSelectedOption] = useState<IconOption | null>(null);
-
+export default function FullIconSearchSelector({
+  value,
+  onChange,
+}: FullIconSearchSelectorProps) {
   const allOptions: IconOption[] = useMemo(() => {
     const brands: IconOption[] = Object.values(simpleIcons)
       .filter((icon: any) => icon && icon.title && icon.slug)
@@ -61,104 +67,64 @@ export default function UniversalIconSearchSelector() {
   };
 
   return (
-    <Box sx={{ width: 400, display: "flex", flexDirection: "column", gap: 2 }}>
-      <Autocomplete
-        options={allOptions}
-        getOptionLabel={(option) => option.label}
-        filterOptions={(options, { inputValue }) => {
-          if (!inputValue || inputValue.trim().length === 0) {
-            return popularDefaults;
-          }
-          const searchTerm = inputValue.toLowerCase();
-          return options
-            .filter(
-              (option) =>
-                option.label.toLowerCase().includes(searchTerm) ||
-                option.slugOrName.toLowerCase().includes(searchTerm),
-            )
-            .slice(0, 50);
-        }}
-        value={selectedOption}
-        onChange={(event, newValue) => setSelectedOption(newValue)}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Rechercher une marque ou une icône..."
-            placeholder="Ex: Netflix, Cloud, House, Music..."
-          />
-        )}
-        renderOption={(props, option) => {
-          const { key, ...otherProps } = props;
-          return (
-            <Box
-              component="li"
-              key={`${option.type}-${option.slugOrName}`}
-              {...otherProps}
-              sx={{ display: "flex", gap: 2, alignItems: "center" }}
-            >
-              {option.type === "brand" ? (
-                <Avatar
-                  src={`https://cdn.simpleicons.org/${option.slugOrName}`}
-                  alt={option.label}
-                  sx={{ width: 24, height: 24, bgcolor: "transparent" }}
-                />
-              ) : (
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "primary.main",
-                  }}
-                >
-                  {renderGenericIcon(option.slugOrName)}
-                </Box>
-              )}
-              <Typography>{option.label}</Typography>
-            </Box>
-          );
-        }}
-      />
-
-      {/* Preview dev only */}
-      {selectedOption && (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            p: 2,
-            border: "1px solid #ddd",
-            borderRadius: 2,
-          }}
-        >
-          {selectedOption.type === "brand" ? (
-            <Avatar
-              src={`https://cdn.simpleicons.org/${selectedOption.slugOrName}`}
-              sx={{ width: 32, height: 32, bgcolor: "transparent" }}
-            />
-          ) : (
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "primary.main",
-              }}
-            >
-              {renderGenericIcon(selectedOption.slugOrName)}
-            </Box>
-          )}
-          <Typography>
-            En BDD : type = <strong>{selectedOption.type}</strong> | valeur ={" "}
-            <strong>{selectedOption.slugOrName}</strong>
-          </Typography>
-        </Box>
+    <Autocomplete
+      options={allOptions}
+      getOptionLabel={(option) => option.label}
+      filterOptions={(options, { inputValue }) => {
+        if (!inputValue || inputValue.trim().length === 0) {
+          return popularDefaults;
+        }
+        const searchTerm = inputValue.toLowerCase();
+        return options
+          .filter(
+            (option) =>
+              option.label.toLowerCase().includes(searchTerm) ||
+              option.slugOrName.toLowerCase().includes(searchTerm),
+          )
+          .slice(0, 50);
+      }}
+      value={value}
+      onChange={(event, newValue) => onChange(newValue)}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Icône du contrat (optionnel)"
+          placeholder="Ex: Netflix, Cloud, House..."
+        />
       )}
-    </Box>
+      renderOption={(props, option) => {
+        const { key, ...otherProps } = props;
+        return (
+          <Box
+            component="li"
+            key={`${option.type}-${option.slugOrName}`}
+            {...otherProps}
+            sx={{ display: "flex", gap: 2, alignItems: "center" }}
+          >
+            {option.type === "brand" ? (
+              <Avatar
+                src={`https://cdn.simpleicons.org/${option.slugOrName}`}
+                alt={option.label}
+                sx={{ width: 24, height: 24, bgcolor: "transparent" }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "primary.main",
+                }}
+              >
+                {renderGenericIcon(option.slugOrName)}
+              </Box>
+            )}
+            <Typography>{option.label}</Typography>
+          </Box>
+        );
+      }}
+    />
   );
 }
