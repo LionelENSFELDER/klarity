@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box } from "@mui/material";
+import { Avatar } from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 
 interface ContractInlineIconProps {
@@ -15,7 +15,7 @@ export function ContractInlineIcon({
 }: ContractInlineIconProps) {
   if (!iconValue || !iconType) {
     return (
-      <span style={{ fontSize: "10px", fontWeight: 700, color: "inherit" }}>
+      <span style={{ fontSize: "10px", fontWeight: 700, color: "transparent" }}>
         {name ? name.charAt(0).toUpperCase() : "?"}
       </span>
     );
@@ -28,10 +28,10 @@ export function ContractInlineIcon({
         src={`https://cdn.simpleicons.org/${iconValue}`}
         alt={name}
         sx={{
-          width: 14,
-          height: 14,
+          width: 20,
+          height: 20,
           bgcolor: "transparent",
-          filter: "brightness(0) invert(1)", // Rend l'icône blanche pour contraster avec le fond de la pastille
+          // filter: "brightness(0) invert(1)",
         }}
       />
     );
@@ -44,13 +44,13 @@ export function ContractInlineIcon({
       iconValue
     ];
     if (IconComponent) {
-      return <IconComponent sx={{ fontSize: 14 }} />;
+      return <IconComponent sx={{ fontSize: 20 }} />;
     }
   }
 
   // Fallback ultime : l'initiale
   return (
-    <span style={{ fontSize: "10px", fontWeight: 700, color: "inherit" }}>
+    <span style={{ fontSize: "20px", fontWeight: 700, color: "inherit" }}>
       {name ? name.charAt(0).toUpperCase() : "?"}
     </span>
   );

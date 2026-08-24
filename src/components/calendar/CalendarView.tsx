@@ -343,11 +343,9 @@ export default function CalendarView({
                                 width: { xs: 18, sm: 22 },
                                 height: { xs: 18, sm: 22 },
                                 borderRadius: "50%",
-                                bgcolor: categoryInfo.color,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                color: "#fff",
                                 fontSize: "10px",
                                 boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                               }}
