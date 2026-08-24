@@ -219,19 +219,20 @@ function DayDetailSidebar({
 }) {
   if (!date || !debit) {
     return (
-      <Box
+      <Paper
+        variant="outlined"
         sx={{
           width: "100%",
           height: "100%",
           bgcolor: "background.paper",
-          borderLeft: { md: 1, xs: 0 },
           borderColor: "divider",
           p: 3,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "text.secondary",
-          borderRadius: { xs: 2, md: 0 },
+          borderRadius: 2,
+          borderLeft: { md: 1, xs: 0 },
         }}
       >
         <Stack spacing={2} textAlign="center">
@@ -242,7 +243,7 @@ function DayDetailSidebar({
             Cliquez sur un jour du calendrier pour voir les détails
           </Typography>
         </Stack>
-      </Box>
+      </Paper>
     );
   }
 
@@ -254,16 +255,17 @@ function DayDetailSidebar({
   });
 
   return (
-    <Box
+    <Paper
+      variant="outlined"
       sx={{
         width: "100%",
         height: "100%",
         bgcolor: "background.paper",
-        borderLeft: { md: 1, xs: 0 },
         borderColor: "divider",
         p: 2,
         overflowY: "auto",
-        borderRadius: { xs: 2, md: 0 },
+        borderRadius: 2,
+        borderLeft: { md: 1, xs: 0 },
       }}
     >
       <Stack
@@ -335,7 +337,7 @@ function DayDetailSidebar({
           </Box>
         )}
       </Stack>
-    </Box>
+    </Paper>
   );
 }
 
@@ -688,9 +690,10 @@ export default function CalendarView({
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             gap: 2,
+            minHeight: { md: "calc(100vh - 400px)" },
           }}
         >
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, minHeight: { md: "calc(100vh - 400px)" } }}>
             <Paper
               variant="outlined"
               sx={{
@@ -699,6 +702,7 @@ export default function CalendarView({
                 bgcolor: "background.paper",
                 borderColor: "divider",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                height: "100%",
               }}
             >
               <Box
@@ -786,11 +790,10 @@ export default function CalendarView({
                           sx={{
                             position: "absolute",
                             top: 4,
-                            left: 4,
-                            fontFamily: "var(--font-mono)",
+                            right: 7,
+                            fontFamily: "var(--font-display)",
                             color: isToday ? "text.primary" : "text.secondary",
                             fontWeight: isToday ? 700 : 400,
-                            fontSize: "0.75rem",
                           }}
                         >
                           {day}
@@ -805,27 +808,18 @@ export default function CalendarView({
                             sx={{ maxWidth: "80%", mt: 1 }}
                           >
                             {debit.contracts.slice(0, 4).map((c) => {
-                              const categoryInfo = getCategory(c.category);
-
                               return (
                                 <Box
                                   key={c.id}
                                   sx={{
-                                    width: { xs: 20, sm: 24 },
-                                    height: { xs: 20, sm: 24 },
+                                    width: { xs: 18, sm: 22 },
+                                    height: { xs: 18, sm: 22 },
                                     borderRadius: "50%",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     fontSize: "10px",
-                                    boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                                    bgcolor: categoryInfo.color,
-                                    color: "white",
-                                    transition: "transform 0.15s ease, box-shadow 0.15s ease",
-                                    '&:hover': {
-                                      transform: "scale(1.05)",
-                                      boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
-                                    },
+                                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                                   }}
                                 >
                                   <ContractInlineIcon
@@ -838,22 +832,12 @@ export default function CalendarView({
                             })}
 
                             {debit.contracts.length > 4 && (
-                              <Box
-                                sx={{
-                                  width: 20,
-                                  height: 20,
-                                  borderRadius: "50%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontSize: "8px",
-                                  bgcolor: "rgba(255,255,255,0.1)",
-                                  color: "text.secondary",
-                                  border: "1px solid rgba(255,255,255,0.2)",
-                                }}
+                              <Typography
+                                variant="caption"
+                                sx={{ fontSize: 9, color: "text.secondary" }}
                               >
                                 +{debit.contracts.length - 4}
-                              </Box>
+                              </Typography>
                             )}
                           </Stack>
                         )}
@@ -869,6 +853,7 @@ export default function CalendarView({
             sx={{
               width: { xs: "100%", md: 360 },
               display: { xs: selectedDay !== null ? "block" : "none", md: "block" },
+              minHeight: { md: "calc(100vh - 400px)" },
             }}
           >
             <DayDetailSidebar date={selectedDate} debit={selectedDebit} />
