@@ -320,7 +320,7 @@ function DayDetailSidebar({
         </Stack>
       </Box>
 
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
         {debit.contracts.length > 0 ? (
           debit.contracts.map((contract) => (
             <ContractDetailCard key={contract.id} contract={contract} />
@@ -690,10 +690,10 @@ export default function CalendarView({
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             gap: 2,
-            minHeight: { md: "calc(100vh - 400px)" },
+            height: { md: "calc(100vh - 320px)" },
           }}
         >
-          <Box sx={{ flex: 1, minHeight: { md: "calc(100vh - 400px)" } }}>
+          <Box sx={{ flex: 1, height: { md: "100%" } }}>
             <Paper
               variant="outlined"
               sx={{
@@ -853,7 +853,8 @@ export default function CalendarView({
             sx={{
               width: { xs: "100%", md: 360 },
               display: { xs: selectedDay !== null ? "block" : "none", md: "block" },
-              minHeight: { md: "calc(100vh - 400px)" },
+              height: { md: "100%" },
+              overflow: "hidden",
             }}
           >
             <DayDetailSidebar date={selectedDate} debit={selectedDebit} />
