@@ -30,15 +30,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
-import Link from "next/link";
 import type { Contract } from "@/modules/contracts/types";
-import { getContrats } from "@/modules/contracts/queries";
-import {
-  CreateContract,
-  EditContract,
-  ArchiveContract,
-  DeleteContract,
-} from "@/modules/contracts/actions";
+import { DeleteContract } from "@/modules/contracts/actions";
+import AddContractButton from "@/components/contracts/AddContractButton";
 
 // interface Contract {
 //   id: string;
@@ -225,14 +219,9 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                           <Typography color="text.secondary" sx={{ mb: 2 }}>
                             Aucun contrat trouvé
                           </Typography>
-                          <Button
-                            component={Link}
-                            href="/contracts/new"
-                            variant="outlined"
-                            size="small"
-                          >
+                          <AddContractButton variant="outlined" size="small">
                             Créer votre premier contrat
-                          </Button>
+                          </AddContractButton>
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -294,14 +283,9 @@ export default function ContractsView({ contracts }: ContractsViewProps) {
                 <Typography color="text.secondary" sx={{ mb: 3 }}>
                   Commencez par créer votre premier contrat
                 </Typography>
-                <Button
-                  component={Link}
-                  href="/contracts/new"
-                  variant="contained"
-                  startIcon={<span>+</span>}
-                >
+                <AddContractButton variant="contained" startIcon={<span>+</span>}>
                   Nouveau contrat
-                </Button>
+                </AddContractButton>
               </Box>
             </Grid>
           ) : (

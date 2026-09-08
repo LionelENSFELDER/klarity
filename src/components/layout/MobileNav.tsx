@@ -19,14 +19,15 @@ import {
   Add as AddIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
+import ContractFormDialog from "@/components/contracts/ContractFormDialog";
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const menuItems = [
     { text: "Calendrier", icon: <CalendarIcon />, href: "/calendar" },
     { text: "Contrats", icon: <ContractsIcon />, href: "/contracts" },
-    { text: "Nouveau contrat", icon: <AddIcon />, href: "/contracts/new" },
     { text: "Dashboard", icon: <DashboardIcon />, href: "/dashboard" },
   ];
 
@@ -44,6 +45,19 @@ export default function MobileNav() {
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 280, pt: 2 }}>
           <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  setOpen(false);
+                  setCreateOpen(true);
+                }}
+              >
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Nouveau contrat" />
+              </ListItemButton>
+            </ListItem>
             {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
@@ -59,6 +73,12 @@ export default function MobileNav() {
           </List>
         </Box>
       </Drawer>
+
+      <ContractFormDialog
+        open={createOpen}
+        mode="create"
+        onClose={() => setCreateOpen(false)}
+      />
     </>
   );
 }

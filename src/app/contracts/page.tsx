@@ -16,8 +16,8 @@ import {
   FileUpload as FileUploadIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
-import Link from "next/link";
 import ContractsView from "@/components/contracts/ContractsView";
+import AddContractButton from "@/components/contracts/AddContractButton";
 
 export default async function ContractsPage() {
   const session = await getServerSession(authOptions);
@@ -68,14 +68,9 @@ export default async function ContractsPage() {
           <Button variant="outlined" startIcon={<FileUploadIcon />}>
             Importer
           </Button>
-          <Button
-            component={Link}
-            href="/contracts/new"
-            variant="contained"
-            startIcon={<AddIcon />}
-          >
+          <AddContractButton variant="contained" startIcon={<AddIcon />}>
             Nouveau contrat
-          </Button>
+          </AddContractButton>
         </Stack>
       </Stack>
 

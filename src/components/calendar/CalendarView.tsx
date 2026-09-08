@@ -22,8 +22,8 @@ import {
   Search as SearchIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
+  Edit as EditIcon,
 } from "@mui/icons-material";
-import Link from "next/link";
 import {
   type CalendarContract,
   getMonthDebits,
@@ -33,6 +33,7 @@ import {
 import { CATEGORIES, getCategory, getFrequencyLabel } from "@/modules/contracts/categories";
 import { statsType } from "@modules/contracts/types";
 import ContractInlineIcon from "@components/icons/ContratInlineIcon";
+import ContractFormDialog from "@/components/contracts/ContractFormDialog";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
@@ -74,7 +75,13 @@ const formatTimeFromDay = (day: number): string => {
 };
 
 // Composant pour afficher une carte de contrat dans la sidebar
-function ContractDetailCard({ contract }: { contract: CalendarContract }) {
+function ContractDetailCard({
+  contract,
+  onEdit,
+}: {
+  contract: CalendarContract;
+  onEdit: (contract: CalendarContract) => void;
+}) {
   const category = getCategory(contract.category);
   const statusColor = getStatusColor(contract.frequency);
 
@@ -134,6 +141,15 @@ function ContractDetailCard({ contract }: { contract: CalendarContract }) {
           >
             {formatTimeFromDay(contract.debitDay)}
           </Box>
+          <Tooltip title="Éditer">
+            <IconButton
+              size="small"
+              aria-label="Éditer le contrat"
+              onClick={() => onEdit(contract)}
+            >
+              <EditIcon fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
         </Stack>
 
         <Box>
@@ -213,9 +229,11 @@ function ContractDetailCard({ contract }: { contract: CalendarContract }) {
 function DayDetailSidebar({
   date,
   debit,
+  onEditContract,
 }: {
   date: Date | null;
   debit: { day: number; contracts: CalendarContract[]; total: number } | null;
+  onEditContract: (contract: CalendarContract) => void;
 }) {
   if (!date || !debit) {
     return (
@@ -323,7 +341,11 @@ function DayDetailSidebar({
       <Stack spacing={2} sx={{ flex: 1, minHeight: 0 }}>
         {debit.contracts.length > 0 ? (
           debit.contracts.map((contract) => (
-            <ContractDetailCard key={contract.id} contract={contract} />
+            <ContractDetailCard
+              key={contract.id}
+              contract={contract}
+              onEdit={onEditContract}
+            />
           ))
         ) : (
           <Box
@@ -353,6 +375,9 @@ export default function CalendarView({
   const [month, setMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [contractDialog, setContractDialog] = useState<
+    { mode: "create" } | { mode: "edit"; contract: CalendarContract } | null
+  >(null);
 
   const debitsByDay = useMemo(
     () => getMonthDebits(contracts, year, month),
@@ -667,8 +692,7 @@ export default function CalendarView({
           </Stack>
 
           <Button
-            component={Link}
-            href="/contracts/new"
+            onClick={() => setContractDialog({ mode: "create" })}
             variant="contained"
             startIcon={<AddIcon />}
             sx={{
@@ -746,6 +770,7 @@ export default function CalendarView({
                       <Box
                         role="button"
                         tabIndex={0}
+                        data-testid={`calendar-day-${day}`}
                         onClick={() => setSelectedDay(day)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -857,13 +882,18 @@ export default function CalendarView({
               overflow: "hidden",
             }}
           >
-            <DayDetailSidebar date={selectedDate} debit={selectedDebit} />
+            <DayDetailSidebar
+              date={selectedDate}
+              debit={selectedDebit}
+              onEditContract={(contract) =>
+                setContractDialog({ mode: "edit", contract })
+              }
+            />
           </Box>
         </Box>
 
         <Button
-          component={Link}
-          href="/contracts/new"
+          onClick={() => setContractDialog({ mode: "create" })}
           variant="contained"
           startIcon={<AddIcon />}
           sx={{
@@ -878,6 +908,21 @@ export default function CalendarView({
           Ajouter
         </Button>
       </Container>
+
+      {contractDialog?.mode === "edit" ? (
+        <ContractFormDialog
+          open
+          mode="edit"
+          contract={contractDialog.contract}
+          onClose={() => setContractDialog(null)}
+        />
+      ) : (
+        <ContractFormDialog
+          open={contractDialog?.mode === "create"}
+          mode="create"
+          onClose={() => setContractDialog(null)}
+        />
+      )}
     </Box>
   );
 }

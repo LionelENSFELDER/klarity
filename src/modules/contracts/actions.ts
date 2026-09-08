@@ -243,3 +243,91 @@ export async function CreateSubscription(formData: FormData) {
   revalidatePath("/contracts");
   return { success: true };
 }
+
+// ============================================
+// Édition d'une souscription (vue calendrier)
+// ============================================
+
+export async function EditSubscription(id: string, formData: FormData) {
+  const userId = await getSessionUserId();
+  await assertIsUserOwnContrat(id, userId);
+
+  const parsed = subscriptionSchema.safeParse({
+    name: formData.get("name"),
+    category: formData.get("category"),
+    amount: parseAmount(formData.get("amount")),
+    frequency: formData.get("frequency"),
+    debitDay: parseAmount(formData.get("debitDay")),
+    debitDate: formData.get("debitDate") ?? undefined,
+    contractNumber: formData.get("contractNumber") ?? undefined,
+    renewalDate: formData.get("renewalDate") ?? undefined,
+    iconType: formData.get("iconType") ?? undefined,
+    iconValue: formData.get("iconValue") ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide" };
+  }
+
+  const data = parsed.data;
+
+  // Document PDF optionnel : remplacé uniquement si un nouveau fichier est fourni
+  let documentUrl: string | undefined;
+  let documentName: string | undefined;
+  const file = formData.get("document");
+  if (file instanceof File && file.size > 0) {
+    if (file.type !== "application/pdf") {
+      return { error: "Le document doit être un PDF" };
+    }
+    if (file.size > MAX_DOCUMENT_SIZE) {
+      return { error: "Le document ne doit pas dépasser 10 Mo" };
+    }
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const dir = path.join(process.cwd(), "public", "uploads", userId);
+    await fs.mkdir(dir, { recursive: true });
+    const filename = `${crypto.randomUUID()}.pdf`;
+    await fs.writeFile(path.join(dir, filename), buffer);
+    documentUrl = `/uploads/${userId}/${filename}`;
+    documentName = file.name;
+  }
+
+  // "Une fois" : date complète du prélèvement stockée dans startDate
+  const debitDate =
+    data.frequency === "once" ? parseDate(data.debitDate) : null;
+  if (data.frequency === "once" && !debitDate) {
+    return { error: "La date du prélèvement est invalide" };
+  }
+  const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
+
+  // Mois de référence pour les fréquences trimestrielle / annuelle
+  const anchorMonth =
+    data.frequency === "quarterly" || data.frequency === "annual"
+      ? new Date().getMonth()
+      : null;
+
+  await prisma.contract.update({
+    where: { id },
+    data: {
+      name: data.name,
+      provider: data.name,
+      category: data.category,
+      amount: data.amount,
+      frequency: data.frequency,
+      debitDay,
+      anchorMonth,
+      startDate: debitDate,
+      contractNumber: data.contractNumber || null,
+      renewalDate: parseDate(data.renewalDate),
+      ...(documentUrl !== undefined ? { documentUrl, documentName } : {}),
+      monthlyAmount: data.frequency === "monthly" ? data.amount : null,
+      annualAmount: data.frequency === "annual" ? data.amount : null,
+      iconType: data.iconType || null,
+      iconValue: data.iconValue || null,
+      updatedAt: new Date(),
+    },
+  });
+
+  revalidatePath("/calendar");
+  revalidatePath("/contracts");
+  return { success: true };
+}
