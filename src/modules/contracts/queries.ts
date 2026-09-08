@@ -1,11 +1,10 @@
 import { prisma } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import type { CalendarContract } from "./calendar";
 
 /** Contrats actifs formatés pour la vue calendrier. */
 export async function getCalendarContracts(): Promise<CalendarContract[]> {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   if (!session?.user?.id) return [];
 
   const contracts = await prisma.contract.findMany({
@@ -33,7 +32,7 @@ export async function getCalendarContracts(): Promise<CalendarContract[]> {
 }
 
 export async function getContrats() {
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session?.user?.id) return [];
 
   return prisma.contract.findMany({
@@ -43,7 +42,7 @@ export async function getContrats() {
 }
 
 export async function getContratById(id: string) {
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session?.user?.id) return null;
 
   return prisma.contract.findUnique({
@@ -52,7 +51,7 @@ export async function getContratById(id: string) {
 }
 
 export async function getContratsByStatus(status: string) {
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session?.user?.id) return [];
 
   return prisma.contract.findMany({
@@ -62,7 +61,7 @@ export async function getContratsByStatus(status: string) {
 }
 
 export async function getContratsStats() {
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session?.user?.id) return null;
 
   const contrats = await prisma.contract.findMany({

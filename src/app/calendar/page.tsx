@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getCalendarContracts } from "@/modules/contracts/queries";
 import CalendarView from "@/components/calendar/CalendarView";
 import { prisma } from "@/lib/db";
@@ -21,27 +20,23 @@ type statsType = {
 export const dynamic = "force-dynamic";
 
 export default async function CalendarPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session?.user?.id) {
     return <div>Erreur de session</div>;
   }
 
-  const contracts = await getCalendarContracts();
-  const activeContracts = await prisma.contract.count({
-    where: {
-      userId: session.user.id,
-      status: "active",
-    },
-  });
-
-  const totalContracts = await prisma.contract.count({
-    where: {
-      userId: session.user.id,
-    },
-  });
-
-  const contractsStats = await getContratsStats();
+  const [contracts, activeContracts, totalContracts, contractsStats] =
+    await Promise.all([
+      getCalendarContracts(),
+      prisma.contract.count({
+        where: { userId: session.user.id, status: "active" },
+      }),
+      prisma.contract.count({
+        where: { userId: session.user.id },
+      }),
+      getContratsStats(),
+    ]);
 
   const stats: statsType = {
     activeContracts: activeContracts,

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Autocomplete,
   TextField,
@@ -6,8 +6,8 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import * as simpleIcons from "simple-icons";
-import * as MuiIcons from "@mui/icons-material";
+import simpleIconsData from "simple-icons/icons.json";
+import { GENERIC_ICONS, getGenericIcon } from "./genericIconMap";
 
 export interface IconOption {
   label: string;
@@ -33,37 +33,24 @@ export default function FullIconSearchSelector({
   onChange,
 }: FullIconSearchSelectorProps) {
   const allOptions: IconOption[] = useMemo(() => {
-    const brands: IconOption[] = Object.values(simpleIcons)
-      .filter((icon: any) => icon && icon.title && icon.slug)
-      .map((icon: any) => ({
-        label: icon.title,
-        type: "brand",
-        slugOrName: icon.slug,
-      }));
+    const brands: IconOption[] = simpleIconsData.map((icon) => ({
+      label: icon.title,
+      type: "brand",
+      slugOrName: icon.slug,
+    }));
 
-    const generics: IconOption[] = Object.keys(MuiIcons)
-      .filter(
-        (key) =>
-          key !== "default" &&
-          !key.endsWith("Outlined") &&
-          !key.endsWith("Rounded") &&
-          !key.endsWith("Sharp") &&
-          !key.endsWith("TwoTone"),
-      )
-      .map((key) => ({
-        label: key.replace(/([A-Z])/g, " $1").trim(),
-        type: "generic",
-        slugOrName: key,
-      }));
+    const generics: IconOption[] = GENERIC_ICONS.map((entry) => ({
+      label: entry.label,
+      type: "generic",
+      slugOrName: entry.name,
+    }));
 
     return [...brands, ...generics];
   }, []);
 
   const renderGenericIcon = (iconName: string) => {
-    const IconComponent = (MuiIcons as Record<string, React.ElementType>)[
-      iconName
-    ];
-    return IconComponent ? <IconComponent /> : <MuiIcons.Help />;
+    const IconComponent = getGenericIcon(iconName);
+    return <IconComponent />;
   };
 
   return (

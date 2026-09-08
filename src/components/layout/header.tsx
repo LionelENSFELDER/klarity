@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import {
   AppBar,
   Toolbar,
@@ -22,7 +21,7 @@ import UserMenu from "./UserMenu";
 import MobileNav from "./MobileNav";
 
 const Header = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   // Si pas de session, ne pas afficher le header
   if (!session) {

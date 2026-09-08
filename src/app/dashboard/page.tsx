@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import MuiThemeProvider from "@/components/providers/MuiThemeProvider";
 import {
@@ -35,7 +34,7 @@ import DashboardTabs from "@/components/dashboard/DashboardTabs";
 import StatsCard from "@/components/dashboard/StatsCard";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session?.user?.id) {
     return <div>Erreur de session</div>;

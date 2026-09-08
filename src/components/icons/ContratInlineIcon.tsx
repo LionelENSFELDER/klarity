@@ -1,6 +1,5 @@
-import React from "react";
 import { Avatar } from "@mui/material";
-import * as MuiIcons from "@mui/icons-material";
+import { getGenericIcon } from "./genericIconMap";
 
 interface ContractInlineIconProps {
   iconType?: string | null;
@@ -37,15 +36,10 @@ export function ContractInlineIcon({
     );
   }
 
-  // 2. Si c'est une icône générique (stockée via Material UI)
+  // 2. Si c'est une icône générique (liste curée, voir genericIconMap.ts)
   if (iconType === "generic") {
-    // @ts-ignore
-    const IconComponent = (MuiIcons as Record<string, React.ElementType>)[
-      iconValue
-    ];
-    if (IconComponent) {
-      return <IconComponent sx={{ fontSize: 20 }} />;
-    }
+    const IconComponent = getGenericIcon(iconValue);
+    return <IconComponent sx={{ fontSize: 20 }} />;
   }
 
   // Fallback ultime : l'initiale

@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import {
   Box,
@@ -23,7 +22,7 @@ import Link from "next/link";
 import Grid from "@mui/material/Grid";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   // Si l'utilisateur est connecté, rediriger vers le calendrier
   if (session) {

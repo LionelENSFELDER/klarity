@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import {
@@ -20,7 +19,7 @@ import ContractsView from "@/components/contracts/ContractsView";
 import AddContractButton from "@/components/contracts/AddContractButton";
 
 export default async function ContractsPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session?.user?.id) {
     redirect("/auth/signin");
