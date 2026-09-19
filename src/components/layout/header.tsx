@@ -10,11 +10,8 @@ import {
   IconButton,
 } from "@mui/material";
 import {
-  Dashboard as DashboardIcon,
-  Description as ContractsIcon,
   CalendarMonth as CalendarIcon,
   Notifications as NotificationsIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
@@ -96,38 +93,10 @@ const Header = async () => {
           >
             Calendrier
           </Button>
-          {/* <Button
-            component={Link}
-            href="/contracts"
-            startIcon={<ContractsIcon />}
-            sx={{ color: "text.secondary" }}
-          >
-            Contrats
-          </Button> */}
-          {/* <Button
-            component={Link}
-            href="/dashboard"
-            startIcon={<DashboardIcon />}
-            sx={{ color: "text.secondary" }}
-          >
-            Dashboard
-          </Button> */}
         </Stack>
 
         {/* Actions */}
         <Stack direction="row" spacing={1} alignItems="center">
-          {/* Add Contract Button */}
-          {/* <Button
-            component={Link}
-            href="/contracts/new"
-            variant="contained"
-            size="small"
-            startIcon={<AddIcon />}
-            sx={{ display: { xs: "none", sm: "flex" } }}
-          >
-            Nouveau contrat
-          </Button> */}
-
           {/* Notifications */}
           <IconButton size="small">
             <Badge badgeContent={3} color="error">

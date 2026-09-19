@@ -8,7 +8,6 @@ import { z } from "zod";
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
-import type { ContractFormData } from "./types";
 
 // 🔒 Helpers privés
 async function getSessionUserId() {
@@ -37,84 +36,6 @@ function parseAmount(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
   const parsed = typeof value === "string" ? parseFloat(value) : Number(value);
   return isNaN(parsed) ? null : parsed;
-}
-
-export async function CreateContract(input: ContractFormData) {
-  const userId = await getSessionUserId();
-
-  await prisma.contract.create({
-    data: {
-      userId,
-      name: input.name,
-      provider: input.provider ?? "",
-      contractNumber: input.contractNumber,
-      category: input.category,
-      status: input.status ?? "active",
-      startDate: input.startDate || null,
-      endDate: input.endDate || null,
-      renewalDate: input.renewalDate || null,
-      monthlyAmount: parseAmount(input.monthlyAmount),
-      annualAmount: parseAmount(input.annualAmount),
-      clientPhone: input.clientPhone,
-      website: input.website,
-      advisorName: input.advisorName,
-      notes: input.notes,
-      iconType: input.iconType || null,
-      iconValue: input.iconValue || null,
-    },
-  });
-
-  revalidatePath("/contracts");
-}
-
-export async function EditContract(id: string, input: ContractFormData) {
-  const userId = await getSessionUserId();
-  await assertIsUserOwnContrat(id, userId);
-
-  await prisma.contract.update({
-    where: { id },
-    data: {
-      name: input.name,
-      provider: input.provider,
-      contractNumber: input.contractNumber,
-      category: input.category,
-      status: input.status,
-      startDate: input.startDate || undefined,
-      endDate: input.endDate || undefined,
-      renewalDate: input.renewalDate || undefined,
-      monthlyAmount: parseAmount(input.monthlyAmount),
-      annualAmount: parseAmount(input.annualAmount),
-      clientPhone: input.clientPhone,
-      website: input.website,
-      advisorName: input.advisorName,
-      notes: input.notes,
-      updatedAt: new Date(),
-      iconType: input.iconType || null,
-      iconValue: input.iconValue || null,
-    },
-  });
-
-  revalidatePath("/contracts");
-  revalidatePath(`/contracts/${id}`);
-}
-
-export async function ArchiveContract(id: string) {
-  const userId = await getSessionUserId();
-  await assertIsUserOwnContrat(id, userId);
-
-  await prisma.contract.update({
-    where: { id },
-    data: { status: "archived", updatedAt: new Date() },
-  });
-
-  revalidatePath("/contracts");
-}
-
-export async function DeleteContract(id: string) {
-  const userId = await getSessionUserId();
-  await assertIsUserOwnContrat(id, userId);
-  await prisma.contract.delete({ where: { id } });
-  revalidatePath("/contracts");
 }
 
 // ============================================
@@ -240,7 +161,6 @@ export async function CreateSubscription(formData: FormData) {
   });
 
   revalidatePath("/calendar");
-  revalidatePath("/contracts");
   return { success: true };
 }
 
@@ -328,6 +248,5 @@ export async function EditSubscription(id: string, formData: FormData) {
   });
 
   revalidatePath("/calendar");
-  revalidatePath("/contracts");
   return { success: true };
 }

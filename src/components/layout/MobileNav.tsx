@@ -13,8 +13,6 @@ import {
 } from "@mui/material";
 import {
   Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  Description as ContractsIcon,
   CalendarMonth as CalendarIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
@@ -27,8 +25,6 @@ export default function MobileNav() {
 
   const menuItems = [
     { text: "Calendrier", icon: <CalendarIcon />, href: "/calendar" },
-    { text: "Contrats", icon: <ContractsIcon />, href: "/contracts" },
-    { text: "Dashboard", icon: <DashboardIcon />, href: "/dashboard" },
   ];
 
   return (

@@ -41,7 +41,7 @@ export default function SignInPage() {
       if (result?.error) {
         setError("Email ou mot de passe incorrect");
       } else {
-        router.push("/dashboard");
+        router.push("/calendar");
       }
     } catch (error) {
       setError("Une erreur s'est produite");
@@ -51,7 +51,7 @@ export default function SignInPage() {
   };
 
   const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
+    signIn("google", { callbackUrl: "/calendar" });
   };
 
   return (

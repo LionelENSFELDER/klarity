@@ -27,12 +27,7 @@ export default withAuth(
         }
 
         // Routes protégées nécessitent un token
-        if (
-          pathname.startsWith("/dashboard") ||
-          pathname.startsWith("/contracts") ||
-          pathname.startsWith("/calendar") ||
-          pathname === "/"
-        ) {
+        if (pathname.startsWith("/calendar") || pathname === "/") {
           return !!token;
         }
 
