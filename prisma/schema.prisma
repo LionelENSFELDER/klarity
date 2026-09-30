@@ -11,7 +11,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Runtime : connexion poolée (PgBouncer), adaptée au serverless.
+  url       = env("DATABASE_URL")
+  // Migrations : connexion directe — le pooler casse les advisory locks.
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 // ============================================

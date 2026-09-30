@@ -47,3 +47,4 @@ prisma/dev.db-wal
 
 # PDF de contrats uploadés localement (feature retirée, dossier conservé)
 /public/uploads
+.neon
