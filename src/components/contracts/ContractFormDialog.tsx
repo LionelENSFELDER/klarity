@@ -12,7 +12,7 @@ import {
   Stack,
 } from "@mui/material";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
-import type { CalendarContract } from "@/modules/contracts/types";
+import type { CalendarContract } from "@/modules/contracts/calendar";
 import ContractFormFields from "./ContractFormFields";
 import type { IconOption } from "@/components/icons/FullIconSearchSelector";
 
@@ -55,7 +55,6 @@ export default function ContractFormDialog({
   const [debitDate, setDebitDate] = useState(EMPTY_STATE.debitDate);
   const [contractNumber, setContractNumber] = useState(EMPTY_STATE.contractNumber);
   const [renewalDate, setRenewalDate] = useState(EMPTY_STATE.renewalDate);
-  const [document, setDocument] = useState<File | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<IconOption | null>(
     EMPTY_STATE.selectedIcon,
   );
@@ -63,7 +62,6 @@ export default function ContractFormDialog({
   useEffect(() => {
     if (!open) return;
     setError("");
-    setDocument(null);
 
     if (mode === "edit" && contract) {
       setName(contract.name);
@@ -130,7 +128,6 @@ export default function ContractFormDialog({
     if (contractNumber.trim())
       formData.set("contractNumber", contractNumber.trim());
     if (renewalDate) formData.set("renewalDate", renewalDate);
-    if (document) formData.set("document", document);
     if (selectedIcon) {
       formData.set("iconType", selectedIcon.type);
       formData.set("iconValue", selectedIcon.slugOrName);
@@ -180,11 +177,6 @@ export default function ContractFormDialog({
             onContractNumberChange={setContractNumber}
             renewalDate={renewalDate}
             onRenewalDateChange={setRenewalDate}
-            document={document}
-            onDocumentChange={setDocument}
-            existingDocumentName={
-              mode === "edit" ? (contract?.documentName ?? null) : null
-            }
             selectedIcon={selectedIcon}
             onSelectedIconChange={setSelectedIcon}
           />

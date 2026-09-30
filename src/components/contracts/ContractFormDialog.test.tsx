@@ -3,7 +3,7 @@ import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContractFormDialog from "./ContractFormDialog";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
-import type { CalendarContract } from "@/modules/contracts/types";
+import type { CalendarContract } from "@/modules/contracts/calendar";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }),
@@ -32,8 +32,6 @@ const contract: CalendarContract = {
   anchorMonth: null,
   startDate: null,
   renewalDate: "2027-01-15T00:00:00.000Z",
-  documentUrl: "/uploads/user/existing.pdf",
-  documentName: "contrat-netflix.pdf",
   iconType: "brand",
   iconValue: "netflix",
 };
@@ -54,9 +52,6 @@ describe("ContractFormDialog – mode édition", () => {
     expect(within(dialog).getByDisplayValue("15.99")).toBeInTheDocument();
     expect(within(dialog).getByDisplayValue("REF-123")).toBeInTheDocument();
     expect(within(dialog).getByDisplayValue("2027-01-15")).toBeInTheDocument();
-    expect(
-      within(dialog).getByText(/Document actuel : contrat-netflix\.pdf/),
-    ).toBeInTheDocument();
   });
 
   it("hydrate le jour de prélèvement du mois (fréquence mensuelle)", () => {

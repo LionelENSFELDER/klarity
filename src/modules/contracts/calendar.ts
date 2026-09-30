@@ -12,8 +12,6 @@ export interface CalendarContract {
   anchorMonth: number | null; // 0-11
   startDate: string | null; // ISO — date du prélèvement unique (frequency "once")
   renewalDate: string | null; // ISO
-  documentUrl: string | null;
-  documentName: string | null;
   iconType?: string | null;
   iconValue?: string | null;
 }

@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -103,10 +103,6 @@ model Contract {
   // Financier (legacy)
   monthlyAmount    Float?   @map("monthly_amount")
   annualAmount     Float?   @map("annual_amount")
-  
-  // Document
-  documentUrl      String?  @map("document_url")
-  documentName     String?  @map("document_name")
   
   // Contact
   clientPhone      String?  @map("client_phone")

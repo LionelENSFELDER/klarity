@@ -44,5 +44,6 @@ next-env.d.ts
 prisma/dev.db
 prisma/dev.db-journal
 prisma/dev.db-wal
-# user-uploaded contract documents
+
+# PDF de contrats uploadés localement (feature retirée, dossier conservé)
 /public/uploads

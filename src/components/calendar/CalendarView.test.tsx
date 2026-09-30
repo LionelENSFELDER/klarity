@@ -3,7 +3,7 @@ import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CalendarView from "./CalendarView";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
-import type { CalendarContract } from "@/modules/contracts/types";
+import type { CalendarContract } from "@/modules/contracts/calendar";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }),
@@ -38,8 +38,6 @@ function makeContract(overrides: Partial<CalendarContract> = {}): CalendarContra
     anchorMonth: null,
     startDate: null,
     renewalDate: null,
-    documentUrl: null,
-    documentName: null,
     iconType: "brand",
     iconValue: "netflix",
     ...overrides,

@@ -5,9 +5,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { promises as fs } from "fs";
-import path from "path";
-import crypto from "crypto";
 
 // 🔒 Helpers privés
 async function getSessionUserId() {
@@ -69,8 +66,6 @@ const subscriptionSchema = z
     },
   );
 
-const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10 Mo
-
 export async function CreateSubscription(formData: FormData) {
   const userId = await getSessionUserId();
 
@@ -103,26 +98,6 @@ export async function CreateSubscription(formData: FormData) {
 
   const data = parsed.data;
 
-  // Document PDF optionnel
-  let documentUrl: string | null = null;
-  let documentName: string | null = null;
-  const file = formData.get("document");
-  if (file instanceof File && file.size > 0) {
-    if (file.type !== "application/pdf") {
-      return { error: "Le document doit être un PDF" };
-    }
-    if (file.size > MAX_DOCUMENT_SIZE) {
-      return { error: "Le document ne doit pas dépasser 10 Mo" };
-    }
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "uploads", userId);
-    await fs.mkdir(dir, { recursive: true });
-    const filename = `${crypto.randomUUID()}.pdf`;
-    await fs.writeFile(path.join(dir, filename), buffer);
-    documentUrl = `/uploads/${userId}/${filename}`;
-    documentName = file.name;
-  }
-
   // "Une fois" : date complète du prélèvement stockée dans startDate
   const debitDate =
     data.frequency === "once" ? parseDate(data.debitDate) : null;
@@ -151,8 +126,6 @@ export async function CreateSubscription(formData: FormData) {
       startDate: debitDate,
       contractNumber: data.contractNumber || null,
       renewalDate: parseDate(data.renewalDate),
-      documentUrl,
-      documentName,
       monthlyAmount: data.frequency === "monthly" ? data.amount : null,
       annualAmount: data.frequency === "annual" ? data.amount : null,
       iconType: data.iconType || null,
@@ -191,26 +164,6 @@ export async function EditSubscription(id: string, formData: FormData) {
 
   const data = parsed.data;
 
-  // Document PDF optionnel : remplacé uniquement si un nouveau fichier est fourni
-  let documentUrl: string | undefined;
-  let documentName: string | undefined;
-  const file = formData.get("document");
-  if (file instanceof File && file.size > 0) {
-    if (file.type !== "application/pdf") {
-      return { error: "Le document doit être un PDF" };
-    }
-    if (file.size > MAX_DOCUMENT_SIZE) {
-      return { error: "Le document ne doit pas dépasser 10 Mo" };
-    }
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "uploads", userId);
-    await fs.mkdir(dir, { recursive: true });
-    const filename = `${crypto.randomUUID()}.pdf`;
-    await fs.writeFile(path.join(dir, filename), buffer);
-    documentUrl = `/uploads/${userId}/${filename}`;
-    documentName = file.name;
-  }
-
   // "Une fois" : date complète du prélèvement stockée dans startDate
   const debitDate =
     data.frequency === "once" ? parseDate(data.debitDate) : null;
@@ -238,7 +191,6 @@ export async function EditSubscription(id: string, formData: FormData) {
       startDate: debitDate,
       contractNumber: data.contractNumber || null,
       renewalDate: parseDate(data.renewalDate),
-      ...(documentUrl !== undefined ? { documentUrl, documentName } : {}),
       monthlyAmount: data.frequency === "monthly" ? data.amount : null,
       annualAmount: data.frequency === "annual" ? data.amount : null,
       iconType: data.iconType || null,

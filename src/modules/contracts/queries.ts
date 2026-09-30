@@ -24,8 +24,6 @@ export async function getCalendarContracts(): Promise<CalendarContract[]> {
     anchorMonth: c.anchorMonth,
     startDate: c.startDate?.toISOString() ?? null,
     renewalDate: c.renewalDate?.toISOString() ?? null,
-    documentUrl: c.documentUrl,
-    documentName: c.documentName,
     iconType: c.iconType,
     iconValue: c.iconValue,
   }));

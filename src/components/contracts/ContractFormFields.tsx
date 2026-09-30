@@ -1,10 +1,8 @@
 "use client";
 
-import { useRef } from "react";
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Stack,
   InputAdornment,
@@ -12,7 +10,6 @@ import {
   ToggleButtonGroup,
   Paper,
 } from "@mui/material";
-import { UploadFile as UploadFileIcon, Close as CloseIcon } from "@mui/icons-material";
 import { CATEGORIES, FREQUENCIES, getCategory } from "@/modules/contracts/categories";
 import { formatEuro } from "@/modules/contracts/calendar";
 import FullIconSearchSelector, {
@@ -36,9 +33,6 @@ interface ContractFormFieldsProps {
   onContractNumberChange: (value: string) => void;
   renewalDate: string;
   onRenewalDateChange: (value: string) => void;
-  document: File | null;
-  onDocumentChange: (file: File | null) => void;
-  existingDocumentName?: string | null;
   selectedIcon: IconOption | null;
   onSelectedIconChange: (value: IconOption | null) => void;
 }
@@ -62,14 +56,9 @@ export default function ContractFormFields({
   onContractNumberChange,
   renewalDate,
   onRenewalDateChange,
-  document,
-  onDocumentChange,
-  existingDocumentName,
   selectedIcon,
   onSelectedIconChange,
 }: ContractFormFieldsProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const isOnce = frequency === "once";
   const parsedAmount = parseFloat(amount.replace(",", "."));
   const selectedCategory = category ? getCategory(category) : null;
@@ -259,58 +248,6 @@ export default function ContractFormFields({
         slotProps={{ inputLabel: { shrink: true } }}
         fullWidth
       />
-
-      {/* Document PDF */}
-      <Box>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/pdf"
-          hidden
-          onChange={(e) => onDocumentChange(e.target.files?.[0] ?? null)}
-        />
-        {document ? (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <UploadFileIcon fontSize="small" color="primary" />
-            <Typography variant="body2" noWrap sx={{ flex: 1 }}>
-              {document.name}
-            </Typography>
-            <Button
-              size="small"
-              startIcon={<CloseIcon />}
-              onClick={() => {
-                onDocumentChange(null);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
-            >
-              Retirer
-            </Button>
-          </Stack>
-        ) : existingDocumentName ? (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <UploadFileIcon fontSize="small" color="disabled" />
-            <Typography
-              variant="body2"
-              noWrap
-              sx={{ flex: 1 }}
-              color="text.secondary"
-            >
-              Document actuel : {existingDocumentName}
-            </Typography>
-            <Button size="small" onClick={() => fileInputRef.current?.click()}>
-              Remplacer
-            </Button>
-          </Stack>
-        ) : (
-          <Button
-            variant="outlined"
-            startIcon={<UploadFileIcon />}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Document du contrat (PDF, optionnel)
-          </Button>
-        )}
-      </Box>
 
       {/*Icon search selector*/}
       <FullIconSearchSelector value={selectedIcon} onChange={onSelectedIconChange} />
