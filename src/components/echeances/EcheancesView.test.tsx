@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import EcheancesView, { type EcheancesParams } from "./EcheancesView";
+import EcheancesView from "./EcheancesView";
+import type { EcheancesParams } from "./params";
 import type { CalendarContract } from "@/modules/contracts/calendar";
 import type { Category } from "@/modules/categories/model";
 

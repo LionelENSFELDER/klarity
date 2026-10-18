@@ -19,6 +19,7 @@ import {
   type CalendarContract,
 } from "@/modules/contracts/calendar";
 import { findCategory, NO_CATEGORY, type Category } from "@/modules/categories/model";
+import { HORIZONS, hrefWith, type EcheancesParams } from "./params";
 import ContractFormDialog from "@/components/contracts/ContractFormDialog";
 import DebitRow from "./DebitRow";
 import EmptyState from "./EmptyState";
@@ -28,16 +29,6 @@ const MONTHS = [
   "janvier", "février", "mars", "avril", "mai", "juin",
   "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
-
-export const HORIZONS = [3, 6, 12] as const;
-
-export interface EcheancesParams {
-  liste: "a-venir" | "mois" | "tout";
-  famille: string | null;
-  fournisseur: string | null;
-  vue: "liste" | "calendrier";
-  horizon: number;
-}
 
 interface EcheancesViewProps {
   /** Contrats déjà filtrés côté serveur selon famille / fournisseur. */
@@ -54,19 +45,6 @@ const LIST_LABELS: Record<EcheancesParams["liste"], string> = {
   mois: "Ce mois-ci",
   tout: "Tout",
 };
-
-/** Conserve les filtres actifs en changeant un seul paramètre. */
-function hrefWith(params: EcheancesParams, patch: Partial<EcheancesParams>) {
-  const next = { ...params, ...patch };
-  const q = new URLSearchParams();
-  if (next.liste !== "a-venir") q.set("liste", next.liste);
-  if (next.famille) q.set("famille", next.famille);
-  if (next.fournisseur) q.set("fournisseur", next.fournisseur);
-  if (next.vue !== "liste") q.set("vue", next.vue);
-  if (next.horizon !== 3) q.set("horizon", String(next.horizon));
-  const s = q.toString();
-  return s ? `/calendar?${s}` : "/calendar";
-}
 
 export default function EcheancesView({
   contracts,
