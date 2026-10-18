@@ -57,11 +57,6 @@ export default async function CalendarPage({
           categories={categories}
           counts={counts}
           user={session.user}
-          active={{
-            liste: params.liste,
-            famille: params.famille,
-            fournisseur: params.fournisseur,
-          }}
         />
         <EcheancesView
           contracts={contracts}

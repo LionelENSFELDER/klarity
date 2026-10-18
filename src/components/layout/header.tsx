@@ -1,21 +1,17 @@
 import { getSession } from "@/lib/session";
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Badge,
-  Stack,
-  IconButton,
-} from "@mui/material";
+import { AppBar, Badge, Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { Notifications as NotificationsIcon } from "@mui/icons-material";
+import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
+import { getCategories } from "@/modules/categories/queries";
+import { buildSidebarCounts } from "@/modules/contracts/sidebar";
+import { ACCENT_GRADIENT } from "@/lib/theme";
 import UserMenu from "./UserMenu";
 import MobileNav from "./MobileNav";
 
 const Header = async () => {
   const session = await getSession();
 
-  // Si pas de session, ne pas afficher le header
+  // Pas de session : pas de header (pages d'authentification).
   if (!session) {
     return null;
   }
@@ -26,6 +22,21 @@ const Header = async () => {
       .map((n: string) => n[0])
       .join("")
       .toUpperCase() || "??";
+
+  // Les mêmes données que le rail desktop, pour que le tiroir mobile soit
+  // complet. `cache` les dédoublonne avec celles demandées par la page.
+  const [contracts, categories, providers] = await Promise.all([
+    getCalendarContracts(),
+    getCategories(),
+    getProviders(),
+  ]);
+  const counts = buildSidebarCounts(
+    contracts,
+    categories,
+    providers,
+    3,
+    new Date(),
+  );
 
   return (
     <AppBar
@@ -41,52 +52,42 @@ const Header = async () => {
         borderColor: "divider",
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        {/* Mobile Menu */}
-        <MobileNav />
+      <Toolbar sx={{ gap: 1 }}>
+        <MobileNav categories={categories} counts={counts} user={session.user} />
 
-        {/* Logo & Brand */}
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={1.25} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
           <Box
             sx={{
-              width: 40,
-              height: 40,
+              width: 28,
+              height: 28,
               borderRadius: 2,
-              bgcolor: "primary.main",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: 1,
+              background: ACCENT_GRADIENT,
+              display: "grid",
+              placeItems: "center",
+              fontSize: 15,
+              flex: "none",
             }}
           >
-            <Typography variant="h6" sx={{ color: "white" }}>
-              📋
-            </Typography>
+            📋
           </Box>
-          <Box>
-            <Typography variant="h6" fontWeight={600}>
-              Klarity
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: { xs: "none", sm: "block" } }}
-            >
-              Gestion administrative simplifiée
-            </Typography>
-          </Box>
+          <Typography
+            sx={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              fontSize: 16,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Klarity
+          </Typography>
         </Stack>
 
-        {/* Actions */}
-        <Stack direction="row" spacing={1} alignItems="center">
-          {/* Notifications */}
-          <IconButton size="small">
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <IconButton size="small" aria-label="Notifications">
             <Badge badgeContent={3} color="error">
-              <NotificationsIcon />
+              <NotificationsIcon sx={{ fontSize: 20 }} />
             </Badge>
           </IconButton>
-
-          {/* User Menu */}
           <UserMenu user={session.user} userInitials={userInitials} />
         </Stack>
       </Toolbar>

@@ -1,9 +1,14 @@
+import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { monthlyCost, type CalendarContract } from "./calendar";
 
-/** Contrats actifs formatés pour la vue calendrier. */
-export async function getCalendarContracts(): Promise<CalendarContract[]> {
+/**
+ * Contrats actifs formatés pour la vue calendrier.
+ * `cache` dédoublonne l'appel dans une même requête : le header et la page
+ * ont tous deux besoin de cette liste.
+ */
+export const getCalendarContracts = cache(async (): Promise<CalendarContract[]> => {
   const session = await getSession();
   if (!session?.user?.id) return [];
 
@@ -27,15 +32,15 @@ export async function getCalendarContracts(): Promise<CalendarContract[]> {
     iconType: c.iconType,
     iconValue: c.iconValue,
   }));
-}
+});
 
 /**
  * Fournisseurs de l'utilisateur, triés par coût mensuel décroissant.
  * La liste se déduit des contrats : un fournisseur sans contrat n'existe pas.
  */
-export async function getProviders(): Promise<
+export const getProviders = cache(async (): Promise<
   { name: string; count: number; monthlyCost: number }[]
-> {
+> => {
   const contracts = await getCalendarContracts();
   const byName = new Map<string, { count: number; monthlyCost: number }>();
 
@@ -49,7 +54,7 @@ export async function getProviders(): Promise<
   return [...byName.entries()]
     .map(([name, v]) => ({ name, ...v }))
     .sort((a, b) => b.monthlyCost - a.monthlyCost || a.name.localeCompare(b.name, "fr"));
-}
+});
 
 export async function getContratsStats() {
   const session = await getSession();

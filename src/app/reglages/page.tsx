@@ -50,7 +50,6 @@ export default async function ReglagesPage({
         categories={categories}
         counts={counts}
         user={session.user}
-        active={{ liste: "", famille: null, fournisseur: null }}
       />
       <Box sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
         <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>

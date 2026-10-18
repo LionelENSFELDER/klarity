@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { DEFAULT_CATEGORIES, type Category } from "./model";
@@ -7,11 +8,11 @@ import { DEFAULT_CATEGORIES, type Category } from "./model";
  * Évite une migration de données : tout compte — existant ou nouveau —
  * obtient ses sept familles par défaut la première fois qu'il les lit.
  */
-export async function getCategories(): Promise<Category[]> {
+export const getCategories = cache(async (): Promise<Category[]> => {
   const session = await getSession();
   if (!session?.user?.id) return [];
   return getCategoriesForUser(session.user.id);
-}
+});
 
 export async function getCategoriesForUser(userId: string): Promise<Category[]> {
   const existing = await prisma.category.findMany({
