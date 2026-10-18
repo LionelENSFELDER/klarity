@@ -15,6 +15,10 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import Link from "next/link";
+import {
+  PASSWORD_MIN_LENGTH,
+  REGISTRATION_SUCCESS_MESSAGE,
+} from "@/modules/auth/registration";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -39,12 +43,14 @@ export default function RegisterPage() {
       });
 
       if (response.ok) {
-        router.push("/auth/signin?message=Compte créé avec succès");
+        router.push(
+          `/auth/signin?message=${encodeURIComponent(REGISTRATION_SUCCESS_MESSAGE)}`,
+        );
       } else {
         const data = await response.json();
         setError(data.error || "Une erreur s'est produite");
       }
-    } catch (error) {
+    } catch {
       setError("Une erreur s'est produite");
     } finally {
       setLoading(false);
@@ -145,6 +151,8 @@ export default function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="new-password"
+                    slotProps={{ htmlInput: { minLength: PASSWORD_MIN_LENGTH } }}
+                    helperText={`Au moins ${PASSWORD_MIN_LENGTH} caractères`}
                   />
 
                   <Button
@@ -152,7 +160,7 @@ export default function RegisterPage() {
                     variant="contained"
                     size="large"
                     fullWidth
-                    disabled={loading}
+                    disabled={loading || password.length < PASSWORD_MIN_LENGTH}
                   >
                     {loading ? "Création..." : "Créer mon compte"}
                   </Button>
