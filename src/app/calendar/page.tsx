@@ -1,13 +1,10 @@
 import { getSession } from "@/lib/session";
 import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
 import { getCategories } from "@/modules/categories/queries";
-import {
-  getMonthOccurrences,
-  getUpcomingDebits,
-} from "@/modules/contracts/calendar";
 import { NO_CATEGORY } from "@/modules/categories/model";
 import { Box } from "@mui/material";
-import AppSidebar, { type SidebarCounts } from "@/components/layout/AppSidebar";
+import AppSidebar from "@/components/layout/AppSidebar";
+import { buildSidebarCounts } from "@/modules/contracts/sidebar";
 import { CategoriesProvider } from "@/components/contracts/CategoriesProvider";
 import EcheancesView from "@/components/echeances/EcheancesView";
 import { parseParams } from "@/components/echeances/params";
@@ -45,23 +42,13 @@ export default async function CalendarPage({
   });
 
   const today = new Date();
-  const counts: SidebarCounts = {
-    aVenir: getUpcomingDebits(allContracts, today, params.horizon).length,
-    mois: getMonthOccurrences(
-      allContracts,
-      today.getFullYear(),
-      today.getMonth(),
-    ).length,
-    tout: allContracts.length,
-    byCategory: Object.fromEntries(
-      categories.map((c) => [
-        c.slug,
-        allContracts.filter((x) => x.category === c.slug).length,
-      ]),
-    ),
-    orphans: allContracts.filter((c) => !knownSlugs.has(c.category)).length,
+  const counts = buildSidebarCounts(
+    allContracts,
+    categories,
     providers,
-  };
+    params.horizon,
+    today,
+  );
 
   return (
     <CategoriesProvider categories={categories}>
@@ -69,6 +56,7 @@ export default async function CalendarPage({
         <AppSidebar
           categories={categories}
           counts={counts}
+          user={session.user}
           active={{
             liste: params.liste,
             famille: params.famille,

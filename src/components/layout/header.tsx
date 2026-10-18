@@ -4,16 +4,11 @@ import {
   Toolbar,
   Box,
   Typography,
-  Button,
   Badge,
   Stack,
   IconButton,
 } from "@mui/material";
-import {
-  CalendarMonth as CalendarIcon,
-  Notifications as NotificationsIcon,
-} from "@mui/icons-material";
-import Link from "next/link";
+import { Notifications as NotificationsIcon } from "@mui/icons-material";
 import UserMenu from "./UserMenu";
 import MobileNav from "./MobileNav";
 
@@ -37,6 +32,9 @@ const Header = async () => {
       position="sticky"
       elevation={0}
       sx={{
+        // Sur desktop le rail de gauche porte la marque, la navigation,
+        // les notifications et le profil : le header n'a plus de rôle.
+        display: { xs: "flex", md: "none" },
         bgcolor: "background.paper",
         color: "text.primary",
         borderBottom: 1,
@@ -77,22 +75,6 @@ const Header = async () => {
               Gestion administrative simplifiée
             </Typography>
           </Box>
-        </Stack>
-
-        {/* Navigation Desktop */}
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ display: { xs: "none", md: "flex" } }}
-        >
-          <Button
-            component={Link}
-            href="/calendar"
-            startIcon={<CalendarIcon />}
-            sx={{ color: "text.primary" }}
-          >
-            Calendrier
-          </Button>
         </Stack>
 
         {/* Actions */}

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
+import { Badge, Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
@@ -10,19 +11,17 @@ import { ACCENT_GRADIENT } from "@/lib/theme";
 import { formatEuro } from "@/modules/contracts/calendar";
 import { NO_CATEGORY, type Category } from "@/modules/categories/model";
 import AddContractButton from "@/components/contracts/AddContractButton";
-
-export interface SidebarCounts {
-  aVenir: number;
-  mois: number;
-  tout: number;
-  byCategory: Record<string, number>;
-  orphans: number;
-  providers: { name: string; count: number; monthlyCost: number }[];
-}
+import UserMenu from "./UserMenu";
+import {
+  getUserInitials,
+  type SidebarCounts,
+  type SidebarUser,
+} from "@/modules/contracts/sidebar";
 
 interface AppSidebarProps {
   categories: Category[];
   counts: SidebarCounts;
+  user: SidebarUser;
   /** Paramètres d'URL actifs, pour marquer l'entrée courante. */
   active: { liste: string; famille: string | null; fournisseur: string | null };
 }
@@ -129,6 +128,7 @@ const countSx = {
 export default function AppSidebar({
   categories,
   counts,
+  user,
   active,
 }: AppSidebarProps) {
   const noFilter = !active.famille && !active.fournisseur;
@@ -150,7 +150,39 @@ export default function AppSidebar({
         minHeight: 0,
       }}
     >
-      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1.25, py: 1.5 }}>
+      {/* Marque : le header est masqué sur desktop, le rail la porte */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1.25}
+        sx={{ px: 2.25, pt: 2, pb: 1.5 }}
+      >
+        <Box
+          sx={{
+            width: 28,
+            height: 28,
+            borderRadius: 2,
+            background: ACCENT_GRADIENT,
+            display: "grid",
+            placeItems: "center",
+            fontSize: 15,
+          }}
+        >
+          📋
+        </Box>
+        <Typography
+          sx={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 700,
+            fontSize: 15,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          Klarity
+        </Typography>
+      </Stack>
+
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1.25, pb: 1.5 }}>
         <Stack spacing={0.25}>
           {LISTS.map((l) => {
             const Icon = l.icon;
@@ -273,6 +305,43 @@ export default function AppSidebar({
       </Box>
 
       <Stack spacing={0.9} sx={{ p: 1.25, borderTop: 1, borderColor: "divider" }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ px: 0.5 }}>
+          <UserMenu user={user} userInitials={getUserInitials(user.name)} />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              title={user.name ?? undefined}
+              sx={{
+                fontSize: 13,
+                fontWeight: 500,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user.name ?? "Utilisateur"}
+            </Typography>
+            <Typography
+              title={user.email ?? undefined}
+              sx={{
+                fontSize: 11.5,
+                color: "#5c6675",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user.email}
+            </Typography>
+          </Box>
+          <Tooltip title="Notifications">
+            <IconButton size="small" sx={{ color: "text.secondary" }}>
+              <Badge badgeContent={3} color="error">
+                <NotificationsIcon sx={{ fontSize: 18 }} />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+        </Stack>
+
         <NavLink href="/reglages" current={false}>
           <SettingsIcon sx={{ fontSize: 16, opacity: 0.85 }} />
           <Typography sx={{ ...textSx, color: "text.secondary" }}>Réglages</Typography>
