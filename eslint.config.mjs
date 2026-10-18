@@ -20,6 +20,16 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    // `require()` est la syntaxe d'un module CommonJS, pas un oubli de
+    // modernisation : vitest-mocks/mui-icons-material.cjs construit ses
+    // exports dans une boucle, ce qu'ESM ne permet pas — ses exports sont
+    // statiques, fixés à l'analyse du module.
+    files: ["**/*.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
