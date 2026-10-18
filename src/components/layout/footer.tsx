@@ -1,4 +1,11 @@
+import Link from "next/link";
 import { Box, Container, Stack, Typography, Chip, Button } from "@mui/material";
+
+const LINKS = [
+  { label: "Confidentialité", href: "/confidentialite" },
+  { label: "Conditions", href: "/conditions" },
+  { label: "Support", href: "/support" },
+];
 
 const Footer = () => {
   return (
@@ -8,7 +15,7 @@ const Footer = () => {
         bgcolor: "background.paper",
         borderTop: 1,
         borderColor: "divider",
-        py: 3,
+        py: 0.75,
         mt: "auto",
       }}
     >
@@ -17,24 +24,43 @@ const Footer = () => {
           direction={{ xs: "column", sm: "row" }}
           justifyContent="space-between"
           alignItems="center"
-          spacing={2}
+          rowGap={0.25}
+          columnGap={2}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="body2" color="text.secondary">
-              © 2025 Klarity. Tous droits réservés.
+          <Stack direction="row" spacing={1.25} alignItems="center">
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+              © 2025 Klarity
             </Typography>
-            <Chip label="Alpha v0.1.0" size="small" variant="outlined" />
+            <Chip
+              label="Alpha v0.1.0"
+              size="small"
+              variant="outlined"
+              sx={{
+                height: 18,
+                fontSize: 10.5,
+                "& .MuiChip-label": { px: 0.75 },
+              }}
+            />
           </Stack>
-          <Stack direction="row" spacing={2}>
-            <Button size="small" color="inherit">
-              Confidentialité
-            </Button>
-            <Button size="small" color="inherit">
-              Conditions
-            </Button>
-            <Button size="small" color="inherit">
-              Support
-            </Button>
+          <Stack direction="row" spacing={0.25}>
+            {LINKS.map((l) => (
+              <Button
+                key={l.href}
+                component={Link}
+                href={l.href}
+                size="small"
+                sx={{
+                  fontSize: 12,
+                  py: 0.25,
+                  px: 1,
+                  minWidth: 0,
+                  textTransform: "none",
+                  color: "text.secondary",
+                }}
+              >
+                {l.label}
+              </Button>
+            ))}
           </Stack>
         </Stack>
       </Container>

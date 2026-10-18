@@ -101,13 +101,16 @@ export default function MonthGrid({
                   }
                 }}
                 sx={{
-                  aspectRatio: "1 / 1",
+                  // Carrée sur mobile ; sur desktop une hauteur fixe, sinon la
+                  // cellule grandit avec la largeur du panneau et devient énorme.
+                  aspectRatio: { xs: "1 / 1", md: "auto" },
+                  height: { md: 86 },
                   maxWidth: "100%",
                   border: 1,
                   borderColor: isToday ? "primary.main" : "#1e2029",
                   boxShadow: isToday ? "inset 0 0 0 1px #8b5cf6" : "none",
                   borderRadius: 1.5,
-                  p: 0.75,
+                  p: { xs: 0.75, md: 1 },
                   display: "flex",
                   flexDirection: "column",
                   gap: 0.5,
