@@ -65,10 +65,33 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  // Relations App  
-  contracts Contract[]
+  // Relations App
+  contracts  Contract[]
+  categories Category[]
 
   @@map("users")
+}
+
+// Familles de contrats, éditables par l'utilisateur.
+// Contract.category stocke le `slug` plutôt qu'une clé étrangère : un contrat
+// dont la famille est supprimée retombe simplement en « sans famille », et le
+// slug reste stable quand le libellé change.
+model Category {
+  id        String   @id @default(cuid())
+  slug      String
+  label     String
+  color     String
+  position  Int      @default(0)
+
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, slug])
+  @@index([userId, position])
+  @@map("categories")
 }
 
 model VerificationToken {

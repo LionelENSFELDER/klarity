@@ -87,6 +87,108 @@ export function getMonthTotal(
     .reduce((sum, c) => sum + c.amount, 0);
 }
 
+/** Une occurrence de prélèvement : un contrat à une date précise. */
+export interface Occurrence {
+  date: Date;
+  contract: CalendarContract;
+}
+
+/**
+ * Déplie les contrats en occurrences datées sur un horizon de N mois.
+ * Les occurrences antérieures à `from` sont écartées : le mois en cours
+ * n'apparaît qu'à partir d'aujourd'hui.
+ */
+export function getUpcomingDebits(
+  contracts: CalendarContract[],
+  from: Date,
+  months: number,
+): Occurrence[] {
+  const out: Occurrence[] = [];
+  for (let i = 0; i < months; i++) {
+    const cursor = new Date(from.getFullYear(), from.getMonth() + i, 1);
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
+    for (const contract of contracts) {
+      if (!isDebitedInMonth(contract, year, month)) continue;
+      const date = new Date(year, month, effectiveDebitDay(contract, year, month));
+      if (date < from) continue;
+      out.push({ date, contract });
+    }
+  }
+  return out.sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+/** Occurrences d'un mois donné, du 1er au dernier jour. */
+export function getMonthOccurrences(
+  contracts: CalendarContract[],
+  year: number,
+  month: number,
+): Occurrence[] {
+  return contracts
+    .filter((c) => isDebitedInMonth(c, year, month))
+    .map((contract) => ({
+      date: new Date(year, month, effectiveDebitDay(contract, year, month)),
+      contract,
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+/**
+ * Première occurrence à partir de `from`, sans limite d'horizon (24 mois max).
+ * Sert aux états vides : distinguer « aucune échéance sur la période »
+ * de « plus aucune échéance du tout ».
+ */
+export function getNextOccurrence(
+  contract: CalendarContract,
+  from: Date,
+): Date | null {
+  for (let i = 0; i < 24; i++) {
+    const cursor = new Date(from.getFullYear(), from.getMonth() + i, 1);
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
+    if (!isDebitedInMonth(contract, year, month)) continue;
+    const date = new Date(year, month, effectiveDebitDay(contract, year, month));
+    if (date >= from) return date;
+  }
+  return null;
+}
+
+/** Groupe des occurrences par mois, dans l'ordre chronologique. */
+export interface MonthGroup {
+  year: number;
+  month: number;
+  items: Occurrence[];
+  total: number;
+}
+
+export function groupByMonth(occurrences: Occurrence[]): MonthGroup[] {
+  const groups = new Map<string, MonthGroup>();
+  for (const occurrence of occurrences) {
+    const year = occurrence.date.getFullYear();
+    const month = occurrence.date.getMonth();
+    const key = `${year}-${month}`;
+    const group = groups.get(key) ?? { year, month, items: [], total: 0 };
+    group.items.push(occurrence);
+    group.total += occurrence.contract.amount;
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
+/** Coût ramené au mois, pour comparer des contrats de fréquences différentes. */
+export function monthlyCost(contract: CalendarContract): number {
+  switch (contract.frequency) {
+    case "monthly":
+      return contract.amount;
+    case "quarterly":
+      return contract.amount / 3;
+    case "annual":
+      return contract.amount / 12;
+    default:
+      return 0;
+  }
+}
+
 export function formatEuro(amount: number): string {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",

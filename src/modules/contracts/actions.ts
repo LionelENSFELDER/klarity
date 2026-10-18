@@ -41,10 +41,8 @@ function parseAmount(value: unknown): number | null {
 
 const subscriptionSchema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .min(1, "Le fournisseur / nom du contrat est requis"),
+    name: z.string().trim().min(1, "Le nom du contrat est requis"),
+    provider: z.string().trim().optional(),
     category: z.string().min(1, "La catégorie est requise"),
     amount: z.number().positive("Le montant doit être positif"),
     frequency: z.enum(["once", "monthly", "quarterly", "annual"]),
@@ -81,6 +79,7 @@ export async function CreateSubscription(formData: FormData) {
 
   const parsed = subscriptionSchema.safeParse({
     name: formData.get("name"),
+    provider: formData.get("provider") ?? undefined,
     category: formData.get("category"),
     amount: parseAmount(formData.get("amount")),
     frequency: formData.get("frequency"),
@@ -116,7 +115,7 @@ export async function CreateSubscription(formData: FormData) {
     data: {
       userId,
       name: data.name,
-      provider: data.name,
+      provider: data.provider || data.name,
       category: data.category,
       status: "active",
       amount: data.amount,
@@ -147,6 +146,7 @@ export async function EditSubscription(id: string, formData: FormData) {
 
   const parsed = subscriptionSchema.safeParse({
     name: formData.get("name"),
+    provider: formData.get("provider") ?? undefined,
     category: formData.get("category"),
     amount: parseAmount(formData.get("amount")),
     frequency: formData.get("frequency"),
@@ -182,7 +182,7 @@ export async function EditSubscription(id: string, formData: FormData) {
     where: { id },
     data: {
       name: data.name,
-      provider: data.name,
+      provider: data.provider || data.name,
       category: data.category,
       amount: data.amount,
       frequency: data.frequency,

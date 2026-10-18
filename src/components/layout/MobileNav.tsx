@@ -15,6 +15,7 @@ import {
   Menu as MenuIcon,
   CalendarMonth as CalendarIcon,
   Add as AddIcon,
+  Settings as SettingsIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 import ContractFormDialog from "@/components/contracts/ContractFormDialog";
@@ -24,7 +25,8 @@ export default function MobileNav() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const menuItems = [
-    { text: "Calendrier", icon: <CalendarIcon />, href: "/calendar" },
+    { text: "Échéances", icon: <CalendarIcon />, href: "/calendar" },
+    { text: "Réglages", icon: <SettingsIcon />, href: "/reglages" },
   ];
 
   return (

@@ -10,7 +10,9 @@ import {
   ToggleButtonGroup,
   Paper,
 } from "@mui/material";
-import { CATEGORIES, FREQUENCIES, getCategory } from "@/modules/contracts/categories";
+import { FREQUENCIES } from "@/modules/contracts/categories";
+import { findCategory } from "@/modules/categories/model";
+import { useCategories } from "./CategoriesProvider";
 import { formatEuro } from "@/modules/contracts/calendar";
 import FullIconSearchSelector, {
   IconOption,
@@ -19,6 +21,8 @@ import FullIconSearchSelector, {
 interface ContractFormFieldsProps {
   name: string;
   onNameChange: (value: string) => void;
+  provider: string;
+  onProviderChange: (value: string) => void;
   category: string;
   onCategoryChange: (value: string) => void;
   amount: string;
@@ -42,6 +46,8 @@ interface ContractFormFieldsProps {
 export default function ContractFormFields({
   name,
   onNameChange,
+  provider,
+  onProviderChange,
   category,
   onCategoryChange,
   amount,
@@ -59,9 +65,10 @@ export default function ContractFormFields({
   selectedIcon,
   onSelectedIconChange,
 }: ContractFormFieldsProps) {
+  const categories = useCategories();
   const isOnce = frequency === "once";
   const parsedAmount = parseFloat(amount.replace(",", "."));
-  const selectedCategory = category ? getCategory(category) : null;
+  const selectedCategory = category ? findCategory(categories, category) : null;
   const previewDay = isOnce
     ? debitDate
       ? new Date(debitDate).getDate()
@@ -77,13 +84,23 @@ export default function ContractFormFields({
 
   return (
     <Stack spacing={3}>
-      {/* Fournisseur / nom */}
+      {/* Nom du contrat */}
       <TextField
-        label="Fournisseur / nom du contrat"
-        placeholder="ex. MAAF Habitation"
+        label="Nom du contrat"
+        placeholder="ex. Assurance habitation"
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
         required
+        fullWidth
+      />
+
+      {/* Fournisseur — distinct du nom : sert au regroupement dans le rail */}
+      <TextField
+        label="Fournisseur (optionnel)"
+        placeholder="ex. MAAF"
+        helperText="Laissé vide, le nom du contrat est repris."
+        value={provider}
+        onChange={(e) => onProviderChange(e.target.value)}
         fullWidth
       />
 
@@ -93,18 +110,18 @@ export default function ContractFormFields({
           Catégorie *
         </Typography>
         <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
-          {CATEGORIES.map((cat) => {
-            const selected = category === cat.id;
+          {categories.map((cat) => {
+            const selected = category === cat.slug;
             return (
               <Box
-                key={cat.id}
+                key={cat.slug}
                 role="button"
                 tabIndex={0}
-                onClick={() => onCategoryChange(cat.id)}
+                onClick={() => onCategoryChange(cat.slug)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    onCategoryChange(cat.id);
+                    onCategoryChange(cat.slug);
                   }
                 }}
                 sx={{

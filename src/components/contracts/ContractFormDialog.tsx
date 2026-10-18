@@ -22,6 +22,7 @@ type ContractFormDialogProps =
 
 const EMPTY_STATE = {
   name: "",
+  provider: "",
   category: "",
   amount: "",
   frequency: "monthly",
@@ -48,6 +49,7 @@ export default function ContractFormDialog({
   const [error, setError] = useState("");
 
   const [name, setName] = useState(EMPTY_STATE.name);
+  const [provider, setProvider] = useState(EMPTY_STATE.provider);
   const [category, setCategory] = useState(EMPTY_STATE.category);
   const [amount, setAmount] = useState(EMPTY_STATE.amount);
   const [frequency, setFrequency] = useState(EMPTY_STATE.frequency);
@@ -65,6 +67,8 @@ export default function ContractFormDialog({
 
     if (mode === "edit" && contract) {
       setName(contract.name);
+      // Avant la séparation des champs, provider recopiait le nom.
+      setProvider(contract.provider === contract.name ? "" : contract.provider);
       setCategory(contract.category);
       setAmount(String(contract.amount));
       setFrequency(contract.frequency);
@@ -89,6 +93,7 @@ export default function ContractFormDialog({
       );
     } else {
       setName(EMPTY_STATE.name);
+      setProvider(EMPTY_STATE.provider);
       setCategory(EMPTY_STATE.category);
       setAmount(EMPTY_STATE.amount);
       setFrequency(EMPTY_STATE.frequency);
@@ -117,6 +122,7 @@ export default function ContractFormDialog({
 
     const formData = new FormData();
     formData.set("name", name.trim());
+    if (provider.trim()) formData.set("provider", provider.trim());
     formData.set("category", category);
     formData.set("amount", String(parsedAmount));
     formData.set("frequency", frequency);
@@ -163,6 +169,8 @@ export default function ContractFormDialog({
           <ContractFormFields
             name={name}
             onNameChange={setName}
+            provider={provider}
+            onProviderChange={setProvider}
             category={category}
             onCategoryChange={setCategory}
             amount={amount}

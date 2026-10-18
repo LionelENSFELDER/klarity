@@ -134,7 +134,7 @@ describe("ContractFormDialog – mode création", () => {
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByText("Ajouter un contrat")).toBeInTheDocument();
     expect(
-      within(dialog).getByLabelText(/Fournisseur \/ nom du contrat/),
+      within(dialog).getByLabelText(/^Nom du contrat/),
     ).toHaveValue("");
   });
 
@@ -147,7 +147,7 @@ describe("ContractFormDialog – mode création", () => {
 
     const dialog = screen.getByRole("dialog");
     await user.type(
-      within(dialog).getByLabelText(/Fournisseur \/ nom du contrat/),
+      within(dialog).getByLabelText(/^Nom du contrat/),
       "Spotify",
     );
     await user.click(within(dialog).getByText("Internet & mobile"));
@@ -180,7 +180,7 @@ describe("ContractFormDialog – mode création", () => {
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).queryByDisplayValue("Netflix")).not.toBeInTheDocument();
     expect(
-      within(dialog).getByLabelText(/Fournisseur \/ nom du contrat/),
+      within(dialog).getByLabelText(/^Nom du contrat/),
     ).toHaveValue("");
   });
 });

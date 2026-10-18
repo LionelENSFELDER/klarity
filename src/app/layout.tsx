@@ -49,7 +49,18 @@ export default async function RootLayout({
               }}
             >
               <Header />
-              <Box component="main" sx={{ flex: 1 }}>
+              {/* minWidth/minHeight 0 : le rail et la liste gèrent leur propre
+                  défilement sans forcer la largeur de la page. */}
+              <Box
+                component="main"
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0,
+                  minHeight: 0,
+                }}
+              >
                 {children}
               </Box>
               <Footer />
