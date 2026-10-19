@@ -2,16 +2,29 @@ import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { Box, Button, Container, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { getCategories } from "@/modules/categories/queries";
-import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
+import {
+  getAllContracts,
+  getCalendarContracts,
+  getProviders,
+} from "@/modules/contracts/queries";
 import { monthlyCost } from "@/modules/contracts/calendar";
 import { buildSidebarCounts } from "@/modules/contracts/sidebar";
 import AppSidebar from "@/components/layout/AppSidebar";
 import CategorySettings from "@/components/settings/CategorySettings";
 import ProviderSettings from "@/components/settings/ProviderSettings";
+import ContractSettings from "@/components/settings/ContractSettings";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+const ONGLETS = [
+  { id: "contrats", label: "Contrats" },
+  { id: "familles", label: "Familles" },
+  { id: "fournisseurs", label: "Fournisseurs" },
+] as const;
+
+type Onglet = (typeof ONGLETS)[number]["id"];
 
 export default async function ReglagesPage({
   searchParams,
@@ -24,13 +37,15 @@ export default async function ReglagesPage({
   }
 
   const raw = await searchParams;
-  const onglet = (Array.isArray(raw.onglet) ? raw.onglet[0] : raw.onglet) === "fournisseurs"
-    ? "fournisseurs"
-    : "familles";
+  const asked = Array.isArray(raw.onglet) ? raw.onglet[0] : raw.onglet;
+  const onglet: Onglet = ONGLETS.some((o) => o.id === asked)
+    ? (asked as Onglet)
+    : "contrats";
 
-  const [categories, contracts, providers] = await Promise.all([
+  const [categories, contracts, allContracts, providers] = await Promise.all([
     getCategories(),
     getCalendarContracts(),
+    getAllContracts(),
     getProviders(),
   ]);
 
@@ -74,7 +89,7 @@ export default async function ReglagesPage({
                 Réglages
               </Typography>
               <Typography sx={{ color: "text.secondary", fontSize: 12.5, mt: 0.4 }}>
-                Familles et fournisseurs
+                Contrats, familles et fournisseurs
               </Typography>
             </Box>
             <Button component={Link} href="/calendar" color="inherit" size="small">
@@ -83,25 +98,25 @@ export default async function ReglagesPage({
           </Stack>
 
           <Tabs value={onglet} sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-            <Tab
-              value="familles"
-              label="Familles"
-              component={Link}
-              href="/reglages?onglet=familles"
-              sx={{ textTransform: "none" }}
-            />
-            <Tab
-              value="fournisseurs"
-              label="Fournisseurs"
-              component={Link}
-              href="/reglages?onglet=fournisseurs"
-              sx={{ textTransform: "none" }}
-            />
+            {ONGLETS.map((o) => (
+              <Tab
+                key={o.id}
+                value={o.id}
+                label={o.label}
+                component={Link}
+                href={`/reglages?onglet=${o.id}`}
+                sx={{ textTransform: "none" }}
+              />
+            ))}
           </Tabs>
 
-          {onglet === "familles" ? (
+          {onglet === "contrats" && (
+            <ContractSettings contracts={allContracts} categories={categories} />
+          )}
+          {onglet === "familles" && (
             <CategorySettings categories={categories} usage={usage} />
-          ) : (
+          )}
+          {onglet === "fournisseurs" && (
             <ProviderSettings providers={providers} />
           )}
         </Container>

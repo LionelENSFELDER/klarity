@@ -202,3 +202,47 @@ export async function EditSubscription(id: string, formData: FormData) {
   revalidatePath("/calendar");
   return { success: true };
 }
+
+// ============================================
+// Gestion des contrats (page Réglages)
+// ============================================
+
+type Result = { success: true } | { error: string };
+
+/**
+ * Archive ou réactive un contrat.
+ *
+ * Un contrat archivé disparaît des échéances et du calendrier — toutes les
+ * requêtes d'affichage filtrent sur `status: "active"` — mais reste
+ * consultable et restaurable depuis la page de gestion.
+ */
+export async function SetContractArchived(
+  id: string,
+  archived: boolean,
+): Promise<Result> {
+  const userId = await getSessionUserId();
+  const contract = await prisma.contract.findFirst({ where: { id, userId } });
+  if (!contract) return { error: "Contrat non trouvé." };
+
+  await prisma.contract.update({
+    where: { id },
+    data: { status: archived ? "archived" : "active", updatedAt: new Date() },
+  });
+
+  revalidatePath("/calendar");
+  revalidatePath("/reglages");
+  return { success: true };
+}
+
+/** Supprime définitivement un contrat. Irréversible. */
+export async function DeleteContract(id: string): Promise<Result> {
+  const userId = await getSessionUserId();
+  const contract = await prisma.contract.findFirst({ where: { id, userId } });
+  if (!contract) return { error: "Contrat non trouvé." };
+
+  await prisma.contract.delete({ where: { id } });
+
+  revalidatePath("/calendar");
+  revalidatePath("/reglages");
+  return { success: true };
+}
