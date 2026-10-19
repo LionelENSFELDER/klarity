@@ -21,7 +21,7 @@ export default function ConfidentialitePage() {
         {
           title: "Données de contrats",
           body: [
-            "Tout ce que vous saisissez : nom du contrat, fournisseur, famille, montant, fréquence, jour de prélèvement, date de renouvellement, référence et notes.",
+            "Tout ce que vous saisissez : nom du contrat, fournisseur, catégorie, montant, fréquence, jour de prélèvement, date de renouvellement, référence et notes.",
             "Ces données ne sont rattachées qu'à votre compte. Klarity ne se connecte à aucune banque et ne lit aucun relevé : rien n'est importé automatiquement.",
           ],
         },

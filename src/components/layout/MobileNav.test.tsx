@@ -20,7 +20,7 @@ vi.mock("@/components/icons/FullIconSearchSelector", () => ({
 const categories: Category[] = [
   { id: "1", slug: "energie", label: "Énergie", color: "#fbbf24", position: 0 },
   { id: "2", slug: "abonnement", label: "Abonnement", color: "#f472b6", position: 1 },
-  { id: "3", slug: "vide", label: "Famille vide", color: "#34d399", position: 2 },
+  { id: "3", slug: "vide", label: "Catégorie vide", color: "#34d399", position: 2 },
 ];
 
 const counts: SidebarCounts = {
@@ -64,15 +64,15 @@ describe("MobileNav", () => {
     expect(within(nav).getByText("9")).toBeInTheDocument();
   });
 
-  it("liste les familles utilisées et masque les familles vides", async () => {
+  it("liste les catégories utilisées et masque les catégories vides", async () => {
     await openDrawer();
     const nav = screen.getByRole("navigation");
 
     expect(within(nav).getByText("Énergie")).toBeInTheDocument();
     expect(within(nav).getByText("Abonnement")).toBeInTheDocument();
-    expect(within(nav).queryByText("Famille vide")).not.toBeInTheDocument();
-    // orphans > 0 : l'entrée « Sans famille » apparaît.
-    expect(within(nav).getByText("Sans famille")).toBeInTheDocument();
+    expect(within(nav).queryByText("Catégorie vide")).not.toBeInTheDocument();
+    // orphans > 0 : l'entrée « Sans catégorie » apparaît.
+    expect(within(nav).getByText("Sans catégorie")).toBeInTheDocument();
   });
 
   it("liste les fournisseurs avec leur coût mensuel", async () => {
@@ -100,7 +100,7 @@ describe("MobileNav", () => {
 
     expect(within(nav).getByText("Énergie").closest("a")).toHaveAttribute(
       "href",
-      "/calendar?famille=energie",
+      "/calendar?categorie=energie",
     );
     expect(within(nav).getByText("EDF").closest("a")).toHaveAttribute(
       "href",
@@ -120,9 +120,9 @@ describe("MobileNav", () => {
 describe("NavContent – sections repliables", () => {
   it("affiche les sections dépliées par défaut", async () => {
     await openDrawer();
-    const familles = screen.getByRole("button", { name: /Familles/ });
+    const catégories = screen.getByRole("button", { name: /Catégories/ });
 
-    expect(familles).toHaveAttribute("aria-expanded", "true");
+    expect(catégories).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByText("Énergie")).toBeInTheDocument();
   });
 
@@ -130,14 +130,14 @@ describe("NavContent – sections repliables", () => {
     const user = userEvent.setup();
     await openDrawer();
 
-    await user.click(screen.getByRole("button", { name: /Familles/ }));
+    await user.click(screen.getByRole("button", { name: /Catégories/ }));
 
     expect(
-      screen.getByRole("button", { name: /Familles/ }),
+      screen.getByRole("button", { name: /Catégories/ }),
     ).toHaveAttribute("aria-expanded", "false");
     // unmountOnExit : les entrées quittent le DOM, pas seulement l'écran.
     expect(screen.queryByText("Énergie")).not.toBeInTheDocument();
-    // Replier les familles ne touche pas les fournisseurs.
+    // Replier les catégories ne touche pas les fournisseurs.
     expect(screen.getByText("EDF")).toBeInTheDocument();
   });
 

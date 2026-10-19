@@ -17,10 +17,10 @@ describe("parseParams", () => {
     expect(parseParams({})).toEqual(DEFAULT_PARAMS);
   });
 
-  it("lit une liste, une famille et un fournisseur valides", () => {
-    expect(parseParams({ liste: "mois", famille: "energie" })).toMatchObject({
+  it("lit une liste, une catégorie et un fournisseur valides", () => {
+    expect(parseParams({ liste: "mois", categorie: "energie" })).toMatchObject({
       liste: "mois",
-      famille: "energie",
+      categorie: "energie",
     });
     expect(parseParams({ fournisseur: "EDF" }).fournisseur).toBe("EDF");
   });
@@ -40,12 +40,12 @@ describe("parseParams", () => {
   });
 
   it("ne garde que la première valeur d'un paramètre répété", () => {
-    expect(parseParams({ famille: ["auto", "energie"] }).famille).toBe("auto");
+    expect(parseParams({ categorie: ["auto", "energie"] }).categorie).toBe("auto");
   });
 
   it("traite une chaîne vide comme absente", () => {
-    expect(parseParams({ famille: "", fournisseur: "" })).toMatchObject({
-      famille: null,
+    expect(parseParams({ categorie: "", fournisseur: "" })).toMatchObject({
+      categorie: null,
       fournisseur: null,
     });
   });
@@ -58,12 +58,12 @@ describe("hrefWith", () => {
   });
 
   it("conserve les filtres actifs en changeant un seul paramètre", () => {
-    const params = { ...DEFAULT_PARAMS, famille: "energie" };
+    const params = { ...DEFAULT_PARAMS, categorie: "energie" };
     expect(hrefWith(params, { horizon: 12 })).toBe(
-      "/calendar?famille=energie&horizon=12",
+      "/calendar?categorie=energie&horizon=12",
     );
     expect(hrefWith(params, { vue: "calendrier" })).toBe(
-      "/calendar?famille=energie&vue=calendrier",
+      "/calendar?categorie=energie&vue=calendrier",
     );
   });
 

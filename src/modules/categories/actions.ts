@@ -49,7 +49,7 @@ export async function RenameCategory(id: string, label: string): Promise<Result>
   if (!trimmed) return { error: "Le nom ne peut pas être vide." };
 
   const siblings = await prisma.category.findMany({ where: { userId } });
-  if (!siblings.some((c) => c.id === id)) return { error: "Famille introuvable." };
+  if (!siblings.some((c) => c.id === id)) return { error: "Catégorie introuvable." };
   if (
     siblings.some(
       (c) => c.id !== id && normalizeName(c.label) === normalizeName(trimmed),
@@ -69,7 +69,7 @@ export async function RecolorCategory(id: string, color: string): Promise<Result
   if (!/^#[0-9a-f]{6}$/i.test(color)) return { error: "Couleur invalide." };
 
   const category = await prisma.category.findFirst({ where: { id, userId } });
-  if (!category) return { error: "Famille introuvable." };
+  if (!category) return { error: "Catégorie introuvable." };
 
   await prisma.category.update({ where: { id }, data: { color } });
   revalidate();
@@ -77,8 +77,8 @@ export async function RecolorCategory(id: string, color: string): Promise<Result
 }
 
 /**
- * Supprime une famille. `reassignTo` est le slug de destination des contrats
- * concernés, ou NO_CATEGORY.slug pour les laisser sans famille.
+ * Supprime une catégorie. `reassignTo` est le slug de destination des contrats
+ * concernés, ou NO_CATEGORY.slug pour les laisser sans catégorie.
  */
 export async function DeleteCategory(
   id: string,
@@ -87,7 +87,7 @@ export async function DeleteCategory(
   const userId = await getSessionUserId();
 
   const category = await prisma.category.findFirst({ where: { id, userId } });
-  if (!category) return { error: "Famille introuvable." };
+  if (!category) return { error: "Catégorie introuvable." };
 
   const used = await prisma.contract.count({
     where: { userId, category: category.slug },
@@ -96,14 +96,14 @@ export async function DeleteCategory(
   if (used > 0) {
     if (!reassignTo) {
       return {
-        error: `${used} contrat${used > 1 ? "s utilisent" : " utilise"} cette famille : choisis une destination.`,
+        error: `${used} contrat${used > 1 ? "s utilisent" : " utilise"} cette catégorie : choisis une destination.`,
       };
     }
     if (reassignTo !== NO_CATEGORY.slug) {
       const target = await prisma.category.findFirst({
         where: { userId, slug: reassignTo },
       });
-      if (!target) return { error: "Famille de destination introuvable." };
+      if (!target) return { error: "Catégorie de destination introuvable." };
     }
     await prisma.contract.updateMany({
       where: { userId, category: category.slug },

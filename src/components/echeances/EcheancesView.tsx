@@ -31,7 +31,7 @@ const MONTHS = [
 ];
 
 interface EcheancesViewProps {
-  /** Contrats déjà filtrés côté serveur selon famille / fournisseur. */
+  /** Contrats déjà filtrés côté serveur selon catégorie / fournisseur. */
   contracts: CalendarContract[];
   totalContracts: number;
   categories: Category[];
@@ -62,10 +62,10 @@ export default function EcheancesView({
       ? getMonthOccurrences(contracts, today.getFullYear(), today.getMonth())
       : getUpcomingDebits(contracts, today, params.horizon);
 
-  const category = params.famille
-    ? params.famille === NO_CATEGORY.slug
+  const category = params.categorie
+    ? params.categorie === NO_CATEGORY.slug
       ? NO_CATEGORY
-      : findCategory(categories, params.famille)
+      : findCategory(categories, params.categorie)
     : null;
 
   const title = category
@@ -73,7 +73,7 @@ export default function EcheancesView({
     : params.fournisseur ?? LIST_LABELS[params.liste];
 
   const isPlainTout =
-    params.liste === "tout" && !params.famille && !params.fournisseur;
+    params.liste === "tout" && !params.categorie && !params.fournisseur;
 
   const detail = category
     ? `${contracts.length} contrat${contracts.length > 1 ? "s" : ""}`

@@ -12,7 +12,7 @@ export type ViewId = "liste" | "calendrier";
 
 export interface EcheancesParams {
   liste: ListId;
-  famille: string | null;
+  categorie: string | null;
   fournisseur: string | null;
   vue: ViewId;
   horizon: number;
@@ -20,7 +20,7 @@ export interface EcheancesParams {
 
 export const DEFAULT_PARAMS: EcheancesParams = {
   liste: "a-venir",
-  famille: null,
+  categorie: null,
   fournisseur: null,
   vue: "liste",
   horizon: 3,
@@ -38,7 +38,7 @@ export function parseParams(
 
   return {
     liste: liste === "mois" || liste === "tout" ? liste : "a-venir",
-    famille: one(raw.famille) || null,
+    categorie: one(raw.categorie) || null,
     fournisseur: one(raw.fournisseur) || null,
     vue: vue === "calendrier" ? "calendrier" : "liste",
     horizon: (HORIZONS as readonly number[]).includes(horizon) ? horizon : 3,
@@ -53,7 +53,7 @@ export function hrefWith(
   const next = { ...params, ...patch };
   const q = new URLSearchParams();
   if (next.liste !== "a-venir") q.set("liste", next.liste);
-  if (next.famille) q.set("famille", next.famille);
+  if (next.categorie) q.set("categorie", next.categorie);
   if (next.fournisseur) q.set("fournisseur", next.fournisseur);
   if (next.vue !== "liste") q.set("vue", next.vue);
   if (next.horizon !== 3) q.set("horizon", String(next.horizon));

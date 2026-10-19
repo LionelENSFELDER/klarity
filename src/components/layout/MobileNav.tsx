@@ -14,7 +14,7 @@ interface MobileNavProps {
 }
 
 // Le tiroir rend exactement le même contenu que le rail desktop : listes,
-// familles, fournisseurs, réglages, profil. L'app étant surtout utilisée
+// catégories, fournisseurs, réglages, profil. L'app étant surtout utilisée
 // sur mobile, rien ne doit être réservé au grand écran.
 export default function MobileNav({
   categories,

@@ -1,4 +1,4 @@
-// Fréquences de prélèvement. Les familles de contrats vivent désormais en
+// Fréquences de prélèvement. Les catégories de contrats vivent désormais en
 // base (voir src/modules/categories) : elles sont éditables par l'utilisateur.
 
 export const FREQUENCIES = [

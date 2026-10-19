@@ -4,9 +4,9 @@ import { getSession } from "@/lib/session";
 import { DEFAULT_CATEGORIES, type Category } from "./model";
 
 /**
- * Familles de l'utilisateur, créées à la volée au premier accès.
+ * Catégories de l'utilisateur, créées à la volée au premier accès.
  * Évite une migration de données : tout compte — existant ou nouveau —
- * obtient ses sept familles par défaut la première fois qu'il les lit.
+ * obtient ses sept catégories par défaut la première fois qu'il les lit.
  */
 export const getCategories = cache(async (): Promise<Category[]> => {
   const session = await getSession();

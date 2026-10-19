@@ -79,7 +79,7 @@ describe("ContractSettings – liste", () => {
     vi.mocked(SetContractArchived).mockReset();
   });
 
-  it("affiche les contrats actifs avec leur famille et leur montant", () => {
+  it("affiche les contrats actifs avec leur catégorie et leur montant", () => {
     renderSettings([base, edf]);
 
     expect(screen.getByText("Netflix Famille")).toBeInTheDocument();

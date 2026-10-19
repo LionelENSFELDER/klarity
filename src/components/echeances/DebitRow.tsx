@@ -119,7 +119,7 @@ export default function DebitRow({
             {contract.provider}
           </Typography>
           {category.slug === NO_CATEGORY.slug && (
-            <Chip label="sans famille" size="small" variant="outlined" sx={tagSx("#5c6675")} />
+            <Chip label="sans catégorie" size="small" variant="outlined" sx={tagSx("#5c6675")} />
           )}
           {renews && (
             <Chip

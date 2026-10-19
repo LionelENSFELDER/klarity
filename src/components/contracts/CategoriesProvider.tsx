@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 import { DEFAULT_CATEGORIES, type Category } from "@/modules/categories/model";
 
-// Les familles sont chargées une fois par la page serveur. Ce contexte évite
+// Les catégories sont chargées une fois par la page serveur. Ce contexte évite
 // de les faire descendre à travers chaque bouton « Nouveau contrat ».
 const CategoriesContext = createContext<Category[] | null>(null);
 
@@ -21,7 +21,7 @@ export function CategoriesProvider({
   );
 }
 
-/** Hors provider (tests, pages sans familles chargées) : les sept par défaut. */
+/** Hors provider (tests, pages sans catégories chargées) : les sept par défaut. */
 export function useCategories(): Category[] {
   return (
     useContext(CategoriesContext) ??

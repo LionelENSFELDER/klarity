@@ -64,7 +64,7 @@ export default function CategorySettings({
     });
   };
 
-  // La couleur n'identifie pas une famille, mais deux teintes identiques
+  // La couleur n'identifie pas une catégorie, mais deux teintes identiques
   // rendent les pastilles du rail indistinguables : on avertit sans bloquer.
   const duplicateColors = categories.filter(
     (c, i) => categories.findIndex((x) => x.color === c.color) !== i,
@@ -83,7 +83,7 @@ export default function CategorySettings({
           <strong>Couleur en double.</strong>{" "}
           {duplicateColors.map((c) => c.label).join(", ")} partage
           {duplicateColors.length > 1 ? "nt" : ""} sa teinte avec une autre
-          famille. Les pastilles du rail deviennent difficiles à distinguer.
+          catégorie. Les pastilles du rail deviennent difficiles à distinguer.
         </Alert>
       )}
 
@@ -99,7 +99,7 @@ export default function CategorySettings({
                     size="small"
                     fullWidth
                     autoFocus
-                    label="Nom de la famille"
+                    label="Nom de la catégorie"
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     onKeyDown={(e) => {
@@ -246,8 +246,8 @@ export default function CategorySettings({
                   </Typography>
                   <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1.5 }}>
                     {stats.count
-                      ? `${stats.count} contrat${stats.count > 1 ? "s utilisent" : " utilise"} cette famille. Choisis leur destination :`
-                      : "Cette famille ne porte aucun contrat, la suppression est sans effet de bord."}
+                      ? `${stats.count} contrat${stats.count > 1 ? "s utilisent" : " utilise"} cette catégorie. Choisis leur destination :`
+                      : "Cette catégorie ne porte aucun contrat, la suppression est sans effet de bord."}
                   </Typography>
                   {stats.count > 0 && (
                     <TextField
@@ -266,7 +266,7 @@ export default function CategorySettings({
                           </MenuItem>
                         ))}
                       <MenuItem value={NO_CATEGORY.slug}>
-                        Laisser sans famille
+                        Laisser sans catégorie
                       </MenuItem>
                     </TextField>
                   )}
@@ -297,7 +297,7 @@ export default function CategorySettings({
               size="small"
               fullWidth
               autoFocus
-              label="Nom de la nouvelle famille"
+              label="Nom de la nouvelle catégorie"
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => {
@@ -317,7 +317,7 @@ export default function CategorySettings({
           </Stack>
         ) : (
           <Button variant="outlined" size="small" onClick={() => setAdding(true)}>
-            ＋ Nouvelle famille
+            ＋ Nouvelle catégorie
           </Button>
         )}
       </Box>

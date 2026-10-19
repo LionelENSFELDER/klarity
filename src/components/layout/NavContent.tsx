@@ -213,11 +213,11 @@ export default function NavContent({
   const onSettings = pathname.startsWith("/reglages");
   const active = {
     liste: searchParams.get("liste") ?? "a-venir",
-    famille: searchParams.get("famille"),
+    categorie: searchParams.get("categorie"),
     fournisseur: searchParams.get("fournisseur"),
   };
-  const noFilter = !active.famille && !active.fournisseur;
-  // Une famille sans contrat reste dans les réglages mais disparaît d'ici.
+  const noFilter = !active.categorie && !active.fournisseur;
+  // Une catégorie sans contrat reste dans les réglages mais disparaît d'ici.
   const shown = categories.filter((c) => (counts.byCategory[c.slug] ?? 0) > 0);
   const isList = (id: string) =>
     !onSettings && noFilter && active.liste === id;
@@ -281,13 +281,13 @@ export default function NavContent({
         })}
       </Stack>
 
-      <NavSection title="Familles" settingsTab="familles">
+      <NavSection title="Catégories" settingsTab="categories">
           {shown.map((cat) => {
-            const current = !onSettings && active.famille === cat.slug;
+            const current = !onSettings && active.categorie === cat.slug;
             return (
               <NavLink onNavigate={onNavigate}
                 key={cat.slug}
-                href={`/calendar?famille=${encodeURIComponent(cat.slug)}`}
+                href={`/calendar?categorie=${encodeURIComponent(cat.slug)}`}
                 current={current}
               >
                 <Box
@@ -314,8 +314,8 @@ export default function NavContent({
 
           {counts.orphans > 0 && (
             <NavLink onNavigate={onNavigate}
-              href={`/calendar?famille=${NO_CATEGORY.slug}`}
-              current={!onSettings && active.famille === NO_CATEGORY.slug}
+              href={`/calendar?categorie=${NO_CATEGORY.slug}`}
+              current={!onSettings && active.categorie === NO_CATEGORY.slug}
             >
               <Box
                 sx={{
@@ -334,7 +334,7 @@ export default function NavContent({
 
         {shown.length === 0 && counts.orphans === 0 && (
           <Typography sx={{ px: 1, fontSize: 12, color: "#5c6675" }}>
-            Aucune famille utilisée
+            Aucune catégorie utilisée
           </Typography>
         )}
       </NavSection>

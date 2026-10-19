@@ -20,7 +20,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 const ONGLETS = [
   { id: "contrats", label: "Contrats" },
-  { id: "familles", label: "Familles" },
+  { id: "categories", label: "Catégories" },
   { id: "fournisseurs", label: "Fournisseurs" },
 ] as const;
 
@@ -89,7 +89,7 @@ export default async function ReglagesPage({
                 Réglages
               </Typography>
               <Typography sx={{ color: "text.secondary", fontSize: 12.5, mt: 0.4 }}>
-                Contrats, familles et fournisseurs
+                Contrats, catégories et fournisseurs
               </Typography>
             </Box>
             <Button component={Link} href="/calendar" color="inherit" size="small">
@@ -113,7 +113,7 @@ export default async function ReglagesPage({
           {onglet === "contrats" && (
             <ContractSettings contracts={allContracts} categories={categories} />
           )}
-          {onglet === "familles" && (
+          {onglet === "categories" && (
             <CategorySettings categories={categories} usage={usage} />
           )}
           {onglet === "fournisseurs" && (

@@ -36,9 +36,9 @@ export default async function CalendarPage({
   // Le filtrage se fait ici : la vue reçoit une liste déjà réduite.
   const contracts = allContracts.filter((c) => {
     if (params.fournisseur && c.provider !== params.fournisseur) return false;
-    if (!params.famille) return true;
-    if (params.famille === NO_CATEGORY.slug) return !knownSlugs.has(c.category);
-    return c.category === params.famille;
+    if (!params.categorie) return true;
+    if (params.categorie === NO_CATEGORY.slug) return !knownSlugs.has(c.category);
+    return c.category === params.categorie;
   });
 
   const today = new Date();

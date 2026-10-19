@@ -1,7 +1,7 @@
-// Familles de contrats : types et helpers purs, sans accès base.
-// Les contrats référencent une famille par son `slug`, pas par son id :
+// Catégories de contrats : types et helpers purs, sans accès base.
+// Les contrats référencent une catégorie par son `slug`, pas par son id :
 // le slug reste stable quand le libellé change, et un contrat dont la
-// famille a été supprimée retombe proprement en « sans famille ».
+// catégorie a été supprimée retombe proprement en « sans catégorie ».
 
 export interface Category {
   id: string;
@@ -11,11 +11,11 @@ export interface Category {
   position: number;
 }
 
-/** Famille de repli pour un contrat dont le slug ne correspond à rien. */
+/** Catégorie de repli pour un contrat dont le slug ne correspond à rien. */
 export const NO_CATEGORY: Category = {
   id: "__none__",
   slug: "__none__",
-  label: "Sans famille",
+  label: "Sans catégorie",
   color: "#5c6675",
   position: 999,
 };
@@ -34,7 +34,7 @@ export const CATEGORY_PALETTE = [
   "#38bdf8",
 ];
 
-/** Familles créées au premier accès d'un utilisateur. */
+/** Catégories créées au premier accès d'un utilisateur. */
 export const DEFAULT_CATEGORIES: Omit<Category, "id">[] = [
   { slug: "habitation", label: "Assurance habitation", color: "#a78bfa", position: 0 },
   { slug: "auto", label: "Assurance auto", color: "#60a5fa", position: 1 },
@@ -45,14 +45,14 @@ export const DEFAULT_CATEGORIES: Omit<Category, "id">[] = [
   { slug: "credit", label: "Crédit", color: "#f87171", position: 6 },
 ];
 
-/** Retrouve une famille par son slug, ou NO_CATEGORY. */
+/** Retrouve une catégorie par son slug, ou NO_CATEGORY. */
 export function findCategory(categories: Category[], slug: string): Category {
   return categories.find((c) => c.slug === slug) ?? NO_CATEGORY;
 }
 
 /**
  * Comparaison tolérante : casse, accents et ponctuation ignorés.
- * Sert à refuser un doublon de famille et à repérer deux saisies
+ * Sert à refuser un doublon de catégorie et à repérer deux saisies
  * du même fournisseur (« EDF » / « E.D.F. »).
  */
 export function normalizeName(value: string): string {
@@ -72,7 +72,7 @@ export function slugify(label: string, taken: string[] = []): string {
       .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
-      .slice(0, 40) || "famille";
+      .slice(0, 40) || "categorie";
 
   if (!taken.includes(base)) return base;
   let n = 2;

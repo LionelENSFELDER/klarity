@@ -48,7 +48,7 @@ const TODAY_ISO = new Date(2026, 9, 18).toISOString();
 
 const params: EcheancesParams = {
   liste: "a-venir",
-  famille: null,
+  categorie: null,
   fournisseur: null,
   vue: "liste",
   horizon: 3,
@@ -122,8 +122,8 @@ describe("EcheancesView – états vides", () => {
     expect(screen.getByRole("link", { name: /Élargir à 12 mois/ })).toBeInTheDocument();
   });
 
-  it("signale un filtre de famille sans contrat", () => {
-    renderView([], { famille: "energie" }, 4);
+  it("signale un filtre de catégorie sans contrat", () => {
+    renderView([], { categorie: "energie" }, 4);
     expect(screen.getByText(/Aucun contrat dans/)).toBeInTheDocument();
   });
 });
