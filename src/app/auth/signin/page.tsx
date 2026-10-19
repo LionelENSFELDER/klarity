@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Box,
   Container,
@@ -19,10 +19,12 @@ import {
 import { Google as GoogleIcon } from "@mui/icons-material";
 import Link from "next/link";
 
-export default function SignInPage() {
+function SignInContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  // Message posé par la page d'inscription après création du compte.
+  const notice = useSearchParams().get("message");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -43,7 +45,7 @@ export default function SignInPage() {
       } else {
         router.push("/calendar");
       }
-    } catch (error) {
+    } catch {
       setError("Une erreur s'est produite");
     } finally {
       setLoading(false);
@@ -115,6 +117,11 @@ export default function SignInPage() {
                   onSubmit={handleCredentialsSubmit}
                   spacing={3}
                 >
+                  {notice && !error && (
+                    <Alert severity="success" sx={{ width: "100%" }}>
+                      {notice}
+                    </Alert>
+                  )}
                   {error && (
                     <Alert severity="error" sx={{ width: "100%" }}>
                       {error}
@@ -211,5 +218,15 @@ export default function SignInPage() {
         </Stack>
       </Container>
     </Box>
+  );
+}
+
+// useSearchParams impose une frontière Suspense — même motif que
+// src/app/auth/error/page.tsx.
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInContent />
+    </Suspense>
   );
 }
