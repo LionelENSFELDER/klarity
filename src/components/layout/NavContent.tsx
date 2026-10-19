@@ -1,9 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Badge, Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Collapse,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -72,44 +82,102 @@ function NavLink({
   );
 }
 
-function SectionLabel({
-  children,
+/** Au-delà, la liste défile au lieu de pousser le reste du rail hors écran. */
+const SECTION_MAX_HEIGHT = 216;
+
+/**
+ * Section repliable du rail. Le titre ouvre et ferme ; la liste est bornée
+ * en hauteur et défile toute seule quand les entrées s'accumulent.
+ */
+function NavSection({
+  title,
   settingsTab,
+  children,
 }: {
-  children: React.ReactNode;
+  title: string;
   settingsTab?: string;
+  children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(true);
+
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{ px: 1, pb: 0.9 }}
-    >
-      <Typography
-        sx={{
-          fontSize: 10.5,
-          fontWeight: 600,
-          letterSpacing: "0.09em",
-          textTransform: "uppercase",
-          color: "#5c6675",
-        }}
+    <Box sx={{ mt: 2.25 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ pr: 0.5, pb: 0.9 }}
       >
-        {children}
-      </Typography>
-      {settingsTab && (
-        <Tooltip title="Gérer">
-          <IconButton
-            component={Link}
-            href={`/reglages?onglet=${settingsTab}`}
-            size="small"
-            sx={{ color: "#5c6675", p: 0.3 }}
+        <Stack
+          component="button"
+          type="button"
+          direction="row"
+          alignItems="center"
+          spacing={0.25}
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            px: 1,
+            py: 0.25,
+            border: 0,
+            bgcolor: "transparent",
+            cursor: "pointer",
+            borderRadius: 1,
+            color: "#5c6675",
+            font: "inherit",
+            textAlign: "left",
+            "&:hover": { color: "text.secondary" },
+          }}
+        >
+          <ExpandMoreIcon
+            sx={{
+              fontSize: 15,
+              transition: "transform 150ms",
+              transform: open ? "none" : "rotate(-90deg)",
+            }}
+          />
+          <Typography
+            component="span"
+            sx={{
+              fontSize: 10.5,
+              fontWeight: 600,
+              letterSpacing: "0.09em",
+              textTransform: "uppercase",
+              color: "inherit",
+            }}
           >
-            <SettingsIcon sx={{ fontSize: 14 }} />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Stack>
+            {title}
+          </Typography>
+        </Stack>
+        {settingsTab && (
+          <Tooltip title="Gérer">
+            <IconButton
+              component={Link}
+              href={`/reglages?onglet=${settingsTab}`}
+              size="small"
+              sx={{ color: "#5c6675", p: 0.3 }}
+            >
+              <SettingsIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Stack>
+
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <Box
+          sx={{
+            maxHeight: SECTION_MAX_HEIGHT,
+            overflowY: "auto",
+            // Laisse respirer la barre de défilement quand elle apparaît.
+            pr: 0.25,
+          }}
+        >
+          <Stack spacing={0.25}>{children}</Stack>
+        </Box>
+      </Collapse>
+    </Box>
   );
 }
 
@@ -213,9 +281,7 @@ export default function NavContent({
         })}
       </Stack>
 
-      <Box sx={{ mt: 2.25 }}>
-        <SectionLabel settingsTab="familles">Familles</SectionLabel>
-        <Stack spacing={0.25}>
+      <NavSection title="Familles" settingsTab="familles">
           {shown.map((cat) => {
             const current = !onSettings && active.famille === cat.slug;
             return (
@@ -266,17 +332,14 @@ export default function NavContent({
             </NavLink>
           )}
 
-          {shown.length === 0 && counts.orphans === 0 && (
-            <Typography sx={{ px: 1, fontSize: 12, color: "#5c6675" }}>
-              Aucune famille utilisée
-            </Typography>
-          )}
-        </Stack>
-      </Box>
+        {shown.length === 0 && counts.orphans === 0 && (
+          <Typography sx={{ px: 1, fontSize: 12, color: "#5c6675" }}>
+            Aucune famille utilisée
+          </Typography>
+        )}
+      </NavSection>
 
-      <Box sx={{ mt: 2.25 }}>
-        <SectionLabel settingsTab="fournisseurs">Fournisseurs</SectionLabel>
-        <Stack spacing={0.25}>
+      <NavSection title="Fournisseurs" settingsTab="fournisseurs">
           {counts.providers.map((p) => {
             const current = !onSettings && active.fournisseur === p.name;
             return (
@@ -304,10 +367,9 @@ export default function NavContent({
                   {formatEuro(Math.round(p.monthlyCost))}
                 </Typography>
               </NavLink>
-            );
-          })}
-        </Stack>
-      </Box>
+          );
+        })}
+      </NavSection>
     </Box>
 
     <Stack spacing={0.9} sx={{ p: 1.25, borderTop: 1, borderColor: "divider" }}>

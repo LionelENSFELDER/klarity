@@ -16,7 +16,9 @@ const Footer = () => {
         borderTop: 1,
         borderColor: "divider",
         py: 0.75,
-        mt: "auto",
+        // La coquille ne défile pas : le footer est simplement le dernier
+        // enfant, jamais comprimé.
+        flex: "none",
       }}
     >
       <Container maxWidth="xl">

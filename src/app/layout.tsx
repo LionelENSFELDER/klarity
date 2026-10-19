@@ -40,17 +40,24 @@ export default async function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <Providers>
+            {/* La coquille occupe exactement la hauteur de l'écran et ne
+                défile pas : le footer reste donc toujours visible, et chaque
+                zone (rail, contenu) gère son propre défilement.
+                dvh plutôt que vh : sur mobile, vh ignore la barre d'URL. */}
             <Box
               sx={{
-                minHeight: "100vh",
+                height: ["100vh", "100dvh"],
+                overflow: "hidden",
                 bgcolor: "background.default",
                 display: "flex",
                 flexDirection: "column",
               }}
             >
               <Header />
-              {/* minWidth/minHeight 0 : le rail et la liste gèrent leur propre
-                  défilement sans forcer la largeur de la page. */}
+              {/* minWidth/minHeight 0 : le rail et la liste gèrent leur
+                  propre défilement sans forcer la largeur de la page.
+                  overflow auto sert de filet aux pages qui n'ont pas leur
+                  propre conteneur de défilement (mentions légales, auth). */}
               <Box
                 component="main"
                 sx={{
@@ -59,6 +66,7 @@ export default async function RootLayout({
                   flexDirection: "column",
                   minWidth: 0,
                   minHeight: 0,
+                  overflow: "auto",
                 }}
               >
                 {children}

@@ -116,3 +116,48 @@ describe("MobileNav", () => {
     expect(await screen.findByRole("presentation")).toBeInTheDocument();
   });
 });
+
+describe("NavContent – sections repliables", () => {
+  it("affiche les sections dépliées par défaut", async () => {
+    await openDrawer();
+    const familles = screen.getByRole("button", { name: /Familles/ });
+
+    expect(familles).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Énergie")).toBeInTheDocument();
+  });
+
+  it("replie une section et masque ses entrées", async () => {
+    const user = userEvent.setup();
+    await openDrawer();
+
+    await user.click(screen.getByRole("button", { name: /Familles/ }));
+
+    expect(
+      screen.getByRole("button", { name: /Familles/ }),
+    ).toHaveAttribute("aria-expanded", "false");
+    // unmountOnExit : les entrées quittent le DOM, pas seulement l'écran.
+    expect(screen.queryByText("Énergie")).not.toBeInTheDocument();
+    // Replier les familles ne touche pas les fournisseurs.
+    expect(screen.getByText("EDF")).toBeInTheDocument();
+  });
+
+  it("replie et déplie chaque section indépendamment", async () => {
+    const user = userEvent.setup();
+    await openDrawer();
+
+    await user.click(screen.getByRole("button", { name: /Fournisseurs/ }));
+    expect(screen.queryByText("EDF")).not.toBeInTheDocument();
+    expect(screen.getByText("Énergie")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /Fournisseurs/ }));
+    expect(await screen.findByText("EDF")).toBeInTheDocument();
+  });
+
+  it("borne la hauteur des sections pour qu'elles défilent au lieu de pousser le rail", async () => {
+    await openDrawer();
+
+    const liste = screen.getByText("Énergie").closest("a")?.parentElement
+      ?.parentElement;
+    expect(liste).toHaveStyle({ overflowY: "auto" });
+  });
+});
