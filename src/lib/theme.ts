@@ -4,6 +4,15 @@ import { createTheme } from "@mui/material/styles";
 export const ACCENT_GRADIENT =
   "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)";
 
+// Teintes de graphique, validées sur fond sombre (contraste, bande de
+// luminosité, séparation en déficience visuelle). Le couple BASE/EXTRA est à
+// ΔE 32,9 en protanopie. Les couleurs de catégorie ne conviennent PAS ici :
+// bleu et violet y sont indiscernables en deutéranopie, elles ne tiennent que
+// collées à leur libellé dans le rail.
+export const CHART_BASE = "#8b5cf6";
+export const CHART_EXTRA = "#d97706";
+export const CHART_MUTED = "#4b5366";
+
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",

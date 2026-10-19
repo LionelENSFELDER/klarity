@@ -18,6 +18,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
+import InsightsIcon from "@mui/icons-material/Insights";
 import { ACCENT_GRADIENT } from "@/lib/theme";
 import { formatEuro } from "@/modules/contracts/calendar";
 import { NO_CATEGORY, type Category } from "@/modules/categories/model";
@@ -211,6 +212,7 @@ export default function NavContent({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const onSettings = pathname.startsWith("/reglages");
+  const onDashboard = pathname.startsWith("/tableau-de-bord");
   const active = {
     liste: searchParams.get("liste") ?? "a-venir",
     categorie: searchParams.get("categorie"),
@@ -220,7 +222,7 @@ export default function NavContent({
   // Une catégorie sans contrat reste dans les réglages mais disparaît d'ici.
   const shown = categories.filter((c) => (counts.byCategory[c.slug] ?? 0) > 0);
   const isList = (id: string) =>
-    !onSettings && noFilter && active.liste === id;
+    !onSettings && !onDashboard && noFilter && active.liste === id;
 
   return (
     <>
@@ -258,6 +260,14 @@ export default function NavContent({
 
     <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1.25, pb: 1.5 }}>
       <Stack spacing={0.25}>
+        <NavLink
+          onNavigate={onNavigate}
+          href="/tableau-de-bord"
+          current={onDashboard}
+        >
+          <InsightsIcon sx={{ fontSize: 16, opacity: 0.85 }} />
+          <Typography sx={textSx}>Tableau de bord</Typography>
+        </NavLink>
         {LISTS.map((l) => {
           const Icon = l.icon;
           const current = isList(l.id);

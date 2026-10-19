@@ -53,6 +53,12 @@ describe("MobileNav", () => {
     expect(screen.queryByText("À venir")).not.toBeInTheDocument();
   });
 
+  it("donne accès au tableau de bord", async () => {
+    await openDrawer();
+    const lien = screen.getByText("Tableau de bord").closest("a");
+    expect(lien).toHaveAttribute("href", "/tableau-de-bord");
+  });
+
   it("propose les trois listes avec leurs compteurs", async () => {
     await openDrawer();
     const nav = screen.getByRole("navigation");

@@ -30,6 +30,7 @@ export default withAuth(
         if (
           pathname.startsWith("/calendar") ||
           pathname.startsWith("/reglages") ||
+          pathname.startsWith("/tableau-de-bord") ||
           pathname === "/"
         ) {
           return !!token;
