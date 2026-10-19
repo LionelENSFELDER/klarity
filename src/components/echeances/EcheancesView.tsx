@@ -231,7 +231,6 @@ export default function EcheancesView({
         {params.vue === "calendrier" ? (
           <MonthGrid
             contracts={contracts}
-            categories={categories}
             year={today.getFullYear()}
             month={today.getMonth()}
             today={today}

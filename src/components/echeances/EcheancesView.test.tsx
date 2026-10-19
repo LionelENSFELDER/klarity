@@ -129,9 +129,78 @@ describe("EcheancesView – états vides", () => {
 });
 
 describe("EcheancesView – vue calendrier", () => {
-  it("affiche la grille du mois quand la vue est calendrier", () => {
-    renderView([make({ debitDay: 25 })], { vue: "calendrier" });
+  const calendrier = { vue: "calendrier" as const };
+
+  it("affiche la grille du mois", () => {
+    renderView([make({ debitDay: 25 })], calendrier);
     expect(screen.getByTestId("calendar-day-25")).toBeInTheDocument();
     expect(screen.getByTestId("calendar-day-1")).toBeInTheDocument();
+  });
+
+  it("ne porte que le total du jour dans la case, sans pastille", () => {
+    renderView(
+      [
+        make({ id: "a", amount: 20, debitDay: 25 }),
+        make({ id: "b", amount: 15.5, debitDay: 25 }),
+      ],
+      calendrier,
+    );
+
+    const case25 = screen.getByTestId("calendar-day-25");
+    expect(case25).toHaveTextContent("35,50 €");
+    // Le jour et le total, rien d'autre : plus de pastilles de couleur.
+    expect(case25.querySelectorAll("span")).toHaveLength(0);
+  });
+
+  it("n'affiche aucun montant sur un jour sans prélèvement", () => {
+    renderView([make({ debitDay: 25 })], calendrier);
+    expect(screen.getByTestId("calendar-day-24")).toHaveTextContent(/^24$/);
+  });
+
+  it("ouvre une popup détaillant les lignes du jour", async () => {
+    const user = userEvent.setup();
+    renderView(
+      [
+        make({ id: "a", name: "Netflix", amount: 20, debitDay: 25 }),
+        make({ id: "b", name: "Spotify", amount: 15.5, debitDay: 25 }),
+      ],
+      calendrier,
+    );
+
+    await user.click(screen.getByTestId("calendar-day-25"));
+
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByText("Netflix")).toBeInTheDocument();
+    expect(within(dialog).getByText("20 €")).toBeInTheDocument();
+    expect(within(dialog).getByText("Spotify")).toBeInTheDocument();
+    expect(within(dialog).getByText("15,50 €")).toBeInTheDocument();
+    // Le total de la popup correspond à celui de la case.
+    expect(within(dialog).getByText(/35,50 €/)).toBeInTheDocument();
+  });
+
+  it("ne réagit pas au clic sur un jour vide", async () => {
+    const user = userEvent.setup();
+    renderView([make({ debitDay: 25 })], calendrier);
+
+    await user.click(screen.getByTestId("calendar-day-24"));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("ouvre l'édition depuis une ligne du détail, sans empiler les popups", async () => {
+    const user = userEvent.setup();
+    renderView([make({ name: "Netflix Famille", debitDay: 25 })], calendrier);
+
+    await user.click(screen.getByTestId("calendar-day-25"));
+    await user.click(
+      within(await screen.findByRole("dialog")).getByText("Netflix Famille"),
+    );
+
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByText("Modifier le contrat")).toBeInTheDocument();
+    // Le détail du jour s'est refermé : son titre a quitté le document.
+    // getAllByRole("dialog") ne suffirait pas — MUI masque la popup du
+    // dessous avec aria-hidden, que la requête par rôle ignore déjà.
+    expect(screen.queryByText(/25 octobre/)).not.toBeInTheDocument();
   });
 });
