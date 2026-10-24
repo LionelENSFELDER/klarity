@@ -1,4 +1,4 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { getSession } from "@/lib/session";
 import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
 import { getCategories } from "@/modules/categories/queries";
@@ -51,32 +51,26 @@ export default async function TableauDeBordPage() {
     top: getTopContracts(contracts, TOP_CONTRACTS),
     days: getDayLoad(contracts, today.getFullYear(), today.getMonth()),
     renewals: getRenewals(contracts, today),
+    categoryList: categories,
+    today,
   };
 
   return (
     <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
       <AppSidebar categories={categories} counts={counts} user={session.user} />
       <Box sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 3.5 } }}>
-          <Stack sx={{ pt: { xs: 2, md: 3 } }}>
-            <Typography
-              component="h1"
-              sx={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 600,
-                fontSize: { xs: 19, md: 23 },
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Tableau de bord
-            </Typography>
-            <Typography sx={{ color: "text.secondary", fontSize: 12.5, mt: 0.4 }}>
-              {contracts.length} contrats actifs · projection sur{" "}
-              {PROJECTION_MONTHS} mois
-            </Typography>
-          </Stack>
+        <Box sx={{ px: { xs: 2, md: 4 }, pt: { xs: 2, md: 3.5 }, maxWidth: 1400 }}>
+          <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+            {contracts.length} contrats actifs · projection sur {PROJECTION_MONTHS} mois
+          </Typography>
+          <Typography
+            component="h1"
+            sx={{ fontWeight: 700, fontSize: { xs: 22, md: 28 }, letterSpacing: "-0.02em", mt: 0.5 }}
+          >
+            Tableau de bord
+          </Typography>
           <DashboardView data={data} />
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

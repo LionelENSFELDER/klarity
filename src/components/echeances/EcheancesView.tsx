@@ -35,6 +35,7 @@ import ContractFormDialog from "@/components/contracts/ContractFormDialog";
 import ContractDetailDialog from "@/components/contracts/ContractDetailDialog";
 import AddContractButton from "@/components/contracts/AddContractButton";
 import ContractAvatar from "@/components/contracts/ContractAvatar";
+import StatCard, { statGridSx } from "@/components/ui/StatCard";
 import DebitRow from "./DebitRow";
 import EmptyState from "./EmptyState";
 import MonthGrid from "./MonthGrid";
@@ -289,25 +290,9 @@ export default function EcheancesView({
         </Stack>
 
         {/* Indicateurs : tout le portefeuille, quel que soit le filtre */}
-        <Box
-          component="section"
-          aria-label="Résumé"
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
-            gap: 2,
-          }}
-        >
+        <Box component="section" aria-label="Résumé" sx={statGridSx}>
           {kpis.map((k) => (
-            <Stack key={k.label} spacing={1.25} sx={{ ...cardSx, borderRadius: 4, px: 2.5, py: 2.25 }}>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, color: "text.secondary" }}>
-                {k.label}
-              </Typography>
-              <Typography sx={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-                {k.value}
-              </Typography>
-              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>{k.note}</Typography>
-            </Stack>
+            <StatCard key={k.label} {...k} />
           ))}
         </Box>
 
