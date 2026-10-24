@@ -159,12 +159,19 @@ export default function ContractFormDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth scroll="paper">
-      <DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      scroll="paper"
+      slotProps={{ paper: { sx: { borderRadius: 6 } } }}
+    >
+      <DialogTitle sx={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em", px: { xs: 2.5, sm: 4 }, pt: 3 }}>
         {mode === "edit" ? "Modifier le contrat" : "Ajouter un contrat"}
       </DialogTitle>
-      <DialogContent dividers>
-        <Stack spacing={3} sx={{ pt: 1 }}>
+      <DialogContent dividers sx={{ px: { xs: 2.5, sm: 4 }, py: 3 }}>
+        <Stack spacing={3}>
           {error && <Alert severity="error">{error}</Alert>}
           <ContractFormFields
             name={name}
@@ -190,14 +197,21 @@ export default function ContractFormDialog({
           />
         </Stack>
       </DialogContent>
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} color="inherit" disabled={loading}>
+      <DialogActions sx={{ px: { xs: 2.5, sm: 4 }, py: 2.5, gap: 1 }}>
+        <Button
+          onClick={onClose}
+          color="inherit"
+          variant="outlined"
+          disabled={loading}
+          sx={{ borderRadius: 999, minHeight: 46, px: 3, borderColor: "divider" }}
+        >
           Annuler
         </Button>
         <Button
           variant="contained"
           onClick={handleSubmit}
           disabled={!isValid || loading}
+          sx={{ borderRadius: 999, minHeight: 46, px: 3.5 }}
         >
           {loading
             ? "Enregistrement…"

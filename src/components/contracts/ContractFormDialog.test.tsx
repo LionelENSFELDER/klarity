@@ -3,6 +3,7 @@ import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContractFormDialog from "./ContractFormDialog";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
+import { CreateCategory } from "@/modules/categories/actions";
 import type { CalendarContract } from "@/modules/contracts/calendar";
 
 vi.mock("next/navigation", () => ({
@@ -12,6 +13,10 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/modules/contracts/actions", () => ({
   EditSubscription: vi.fn(),
   CreateSubscription: vi.fn(),
+}));
+
+vi.mock("@/modules/categories/actions", () => ({
+  CreateCategory: vi.fn(async () => ({ success: true })),
 }));
 
 // Le vrai sélecteur importe tout `@mui/icons-material` (des milliers de
@@ -59,8 +64,9 @@ describe("ContractFormDialog – mode édition", () => {
       <ContractFormDialog open mode="edit" contract={contract} onClose={() => {}} />,
     );
     // Le jour 12 doit être sélectionné dans la mini-grille 1-31
-    const day12 = screen.getByText("12", { selector: "div" });
-    expect(day12).toHaveStyle({ color: "#fff" });
+    const days = screen.getByRole("group", { name: /Jour du prélèvement/ });
+    expect(within(days).getByRole("button", { name: "12" })).toHaveAttribute("aria-pressed", "true");
+    expect(within(days).getByRole("button", { name: "11" })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("hydrate la date unique de prélèvement pour un contrat 'once'", () => {
@@ -182,5 +188,46 @@ describe("ContractFormDialog – mode création", () => {
     expect(
       within(dialog).getByLabelText(/^Nom du contrat/),
     ).toHaveValue("");
+  });
+});
+
+describe("ContractFormDialog – aperçu et catégories", () => {
+  it("montre les prochains prélèvements du contrat en cours de saisie", async () => {
+    const user = userEvent.setup();
+    render(<ContractFormDialog open mode="create" onClose={() => {}} />);
+    const dialog = screen.getByRole("dialog");
+    const apercu = within(dialog).getByRole("complementary", { name: "Aperçu" });
+
+    expect(within(apercu).getByText(/Choisissez un jour/)).toBeInTheDocument();
+
+    await user.type(within(dialog).getByLabelText(/Montant/), "9,99");
+    await user.click(within(dialog).getByRole("button", { name: "15" }));
+
+    expect(within(apercu).queryByText(/Choisissez un jour/)).not.toBeInTheDocument();
+    // Trois prochaines dates, chacune au montant saisi, plus le lissé.
+    expect(within(apercu).getAllByText("9,99 €").length).toBeGreaterThanOrEqual(4);
+    expect(within(apercu).getByText("119,88 €")).toBeInTheDocument();
+  });
+
+  it("crée une catégorie depuis le formulaire et l'enregistre avec le contrat", async () => {
+    vi.mocked(CreateSubscription).mockResolvedValue({ success: true });
+    const user = userEvent.setup();
+    render(<ContractFormDialog open mode="create" onClose={() => {}} />);
+    const dialog = screen.getByRole("dialog");
+
+    await user.click(within(dialog).getByRole("button", { name: "+ Nouvelle" }));
+    await user.type(within(dialog).getByLabelText("Nom de la nouvelle catégorie"), "Sport");
+    await user.click(within(dialog).getByRole("button", { name: "Créer" }));
+    expect(CreateCategory).toHaveBeenCalledWith("Sport");
+
+    await user.type(within(dialog).getByLabelText(/^Nom du contrat/), "Basic-Fit");
+    await user.type(within(dialog).getByLabelText(/Montant/), "29,99");
+    await user.click(within(dialog).getByRole("button", { name: "27" }));
+    await user.click(within(dialog).getByRole("button", { name: /ajouter au calendrier/i }));
+
+    // Le slug est calculé comme le ferait le serveur, sans attendre le rechargement.
+    await waitFor(() => expect(CreateSubscription).toHaveBeenCalled());
+    const [formData] = vi.mocked(CreateSubscription).mock.calls.at(-1)!;
+    expect(formData.get("category")).toBe("sport");
   });
 });
