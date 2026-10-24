@@ -6,6 +6,7 @@ import {
   groupByDay,
   groupByMonth,
   monthlyCost,
+  relativeDay,
   type CalendarContract,
 } from "./calendar";
 
@@ -152,6 +153,17 @@ describe("groupByDay", () => {
     expect(groups[0].total).toBe(15);
     expect(groups[0].items).toHaveLength(2);
     expect(groups[2].date).toEqual(new Date(2026, 10, 20));
+  });
+});
+
+describe("relativeDay", () => {
+  it("nomme les jours proches et compte les autres", () => {
+    expect(relativeDay(new Date(2026, 9, 18), TODAY)).toBe("Aujourd'hui");
+    expect(relativeDay(new Date(2026, 9, 19), TODAY)).toBe("Demain");
+    expect(relativeDay(new Date(2026, 9, 17), TODAY)).toBe("Hier");
+    // Passage à l'heure d'hiver le 25 octobre : le décompte reste entier.
+    expect(relativeDay(new Date(2026, 10, 1), TODAY)).toBe("Dans 14 jours");
+    expect(relativeDay(new Date(2026, 9, 10), TODAY)).toBe("Il y a 8 jours");
   });
 });
 

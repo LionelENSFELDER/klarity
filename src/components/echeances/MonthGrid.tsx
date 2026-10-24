@@ -1,52 +1,79 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import {
   daysInMonth,
   formatEuro,
   getMonthOccurrences,
+  relativeDay,
   type CalendarContract,
 } from "@/modules/contracts/calendar";
+import { getFrequencyLabel } from "@/modules/contracts/categories";
+import { findCategory, type Category } from "@/modules/categories/model";
+import ContractAvatar from "@/components/contracts/ContractAvatar";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const MONTHS = [
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+];
+const WEEKDAY_FORMAT = new Intl.DateTimeFormat("fr-FR", { weekday: "long" });
+const SHORT_FORMAT = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+/** Pastilles visibles dans une case avant le « +N ». */
+const MAX_AVATARS = 3;
+
+const euro = (n: number) => formatEuro(Math.round(n * 100) / 100);
+
+const cardSx = {
+  bgcolor: "background.paper",
+  border: 1,
+  borderColor: "divider",
+  borderRadius: 4.5,
+} as const;
 
 interface MonthGridProps {
   contracts: CalendarContract[];
+  categories: Category[];
   year: number;
   month: number;
   today: Date;
-  /** Ouvre la popup d'édition depuis une ligne du détail du jour. */
+  /** Ouvre le contrat depuis une ligne du détail du jour. */
   onSelect: (contract: CalendarContract) => void;
 }
 
 /**
- * Vue secondaire : lire la répartition des prélèvements dans le mois.
- *
- * Une case ne porte que le total du jour — c'est la seule information
- * lisible d'un coup d'œil à cette taille. Le détail vit dans la popup.
+ * Lire la répartition des prélèvements dans le mois. Une case porte le
+ * total du jour et son poids dans le mois ; le détail du jour sélectionné
+ * vit dans le panneau d'à côté, sans popup à refermer.
  */
 export default function MonthGrid({
   contracts,
+  categories,
   year,
   month,
   today,
   onSelect,
 }: MonthGridProps) {
-  const [openDay, setOpenDay] = useState<number | null>(null);
-
   const byDay = new Map<number, CalendarContract[]>();
   for (const { date, contract } of getMonthOccurrences(contracts, year, month)) {
     const day = date.getDate();
     byDay.set(day, [...(byDay.get(day) ?? []), contract]);
   }
+  const totalOf = (day: number) =>
+    (byDay.get(day) ?? []).reduce((s, c) => s + c.amount, 0);
+  const debitDays = [...byDay.keys()].sort((a, b) => a - b);
+
+  const isCurrentMonth =
+    year === today.getFullYear() && month === today.getMonth();
+  const todayDay = isCurrentMonth ? today.getDate() : 0;
+  const isPast = (day: number) =>
+    isCurrentMonth ? day < todayDay : new Date(year, month, day) < today;
+
+  // Par défaut : le prochain jour prélevé, sinon le dernier du mois.
+  const [selected, setSelected] = useState<number | null>(
+    () => debitDays.find((d) => !isPast(d)) ?? debitDays.at(-1) ?? null,
+  );
 
   const leading = (new Date(year, month, 1).getDay() + 6) % 7;
   const cells: (number | null)[] = [
@@ -55,225 +82,335 @@ export default function MonthGrid({
   ];
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const isCurrentMonth =
-    year === today.getFullYear() && month === today.getMonth();
-
-  const dayContracts = openDay !== null ? (byDay.get(openDay) ?? []) : [];
-  const dayTotal = dayContracts.reduce((s, c) => s + c.amount, 0);
+  const monthTotal = debitDays.reduce((s, d) => s + totalOf(d), 0);
+  const paid = debitDays.filter(isPast).reduce((s, d) => s + totalOf(d), 0);
+  const maxDay = Math.max(0, ...debitDays.map(totalOf));
 
   return (
-    <Box sx={{ pt: 2 }}>
-      <Typography sx={{ color: "text.secondary", fontSize: 12.5, mb: 1.75 }}>
-        La grille reste disponible pour lire la répartition des prélèvements dans
-        le mois. Clique sur un jour pour en voir le détail.
-      </Typography>
-
+    <Stack direction="row" flexWrap="wrap" gap={2.5} alignItems="flex-start">
       <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
-          gap: 0.75,
-        }}
+        component="section"
+        aria-label={`Calendrier de ${MONTHS[month]} ${year}`}
+        sx={{ ...cardSx, flex: "999 1 560px", minWidth: 0, p: { xs: 1.5, md: 2.25 } }}
       >
-        {WEEKDAYS.map((d) => (
-          <Typography
-            key={d}
-            sx={{
-              fontSize: 10.5,
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              color: "#5c6675",
-              textAlign: "center",
-              pb: 0.5,
-            }}
-          >
-            {d}
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          justifyContent="space-between"
+          alignItems="center"
+          gap={1.5}
+          sx={{ mb: 1.75 }}
+        >
+          <Typography component="h2" sx={{ fontSize: 18, fontWeight: 700, textTransform: "capitalize" }}>
+            {MONTHS[month]} {year}
           </Typography>
-        ))}
+          <Stack direction="row" spacing={2.25} sx={{ fontSize: 13, color: "text.secondary" }}>
+            <span>Total <Box component="strong" sx={{ color: "text.primary" }}>{euro(monthTotal)}</Box></span>
+            <span>Prélevé <Box component="strong" sx={{ color: "text.primary" }}>{euro(paid)}</Box></span>
+            <span>Reste <Box component="strong" sx={{ color: "primary.dark", ".dark &": { color: "primary.light" } }}>{euro(monthTotal - paid)}</Box></span>
+          </Stack>
+        </Stack>
 
-        {cells.map((day, i) => {
-          if (day === null) return <Box key={`blank-${i}`} />;
-          const list = byDay.get(day) ?? [];
-          const total = list.reduce((s, c) => s + c.amount, 0);
-          const isToday = isCurrentMonth && day === today.getDate();
-          const clickable = list.length > 0;
-
-          return (
-            <Box
-              key={day}
-              role={clickable ? "button" : undefined}
-              tabIndex={clickable ? 0 : undefined}
-              aria-label={
-                clickable
-                  ? `${day} : ${formatEuro(total)}, ${list.length} prélèvement${
-                      list.length > 1 ? "s" : ""
-                    }`
-                  : undefined
-              }
-              data-testid={`calendar-day-${day}`}
-              onClick={() => clickable && setOpenDay(day)}
-              onKeyDown={(e) => {
-                if (clickable && (e.key === "Enter" || e.key === " ")) {
-                  e.preventDefault();
-                  setOpenDay(day);
-                }
-              }}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
+            gap: { xs: 0.5, md: 1 },
+          }}
+        >
+          {WEEKDAYS.map((d) => (
+            <Typography
+              key={d}
               sx={{
-                // Carrée sur mobile ; sur desktop une hauteur fixe, sinon la
-                // cellule grandit avec la largeur du panneau et devient énorme.
-                aspectRatio: { xs: "1 / 1", md: "auto" },
-                height: { md: 86 },
-                maxWidth: "100%",
-                minWidth: 0,
-                border: 1,
-                borderColor: isToday ? "primary.main" : "#1e2029",
-                boxShadow: isToday ? "inset 0 0 0 1px #8b5cf6" : "none",
-                borderRadius: 1.5,
-                p: { xs: 0.75, md: 1 },
-                display: "flex",
-                flexDirection: "column",
-                bgcolor: "background.paper",
-                overflow: "hidden",
-                cursor: clickable ? "pointer" : "default",
-                "&:hover": clickable
-                  ? {
-                      borderColor: "primary.main",
-                      bgcolor: "rgba(255,255,255,0.03)",
-                    }
-                  : undefined,
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "text.secondary",
+                textAlign: "center",
+                pb: 0.5,
               }}
             >
-              <Typography
+              {d}
+            </Typography>
+          ))}
+
+          {cells.map((day, i) => {
+            if (day === null) return <Box key={`blank-${i}`} />;
+            const list = byDay.get(day) ?? [];
+            const total = totalOf(day);
+            const isToday = day === todayDay;
+            const isSelected = day === selected;
+            const past = isPast(day);
+            const clickable = list.length > 0;
+
+            return (
+              <Box
+                key={day}
+                component={clickable ? "button" : "div"}
+                type={clickable ? "button" : undefined}
+                aria-pressed={clickable ? isSelected : undefined}
+                aria-label={
+                  clickable
+                    ? `${day} ${MONTHS[month]} : ${formatEuro(total)}, ${list.length} prélèvement${
+                        list.length > 1 ? "s" : ""
+                      }`
+                    : undefined
+                }
+                data-testid={`calendar-day-${day}`}
+                onClick={clickable ? () => setSelected(day) : undefined}
                 sx={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 11,
-                  fontVariantNumeric: "tabular-nums",
-                  color: isToday ? "#fff" : "text.secondary",
-                }}
-              >
-                {day}
-              </Typography>
-
-              {/* Seule information portée par la case : le total du jour. */}
-              {total > 0 && (
-                <Typography
-                  sx={{
-                    mt: "auto",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: { xs: 9.5, md: 11.5 },
-                    fontWeight: 500,
-                    fontVariantNumeric: "tabular-nums",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {formatEuro(total)}
-                </Typography>
-              )}
-            </Box>
-          );
-        })}
-      </Box>
-
-      <Dialog
-        open={openDay !== null}
-        onClose={() => setOpenDay(null)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle sx={{ pb: 1 }}>
-          <Typography
-            component="span"
-            sx={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 600,
-              fontSize: 17,
-              display: "block",
-              textTransform: "capitalize",
-            }}
-          >
-            {openDay !== null &&
-              new Date(year, month, openDay).toLocaleDateString("fr-FR", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
-          </Typography>
-          <Typography
-            component="span"
-            sx={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 13,
-              color: "text.secondary",
-              fontVariantNumeric: "tabular-nums",
-            }}
-          >
-            {formatEuro(dayTotal)} · {dayContracts.length} prélèvement
-            {dayContracts.length > 1 ? "s" : ""}
-          </Typography>
-        </DialogTitle>
-
-        <DialogContent dividers sx={{ py: 1 }}>
-          <Stack>
-            {dayContracts.map((contract, i) => (
-              <Stack
-                key={`${contract.id}-${i}`}
-                component="button"
-                type="button"
-                direction="row"
-                alignItems="baseline"
-                spacing={1.5}
-                onClick={() => {
-                  // Fermer avant d'ouvrir l'édition : deux popups empilées
-                  // sont pénibles à refermer.
-                  setOpenDay(null);
-                  onSelect(contract);
-                }}
-                sx={{
-                  width: "100%",
-                  py: 1,
-                  px: 1,
-                  border: 0,
-                  borderRadius: 1.5,
-                  bgcolor: "transparent",
+                  height: { xs: 52, md: 112 },
+                  minWidth: 0,
+                  p: { xs: 0.5, md: 1.25 },
+                  border: isSelected ? 2 : 1,
+                  borderColor: isSelected ? "primary.main" : "divider",
+                  borderRadius: 3,
+                  bgcolor: isSelected
+                    ? "rgba(var(--mui-palette-primary-mainChannel) / 0.06)"
+                    : "background.paper",
                   color: "text.primary",
                   font: "inherit",
                   textAlign: "left",
-                  cursor: "pointer",
-                  "& + &": { boxShadow: "0 -1px 0 #1e2029" },
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.04)" },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  alignItems: { xs: "center", md: "stretch" },
+                  overflow: "hidden",
+                  cursor: clickable ? "pointer" : "default",
+                  "&:hover": clickable ? { borderColor: "primary.main" } : undefined,
                 }}
               >
-                <Typography
-                  title={contract.name}
-                  sx={{
-                    flex: 1,
-                    minWidth: 0,
-                    fontSize: 14,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {contract.name}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    fontVariantNumeric: "tabular-nums",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {formatEuro(contract.amount)}
-                </Typography>
-              </Stack>
-            ))}
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box
+                    component="span"
+                    sx={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      display: "grid",
+                      placeItems: "center",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      bgcolor: isToday ? "primary.main" : "transparent",
+                      color: isToday ? "#fff" : past ? "text.secondary" : "text.primary",
+                    }}
+                  >
+                    {day}
+                  </Box>
+                  <Stack direction="row" sx={{ display: { xs: "none", md: "flex" }, pl: 0.75 }}>
+                    {list.slice(0, MAX_AVATARS).map((c, k) => (
+                      <Box key={`${c.id}-${k}`} sx={{ ml: -0.75, borderRadius: "50%", border: 2, borderColor: "background.paper" }}>
+                        <ContractAvatar contract={c} category={findCategory(categories, c.category)} size={22} />
+                      </Box>
+                    ))}
+                    {list.length > MAX_AVATARS && (
+                      <Typography sx={{ fontSize: 11, color: "text.secondary", ml: 0.5, alignSelf: "center" }}>
+                        +{list.length - MAX_AVATARS}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Stack>
+
+                {total > 0 && (
+                  <>
+                    {/* Sur mobile, un point suffit : le montant ne tient pas. */}
+                    <Box
+                      aria-hidden
+                      sx={{
+                        display: { xs: "block", md: "none" },
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        bgcolor: past ? "text.secondary" : "primary.main",
+                      }}
+                    />
+                    <Stack spacing={0.75} sx={{ display: { xs: "none", md: "flex" } }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontWeight: 700,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          color: past ? "text.secondary" : "text.primary",
+                        }}
+                      >
+                        {formatEuro(total)}
+                      </Typography>
+                      <Box sx={{ height: 4, borderRadius: 999, bgcolor: "action.hover", overflow: "hidden" }}>
+                        <Box
+                          sx={{
+                            height: "100%",
+                            borderRadius: 999,
+                            width: `${(total / maxDay) * 100}%`,
+                            bgcolor: past ? "primary.light" : "primary.main",
+                          }}
+                        />
+                      </Box>
+                    </Stack>
+                  </>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
+      <DayPanel
+        day={selected}
+        year={year}
+        month={month}
+        today={today}
+        list={selected !== null ? (byDay.get(selected) ?? []) : []}
+        next={debitDays
+          .filter((d) => selected !== null && d > selected)
+          .slice(0, 3)
+          .map((d) => ({ day: d, names: (byDay.get(d) ?? []).map((c) => c.name), total: totalOf(d) }))}
+        categories={categories}
+        onSelect={onSelect}
+      />
+    </Stack>
+  );
+}
+
+function DayPanel({
+  day,
+  year,
+  month,
+  today,
+  list,
+  next,
+  categories,
+  onSelect,
+}: {
+  day: number | null;
+  year: number;
+  month: number;
+  today: Date;
+  list: CalendarContract[];
+  next: { day: number; names: string[]; total: number }[];
+  categories: Category[];
+  onSelect: (contract: CalendarContract) => void;
+}) {
+  if (day === null) {
+    return (
+      <Box component="aside" aria-label="Détail du jour" sx={{ ...cardSx, flex: "1 1 280px", minWidth: 0, p: 2.5 }}>
+        <Typography sx={{ color: "text.secondary", fontSize: 14 }}>
+          Aucun prélèvement ce mois-ci.
+        </Typography>
+      </Box>
+    );
+  }
+
+  const date = new Date(year, month, day);
+  const total = list.reduce((s, c) => s + c.amount, 0);
+
+  return (
+    <Stack
+      component="aside"
+      aria-label="Détail du jour"
+      spacing={2}
+      sx={{ ...cardSx, flex: "1 1 280px", minWidth: 0, p: 2.5 }}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+        <Box>
+          <Typography sx={{ fontSize: 13, color: "text.secondary", textTransform: "capitalize" }}>
+            {WEEKDAY_FORMAT.format(date)}
+          </Typography>
+          <Typography component="h2" sx={{ fontSize: 22, fontWeight: 700 }}>
+            {day} {MONTHS[month]}
+          </Typography>
+        </Box>
+        <Box
+          component="span"
+          sx={{
+            fontSize: 12,
+            fontWeight: 600,
+            px: 1.25,
+            py: 0.5,
+            borderRadius: 999,
+            bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.1)",
+            color: "primary.dark",
+            ".dark &": { color: "primary.light" },
+          }}
+        >
+          {relativeDay(date, today)}
+        </Box>
+      </Stack>
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ borderRadius: 3.5, bgcolor: "background.default", px: 2, py: 1.75 }}
+      >
+        <Typography sx={{ color: "text.secondary" }}>Total du jour</Typography>
+        <Typography sx={{ fontSize: 22, fontWeight: 700 }}>{euro(total)}</Typography>
+      </Stack>
+
+      <Stack spacing={0.5}>
+        {list.map((contract, i) => (
+          <Stack
+            key={`${contract.id}-${i}`}
+            component="button"
+            type="button"
+            direction="row"
+            alignItems="center"
+            spacing={1.5}
+            onClick={() => onSelect(contract)}
+            sx={{
+              width: "100%",
+              p: 1,
+              mx: -1,
+              border: 0,
+              borderRadius: 3,
+              bgcolor: "transparent",
+              color: "text.primary",
+              font: "inherit",
+              textAlign: "left",
+              cursor: "pointer",
+              "&:hover": { bgcolor: "action.hover" },
+            }}
+          >
+            <ContractAvatar contract={contract} category={findCategory(categories, contract.category)} />
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography title={contract.name} sx={{ fontWeight: 600 }} noWrap>
+                {contract.name}
+              </Typography>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }} noWrap>
+                {findCategory(categories, contract.category).label} ·{" "}
+                {getFrequencyLabel(contract.frequency).toLowerCase()}
+              </Typography>
+            </Box>
+            <Typography sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+              {formatEuro(contract.amount)}
+            </Typography>
           </Stack>
-        </DialogContent>
-      </Dialog>
-    </Box>
+        ))}
+      </Stack>
+
+      {next.length > 0 && (
+        <>
+          <Box sx={{ height: "1px", bgcolor: "divider" }} />
+          <Typography
+            component="h3"
+            sx={{ fontSize: 12, fontWeight: 600, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.04em" }}
+          >
+            Ensuite
+          </Typography>
+          {next.map((n) => (
+            <Stack key={n.day} direction="row" justifyContent="space-between" spacing={1.5} sx={{ fontSize: 13 }}>
+              <Typography sx={{ fontSize: 13, color: "text.secondary", minWidth: 0 }} noWrap>
+                {SHORT_FORMAT.format(new Date(year, month, n.day))} · {n.names.join(", ")}
+              </Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap" }}>
+                {euro(n.total)}
+              </Typography>
+            </Stack>
+          ))}
+        </>
+      )}
+    </Stack>
   );
 }

@@ -24,6 +24,7 @@ import {
   groupByDay,
   groupByMonth,
   monthlyCost,
+  relativeDay,
   type CalendarContract,
   type Occurrence,
 } from "@/modules/contracts/calendar";
@@ -80,18 +81,6 @@ const DAY_FORMAT = new Intl.DateTimeFormat("fr-FR", {
 });
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-/** « Aujourd'hui », « Demain », « Dans 5 jours ». */
-function relativeDay(date: Date, today: Date): string {
-  const days = Math.round(
-    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
-      Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) /
-      86_400_000,
-  );
-  if (days === 0) return "Aujourd'hui";
-  if (days === 1) return "Demain";
-  return `Dans ${days} jours`;
-}
 
 const euro = (n: number) => formatEuro(Math.round(n * 100) / 100);
 
@@ -321,15 +310,14 @@ export default function EcheancesView({
         </Box>
 
         {params.vue === "calendrier" ? (
-          <Box sx={{ ...cardSx, p: { xs: 1.5, md: 2.25 } }}>
-            <MonthGrid
-              contracts={contracts}
-              year={today.getFullYear()}
-              month={today.getMonth()}
-              today={today}
-              onSelect={setEditing}
-            />
-          </Box>
+          <MonthGrid
+            contracts={contracts}
+            categories={categories}
+            year={today.getFullYear()}
+            month={today.getMonth()}
+            today={today}
+            onSelect={setEditing}
+          />
         ) : (
           <Stack direction="row" flexWrap="wrap" gap={3} alignItems="flex-start">
             <Box component="section" aria-label="Échéances" sx={{ flex: "999 1 560px", minWidth: 0, ...cardSx, overflow: "hidden" }}>

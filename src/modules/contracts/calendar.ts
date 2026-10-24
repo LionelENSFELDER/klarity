@@ -209,6 +209,19 @@ export function monthlyCost(contract: CalendarContract): number {
   }
 }
 
+/** « Aujourd'hui », « Demain », « Dans 5 jours », « Il y a 2 jours ». */
+export function relativeDay(date: Date, today: Date): string {
+  const days = Math.round(
+    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) -
+      Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) /
+      86_400_000,
+  );
+  if (days === 0) return "Aujourd'hui";
+  if (days === 1) return "Demain";
+  if (days === -1) return "Hier";
+  return days > 0 ? `Dans ${days} jours` : `Il y a ${-days} jours`;
+}
+
 export function formatEuro(amount: number): string {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
