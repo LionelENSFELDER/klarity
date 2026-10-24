@@ -33,6 +33,8 @@ const counts: SidebarCounts = {
     { name: "EDF", count: 2, monthlyCost: 93 },
     { name: "Spotify", count: 1, monthlyCost: 11 },
   ],
+  monthTotal: 742.58,
+  monthPaid: 486.2,
 };
 
 const user = { name: "John Doe", email: "test@klarity.dev", image: null };

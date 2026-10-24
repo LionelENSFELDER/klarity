@@ -1,7 +1,12 @@
 // Données du rail de navigation, calculées côté serveur.
 // Module volontairement non-client : les deux pages serveur l'importent.
 
-import { getMonthOccurrences, getUpcomingDebits, type CalendarContract } from "./calendar";
+import {
+  getMonthDebits,
+  getMonthOccurrences,
+  getUpcomingDebits,
+  type CalendarContract,
+} from "./calendar";
 import type { Category } from "@/modules/categories/model";
 
 export interface ProviderUsage {
@@ -17,6 +22,10 @@ export interface SidebarCounts {
   byCategory: Record<string, number>;
   orphans: number;
   providers: ProviderUsage[];
+  /** Total des prélèvements du mois en cours. */
+  monthTotal: number;
+  /** Part déjà prélevée : les jours avant aujourd'hui. */
+  monthPaid: number;
 }
 
 export interface SidebarUser {
@@ -33,6 +42,9 @@ export function buildSidebarCounts(
   today: Date,
 ): SidebarCounts {
   const known = new Set(categories.map((c) => c.slug));
+  const days = [
+    ...getMonthDebits(contracts, today.getFullYear(), today.getMonth()).values(),
+  ];
   return {
     aVenir: getUpcomingDebits(contracts, today, horizon).length,
     mois: getMonthOccurrences(contracts, today.getFullYear(), today.getMonth())
@@ -46,6 +58,10 @@ export function buildSidebarCounts(
     ),
     orphans: contracts.filter((c) => !known.has(c.category)).length,
     providers,
+    monthTotal: days.reduce((sum, d) => sum + d.total, 0),
+    monthPaid: days
+      .filter((d) => d.day < today.getDate())
+      .reduce((sum, d) => sum + d.total, 0),
   };
 }
 

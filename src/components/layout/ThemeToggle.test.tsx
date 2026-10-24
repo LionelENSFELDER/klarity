@@ -19,7 +19,7 @@ function renderNav() {
     <MuiThemeProvider>
       <NavContent
         categories={[]}
-        counts={{ aVenir: 0, mois: 0, tout: 0, byCategory: {}, orphans: 0, providers: [] }}
+        counts={{ aVenir: 0, mois: 0, tout: 0, byCategory: {}, orphans: 0, providers: [], monthTotal: 0, monthPaid: 0 }}
         user={{ name: "John Doe", email: "test@klarity.dev", image: null }}
       />
     </MuiThemeProvider>,
