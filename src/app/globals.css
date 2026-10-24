@@ -120,3 +120,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Une seule famille : les titres (var(--font-display)) suivent Inter. */
+html {
+  --font-display: var(--font-sans);
+}

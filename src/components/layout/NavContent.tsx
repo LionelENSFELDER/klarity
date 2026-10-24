@@ -88,7 +88,7 @@ function NavLink({
 
 /**
  * Bascule clair/sombre, habillée comme une entrée du rail. `mode` reste
- * indéfini jusqu'au montage : on suppose alors le sombre, thème par défaut.
+ * indéfini jusqu'au montage : on affiche alors l'action « Thème clair ».
  */
 function ThemeToggle() {
   const { mode, systemMode, setMode } = useColorScheme();

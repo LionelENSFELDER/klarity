@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
@@ -11,11 +11,6 @@ import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -38,10 +33,10 @@ export default async function RootLayout({
       lang="fr"
       // Le script ci-dessous pose la classe du thème avant hydratation.
       suppressHydrationWarning
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body>
-        <InitColorSchemeScript attribute="class" defaultMode="dark" />
+        <InitColorSchemeScript attribute="class" defaultMode="system" />
         <AppRouterCacheProvider>
           <Providers>
             {/* La coquille occupe exactement la hauteur de l'écran et ne

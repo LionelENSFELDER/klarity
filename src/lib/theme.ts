@@ -15,17 +15,18 @@ export const CHART_MUTED = "#4b5366";
 
 // Un seul thème, deux palettes : MUI pose la classe sur <html>, retient le
 // choix dans localStorage et l'applique avant hydratation (pas de flash).
+// Sans choix enregistré, c'est le thème du système qui s'applique.
 export const theme = createTheme({
   cssVariables: { colorSchemeSelector: "class" },
-  defaultColorScheme: "dark",
   colorSchemes: {
     dark: {
       palette: {
         mode: "dark",
+        // light sert de couleur de texte sur fond sombre (contraste ≥ 4,5:1).
         primary: {
-          main: "#8b5cf6", // Violet
+          main: "#7c3aed",
           light: "#a78bfa",
-          dark: "#7c3aed",
+          dark: "#6d28d9",
         },
         secondary: {
           main: "#3b82f6", // Bleu
@@ -62,9 +63,9 @@ export const theme = createTheme({
       palette: {
         mode: "light",
         primary: {
-          main: "#2563eb", // Bleu professionnel
-          light: "#60a5fa",
-          dark: "#1e40af",
+          main: "#6d28d9",
+          light: "#a78bfa",
+          dark: "#5b21b6",
         },
         secondary: {
           main: "#4f46e5", // Indigo
@@ -72,12 +73,12 @@ export const theme = createTheme({
           dark: "#3730a3",
         },
         background: {
-          default: "#f8fafc", // Slate 50
-          paper: "#ffffff", // White
+          default: "#f4f5f7",
+          paper: "#ffffff",
         },
         text: {
-          primary: "#0f172a", // Slate 900
-          secondary: "#475569", // Slate 600
+          primary: "#111827",
+          secondary: "#5b6472",
         },
         success: {
           main: "#10b981", // Emerald
@@ -94,7 +95,7 @@ export const theme = createTheme({
           light: "#f87171",
           dark: "#dc2626",
         },
-        divider: "#e2e8f0", // Slate 200
+        divider: "#e6e8ec",
       },
     },
   },
@@ -132,17 +133,20 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        // Les montants s'alignent d'une ligne à l'autre.
+        body: { fontVariantNumeric: "tabular-nums" },
+      },
+    },
     MuiCard: {
+      defaultProps: { elevation: 0 },
       styleOverrides: {
         root: ({ theme }) => ({
           backgroundImage: "none",
           backgroundColor: theme.vars.palette.background.paper,
           borderRadius: 16,
           border: `1px solid ${theme.vars.palette.divider}`,
-          ...theme.applyStyles("light", {
-            boxShadow:
-              "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-          }),
         }),
       },
     },
@@ -158,21 +162,15 @@ export const theme = createTheme({
         root: {
           textTransform: "none",
           borderRadius: 10,
-          fontWeight: 500,
-        },
-        containedPrimary: {
-          background: ACCENT_GRADIENT,
-          color: "#fff",
-          "&:hover": {
-            background: "linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)",
-          },
+          fontWeight: 600,
+          boxShadow: "none",
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 999,
         },
       },
     },

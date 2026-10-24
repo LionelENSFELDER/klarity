@@ -3,6 +3,8 @@
 // le slug reste stable quand le libellé change, et un contrat dont la
 // catégorie a été supprimée retombe proprement en « sans catégorie ».
 
+import { darken, lighten } from "@mui/material/styles";
+
 export interface Category {
   id: string;
   slug: string;
@@ -78,4 +80,18 @@ export function slugify(label: string, taken: string[] = []): string {
   let n = 2;
   while (taken.includes(`${base}-${n}`)) n++;
   return `${base}-${n}`;
+}
+
+/**
+ * Fond et texte d'une pastille teintée par la couleur de catégorie.
+ * Couleurs pleines (pas d'alpha) : le contraste ne dépend pas de ce qu'il
+ * y a dessous.
+ */
+export function categoryTint(
+  color: string,
+  mode: "light" | "dark",
+): { bg: string; ink: string } {
+  return mode === "light"
+    ? { bg: lighten(color, 0.82), ink: darken(color, 0.6) }
+    : { bg: darken(color, 0.7), ink: lighten(color, 0.6) };
 }

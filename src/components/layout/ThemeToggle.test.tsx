@@ -32,20 +32,21 @@ describe("bascule de thème", () => {
     document.documentElement.className = "";
   });
 
-  it("part du sombre et bascule en clair, puis revient", async () => {
+  // happy-dom ne signale pas de préférence sombre : le système vaut « clair ».
+  it("part du thème système et bascule en sombre, puis revient", async () => {
     renderNav();
-    await userEvent.click(await screen.findByRole("button", { name: "Thème clair" }));
-    expect(document.documentElement).toHaveClass("light");
-    expect(window.localStorage.getItem("mui-mode")).toBe("light");
-
-    await userEvent.click(screen.getByRole("button", { name: "Thème sombre" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Thème sombre" }));
     expect(document.documentElement).toHaveClass("dark");
     expect(window.localStorage.getItem("mui-mode")).toBe("dark");
+
+    await userEvent.click(screen.getByRole("button", { name: "Thème clair" }));
+    expect(document.documentElement).toHaveClass("light");
+    expect(window.localStorage.getItem("mui-mode")).toBe("light");
   });
 
   it("reprend le choix enregistré", async () => {
-    window.localStorage.setItem("mui-mode", "light");
+    window.localStorage.setItem("mui-mode", "dark");
     renderNav();
-    expect(await screen.findByRole("button", { name: "Thème sombre" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Thème clair" })).toBeInTheDocument();
   });
 });
