@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
+  MenuItem,
   TextField,
   Typography,
   Stack,
@@ -49,8 +50,9 @@ interface ContractFormFieldsProps {
   onRenewalDateChange: (value: string) => void;
   selectedIcon: IconOption | null;
   onSelectedIconChange: (value: IconOption | null) => void;
-  /** Mois de référence du contrat modifié : l'aperçu tombe aux bons mois. */
-  anchorMonth?: number | null;
+  /** Mois de référence (0-11) d'un trimestriel ou d'un annuel. */
+  anchorMonth: number | null;
+  onAnchorMonthChange: (value: number) => void;
 }
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
@@ -61,6 +63,20 @@ const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
 });
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const MONTHS = [
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+];
+
+/** « Prélevé chaque année en janvier » ou les quatre mois d'un trimestriel. */
+export function anchorHelp(frequency: string, anchor: number | null): string {
+  if (anchor === null) return "";
+  if (frequency === "annual") return `Prélevé chaque année en ${MONTHS[anchor]}.`;
+  const months = [0, 3, 6, 9].map((k) => (anchor + k) % 12).sort((a, b) => a - b);
+  const names = months.map((m) => MONTHS[m]);
+  return `Prélevé en ${names.slice(0, 3).join(", ")} et ${names[3]}.`;
+}
 
 const choiceSx = (selected: boolean) => ({
   border: selected ? 1.5 : 1,
@@ -114,7 +130,8 @@ export default function ContractFormFields({
   onRenewalDateChange,
   selectedIcon,
   onSelectedIconChange,
-  anchorMonth = null,
+  anchorMonth,
+  onAnchorMonthChange,
 }: ContractFormFieldsProps) {
   const categories = useCategories();
   const isOnce = frequency === "once";
@@ -304,6 +321,23 @@ export default function ContractFormFields({
                 Les mois plus courts, le prélèvement tombe le dernier jour.
               </Typography>
             </Box>
+          )}
+
+          {(frequency === "quarterly" || frequency === "annual") && (
+            <TextField
+              select
+              label="Mois de référence"
+              value={anchorMonth ?? ""}
+              onChange={(e) => onAnchorMonthChange(Number(e.target.value))}
+              helperText={anchorHelp(frequency, anchorMonth)}
+              sx={{ maxWidth: 320 }}
+            >
+              {MONTHS.map((m, i) => (
+                <MenuItem key={m} value={i}>
+                  {cap(m)}
+                </MenuItem>
+              ))}
+            </TextField>
           )}
         </Section>
 

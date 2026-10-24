@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContractFormDialog from "./ContractFormDialog";
+import { anchorHelp } from "./ContractFormFields";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
 import { CreateCategory } from "@/modules/categories/actions";
 import type { CalendarContract } from "@/modules/contracts/calendar";
@@ -247,5 +248,78 @@ describe("ContractFormDialog – contrat annuel", () => {
     const dates = within(apercu).getAllByText(/ 3 /);
     expect(dates.length).toBeGreaterThan(0);
     for (const d of dates) expect(d).toHaveTextContent(/3 janvier/);
+  });
+});
+
+describe("ContractFormDialog – mois de référence", () => {
+  beforeEach(() => {
+    vi.mocked(CreateSubscription).mockReset();
+    vi.mocked(EditSubscription).mockReset();
+  });
+
+  it("n'apparaît que pour un trimestriel ou un annuel", async () => {
+    const user = userEvent.setup();
+    render(<ContractFormDialog open mode="create" onClose={() => {}} />);
+    const dialog = screen.getByRole("dialog");
+
+    expect(within(dialog).queryByLabelText("Mois de référence")).not.toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Annuel" }));
+    expect(within(dialog).getByLabelText("Mois de référence")).toBeInTheDocument();
+  });
+
+  it("envoie le mois choisi à la création", async () => {
+    vi.mocked(CreateSubscription).mockResolvedValue({ success: true });
+    const user = userEvent.setup();
+    render(<ContractFormDialog open mode="create" onClose={() => {}} />);
+    const dialog = screen.getByRole("dialog");
+
+    await user.type(within(dialog).getByLabelText(/^Nom du contrat/), "Assurance auto");
+    await user.click(within(dialog).getByText("Assurance auto", { selector: "button" }));
+    await user.type(within(dialog).getByLabelText(/Montant/), "412");
+    await user.click(within(dialog).getByRole("button", { name: "Annuel" }));
+    await user.click(within(dialog).getByRole("button", { name: "3" }));
+    await user.click(within(dialog).getByLabelText("Mois de référence"));
+    await user.click(await screen.findByRole("option", { name: "Mars" }));
+
+    expect(within(dialog).getByText("Prélevé chaque année en mars.")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: /ajouter au calendrier/i }));
+
+    await waitFor(() => expect(CreateSubscription).toHaveBeenCalled());
+    const [formData] = vi.mocked(CreateSubscription).mock.calls[0];
+    expect(formData.get("frequency")).toBe("annual");
+    expect(formData.get("anchorMonth")).toBe("2");
+  });
+
+  it("renvoie le mois du contrat modifié tel quel", async () => {
+    vi.mocked(EditSubscription).mockResolvedValue({ success: true });
+    const user = userEvent.setup();
+    const annual: CalendarContract = { ...contract, frequency: "annual", anchorMonth: 0, debitDay: 3 };
+    render(<ContractFormDialog open mode="edit" contract={annual} onClose={() => {}} />);
+
+    await user.click(screen.getByRole("button", { name: /enregistrer/i }));
+
+    await waitFor(() => expect(EditSubscription).toHaveBeenCalled());
+    const [, formData] = vi.mocked(EditSubscription).mock.calls[0];
+    expect(formData.get("anchorMonth")).toBe("0");
+  });
+
+  it("n'envoie pas de mois pour un contrat mensuel", async () => {
+    vi.mocked(EditSubscription).mockResolvedValue({ success: true });
+    const user = userEvent.setup();
+    render(<ContractFormDialog open mode="edit" contract={contract} onClose={() => {}} />);
+
+    await user.click(screen.getByRole("button", { name: /enregistrer/i }));
+
+    await waitFor(() => expect(EditSubscription).toHaveBeenCalled());
+    const [, formData] = vi.mocked(EditSubscription).mock.calls[0];
+    expect(formData.get("anchorMonth")).toBeNull();
+  });
+});
+
+describe("anchorHelp", () => {
+  it("dit en clair quand tombe le prélèvement", () => {
+    expect(anchorHelp("annual", 0)).toBe("Prélevé chaque année en janvier.");
+    // Trimestriel ancré en novembre : les quatre mois, dans l'ordre de l'année.
+    expect(anchorHelp("quarterly", 10)).toBe("Prélevé en février, mai, août et novembre.");
   });
 });

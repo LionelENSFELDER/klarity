@@ -48,6 +48,13 @@ const subscriptionSchema = z
     amount: z.number().positive("Le montant doit être positif"),
     frequency: z.enum(["once", "monthly", "quarterly", "annual"]),
     debitDay: z.number().int().min(1).max(31).nullable(),
+    // Mois de référence (0-11) d'un trimestriel ou d'un annuel.
+    anchorMonth: z
+      .number()
+      .int()
+      .min(0, "Le mois de référence est invalide")
+      .max(11, "Le mois de référence est invalide")
+      .nullable(),
     debitDate: z.string().optional(), // date complète pour "une fois"
     contractNumber: z.string().trim().optional(),
     renewalDate: z.string().optional(),
@@ -85,6 +92,7 @@ export async function CreateSubscription(formData: FormData) {
     amount: parseAmount(formData.get("amount")),
     frequency: formData.get("frequency"),
     debitDay: parseAmount(formData.get("debitDay")),
+    anchorMonth: parseAmount(formData.get("anchorMonth")),
     debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
@@ -106,7 +114,7 @@ export async function CreateSubscription(formData: FormData) {
   }
   const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
 
-  const anchorMonth = resolveAnchorMonth(data.frequency, null, new Date());
+  const anchorMonth = resolveAnchorMonth(data.frequency, data.anchorMonth, new Date());
 
   await prisma.contract.create({
     data: {
@@ -148,6 +156,7 @@ export async function EditSubscription(id: string, formData: FormData) {
     amount: parseAmount(formData.get("amount")),
     frequency: formData.get("frequency"),
     debitDay: parseAmount(formData.get("debitDay")),
+    anchorMonth: parseAmount(formData.get("anchorMonth")),
     debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
@@ -169,9 +178,10 @@ export async function EditSubscription(id: string, formData: FormData) {
   }
   const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
 
+  // Le mois saisi l'emporte ; sans saisie, le contrat garde le sien.
   const anchorMonth = resolveAnchorMonth(
     data.frequency,
-    existing.anchorMonth,
+    data.anchorMonth ?? existing.anchorMonth,
     new Date(),
   );
 

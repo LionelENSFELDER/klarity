@@ -28,6 +28,8 @@ const EMPTY_STATE = {
   frequency: "monthly",
   debitDay: null as number | null,
   debitDate: "",
+  // Mois de référence par défaut : le mois en cours, comme côté serveur.
+  anchorMonth: null as number | null,
   contractNumber: "",
   renewalDate: "",
   selectedIcon: null as IconOption | null,
@@ -55,6 +57,7 @@ export default function ContractFormDialog({
   const [frequency, setFrequency] = useState(EMPTY_STATE.frequency);
   const [debitDay, setDebitDay] = useState<number | null>(EMPTY_STATE.debitDay);
   const [debitDate, setDebitDate] = useState(EMPTY_STATE.debitDate);
+  const [anchorMonth, setAnchorMonth] = useState<number | null>(EMPTY_STATE.anchorMonth);
   const [contractNumber, setContractNumber] = useState(EMPTY_STATE.contractNumber);
   const [renewalDate, setRenewalDate] = useState(EMPTY_STATE.renewalDate);
   const [selectedIcon, setSelectedIcon] = useState<IconOption | null>(
@@ -73,6 +76,7 @@ export default function ContractFormDialog({
       setAmount(String(contract.amount));
       setFrequency(contract.frequency);
       setDebitDay(contract.frequency === "once" ? null : contract.debitDay);
+      setAnchorMonth(contract.anchorMonth ?? new Date().getMonth());
       setDebitDate(
         contract.frequency === "once" && contract.startDate
           ? contract.startDate.slice(0, 10)
@@ -99,6 +103,7 @@ export default function ContractFormDialog({
       setFrequency(EMPTY_STATE.frequency);
       setDebitDay(EMPTY_STATE.debitDay);
       setDebitDate(EMPTY_STATE.debitDate);
+      setAnchorMonth(new Date().getMonth());
       setContractNumber(EMPTY_STATE.contractNumber);
       setRenewalDate(EMPTY_STATE.renewalDate);
       setSelectedIcon(EMPTY_STATE.selectedIcon);
@@ -130,6 +135,9 @@ export default function ContractFormDialog({
       formData.set("debitDate", debitDate);
     } else if (debitDay !== null) {
       formData.set("debitDay", String(debitDay));
+    }
+    if ((frequency === "quarterly" || frequency === "annual") && anchorMonth !== null) {
+      formData.set("anchorMonth", String(anchorMonth));
     }
     if (contractNumber.trim())
       formData.set("contractNumber", contractNumber.trim());
@@ -194,7 +202,8 @@ export default function ContractFormDialog({
             onRenewalDateChange={setRenewalDate}
             selectedIcon={selectedIcon}
             onSelectedIconChange={setSelectedIcon}
-            anchorMonth={mode === "edit" ? (contract?.anchorMonth ?? null) : null}
+            anchorMonth={anchorMonth}
+            onAnchorMonthChange={setAnchorMonth}
           />
         </Stack>
       </DialogContent>
