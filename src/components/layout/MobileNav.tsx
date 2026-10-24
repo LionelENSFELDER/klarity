@@ -26,11 +26,17 @@ export default function MobileNav({
   return (
     <>
       <IconButton
-        edge="start"
         color="inherit"
         aria-label="Ouvrir la navigation"
         onClick={() => setOpen(true)}
-        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+        sx={{
+          display: { xs: "flex", md: "none" },
+          width: 44,
+          height: 44,
+          border: 1,
+          borderColor: "divider",
+          borderRadius: 3,
+        }}
       >
         <MenuIcon />
       </IconButton>

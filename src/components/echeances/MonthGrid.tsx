@@ -104,7 +104,7 @@ export default function MonthGrid({
           <Typography component="h2" sx={{ fontSize: 18, fontWeight: 700, textTransform: "capitalize" }}>
             {MONTHS[month]} {year}
           </Typography>
-          <Stack direction="row" spacing={2.25} sx={{ fontSize: 13, color: "text.secondary" }}>
+          <Stack direction="row" flexWrap="wrap" columnGap={2.25} rowGap={0.5} sx={{ fontSize: 13, color: "text.secondary" }}>
             <span>Total <Box component="strong" sx={{ color: "text.primary" }}>{euro(monthTotal)}</Box></span>
             <span>Prélevé <Box component="strong" sx={{ color: "text.primary" }}>{euro(paid)}</Box></span>
             <span>Reste <Box component="strong" sx={{ color: "primary.dark", ".dark &": { color: "primary.light" } }}>{euro(monthTotal - paid)}</Box></span>
