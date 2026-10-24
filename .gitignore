@@ -48,3 +48,9 @@ prisma/dev.db-wal
 # PDF de contrats uploadés localement (feature retirée, dossier conservé)
 /public/uploads
 .neon
+
+# Fichiers de travail du logo : jamais servis depuis public/
+/public/*.af
+/public/*.af~lock~
+/public/*.zip
+*.af~lock~
