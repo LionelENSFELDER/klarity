@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSession } from "@/lib/session";
-import { Box, Button, Container, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { getCategories } from "@/modules/categories/queries";
 import {
   getAllContracts,
@@ -58,6 +58,11 @@ export default async function ReglagesPage({
   }
 
   const counts = buildSidebarCounts(contracts, categories, providers, 3, new Date());
+  const tabCounts: Record<Onglet, number> = {
+    contrats: allContracts.length,
+    categories: categories.length,
+    fournisseurs: providers.length,
+  };
 
   return (
     <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
@@ -67,45 +72,38 @@ export default async function ReglagesPage({
         user={session.user}
       />
       <Box sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-        <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            flexWrap="wrap"
-            gap={2}
-            sx={{ mb: 2.5 }}
+        <Box sx={{ px: { xs: 2, md: 4 }, pt: { xs: 2, md: 3.5 }, pb: 5, maxWidth: 1200 }}>
+          <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+            Contrats, catégories et fournisseurs
+          </Typography>
+          <Typography
+            component="h1"
+            sx={{ fontWeight: 700, fontSize: { xs: 22, md: 28 }, letterSpacing: "-0.02em", mt: 0.5 }}
           >
-            <Box>
-              <Typography
-                component="h1"
-                sx={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 600,
-                  fontSize: 23,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Réglages
-              </Typography>
-              <Typography sx={{ color: "text.secondary", fontSize: 12.5, mt: 0.4 }}>
-                Contrats, catégories et fournisseurs
-              </Typography>
-            </Box>
-            <Button component={Link} href="/calendar" color="inherit" size="small">
-              ← Retour aux échéances
-            </Button>
-          </Stack>
+            Réglages
+          </Typography>
 
-          <Tabs value={onglet} sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+          <Tabs
+            value={onglet}
+            variant="scrollable"
+            allowScrollButtonsMobile
+            sx={{ borderBottom: 1, borderColor: "divider", mt: 2, mb: 2.5 }}
+          >
             {ONGLETS.map((o) => (
               <Tab
                 key={o.id}
                 value={o.id}
-                label={o.label}
+                label={
+                  <span>
+                    {o.label}{" "}
+                    <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                      {tabCounts[o.id]}
+                    </Box>
+                  </span>
+                }
                 component={Link}
                 href={`/reglages?onglet=${o.id}`}
-                sx={{ textTransform: "none" }}
+                sx={{ textTransform: "none", fontWeight: 600, fontSize: 14 }}
               />
             ))}
           </Tabs>
@@ -119,7 +117,7 @@ export default async function ReglagesPage({
           {onglet === "fournisseurs" && (
             <ProviderSettings providers={providers} />
           )}
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

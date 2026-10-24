@@ -93,11 +93,11 @@ export default function ProviderSettings({
         </Alert>
       ))}
 
-      <Stack>
+      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 4.5, overflow: "hidden", px: 1 }}>
         {providers.map((p) => {
           if (editing === p.name) {
             return (
-              <Paper key={p.name} variant="outlined" sx={{ p: 2, my: 1 }}>
+              <Paper key={p.name} variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
                 <Stack direction="row" spacing={1.25} alignItems="center">
                   <TextField
                     size="small"
@@ -136,8 +136,8 @@ export default function ProviderSettings({
                   py: 1.25,
                   px: 1,
                   borderRadius: 1.5,
-                  "& + &": { boxShadow: "0 -1px 0 #1e2029" },
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.03)" },
+                  "& + &": { borderTop: 1, borderColor: "divider" },
+                  "&:hover": { bgcolor: "action.hover" },
                 }}
               >
                 <Box
@@ -145,7 +145,7 @@ export default function ProviderSettings({
                     width: 9,
                     height: 9,
                     borderRadius: "50%",
-                    border: "1px solid #5c6675",
+                    border: 1, borderColor: "text.secondary",
                     flex: "none",
                   }}
                 />
@@ -162,7 +162,7 @@ export default function ProviderSettings({
                   >
                     {p.name}
                   </Typography>
-                  <Typography sx={{ fontSize: 11.5, color: "#5c6675", mt: "1px" }}>
+                  <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: "1px" }}>
                     {p.count} contrat{p.count > 1 ? "s" : ""}
                   </Typography>
                 </Box>
@@ -205,9 +205,9 @@ export default function ProviderSettings({
               </Stack>
 
               {merging === p.name && (
-                <Paper variant="outlined" sx={{ p: 2, my: 1 }}>
+                <Paper variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
                   <Typography
-                    sx={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13.5, mb: 0.75 }}
+                    sx={{ fontWeight: 600, fontSize: 13.5, mb: 0.75 }}
                   >
                     Fusionner «&nbsp;{p.name}&nbsp;» dans un autre fournisseur
                   </Typography>

@@ -96,8 +96,7 @@ describe("ContractSettings – liste", () => {
     // Un contrat archivé ne doit pas disparaître sans explication.
     expect(screen.getByText(/1 contrat archivé/)).toBeInTheDocument();
 
-    await user.click(screen.getByLabelText("Statut"));
-    await user.click(screen.getByRole("option", { name: /Archivés/ }));
+    await user.click(screen.getByRole("button", { name: /Archivés/ }));
 
     expect(screen.getByText("Ancien forfait")).toBeInTheDocument();
     expect(screen.queryByText("Netflix Famille")).not.toBeInTheDocument();
@@ -173,8 +172,7 @@ describe("ContractSettings – actions", () => {
     vi.mocked(SetContractArchived).mockResolvedValue({ success: true });
     renderSettings([archived]);
 
-    await user.click(screen.getByLabelText("Statut"));
-    await user.click(screen.getByRole("option", { name: /Archivés/ }));
+    await user.click(screen.getByRole("button", { name: /Archivés/ }));
     await user.click(screen.getByRole("button", { name: "Restaurer" }));
 
     expect(SetContractArchived).toHaveBeenCalledWith("c3", false);

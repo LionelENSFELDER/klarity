@@ -7,12 +7,23 @@ import {
   Box,
   Button,
   Chip,
+  IconButton,
+  InputAdornment,
   MenuItem,
   Paper,
   Stack,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import ArchiveIcon from "@mui/icons-material/ArchiveOutlined";
+import UnarchiveIcon from "@mui/icons-material/UnarchiveOutlined";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import {
   DeleteContract,
   SetContractArchived,
@@ -23,9 +34,10 @@ import {
   getNextOccurrence,
   monthlyCost,
 } from "@/modules/contracts/calendar";
-import { findCategory, type Category } from "@/modules/categories/model";
+import { findCategory, NO_CATEGORY, type Category } from "@/modules/categories/model";
 import { getFrequencyLabel } from "@/modules/contracts/categories";
 import ContractFormDialog from "@/components/contracts/ContractFormDialog";
+import ContractAvatar from "@/components/contracts/ContractAvatar";
 
 const MONTHS = [
   "janv.", "févr.", "mars", "avr.", "mai", "juin",
@@ -111,242 +123,263 @@ export default function ContractSettings({
         </Alert>
       )}
 
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={1.25}
-        sx={{ mb: 2 }}
-        alignItems={{ sm: "center" }}
-      >
-        <TextField
-          size="small"
-          placeholder="Rechercher un contrat ou un fournisseur"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ flex: 1, minWidth: 0 }}
-        />
-        <TextField
-          select
-          size="small"
-          label="Statut"
-          value={status}
-          onChange={(e) => setStatus(e.target.value as StatusFilter)}
-          sx={{ minWidth: 140 }}
+      <Box sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 4.5, overflow: "hidden" }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={1.25}
+          alignItems={{ md: "center" }}
+          sx={{ p: 2 }}
         >
-          <MenuItem value="actifs">Actifs</MenuItem>
-          <MenuItem value="archives">
-            Archivés{archivedCount ? ` (${archivedCount})` : ""}
-          </MenuItem>
-          <MenuItem value="tous">Tous</MenuItem>
-        </TextField>
-        <TextField
-          select
-          size="small"
-          label="Trier par"
-          value={sort}
-          onChange={(e) => setSort(e.target.value as SortKey)}
-          sx={{ minWidth: 150 }}
+          <TextField
+            size="small"
+            placeholder="Rechercher un contrat ou un fournisseur"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ fontSize: 18 }} />
+                  </InputAdornment>
+                ),
+              },
+              htmlInput: { "aria-label": "Rechercher un contrat ou un fournisseur" },
+            }}
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <ToggleButtonGroup
+            exclusive
+            size="small"
+            aria-label="Statut"
+            value={status}
+            onChange={(_, v) => v && setStatus(v)}
+            sx={{
+              bgcolor: "action.hover",
+              p: 0.5,
+              borderRadius: 2.5,
+              "& .MuiToggleButton-root": {
+                border: 0,
+                borderRadius: "8px !important",
+                px: 1.5,
+                textTransform: "none",
+                color: "text.primary",
+              },
+              "& .Mui-selected": {
+                bgcolor: "background.paper !important",
+                fontWeight: 600,
+                boxShadow: "0 1px 2px rgba(16,24,40,0.08)",
+              },
+            }}
+          >
+            <ToggleButton value="actifs">Actifs · {contracts.length - archivedCount}</ToggleButton>
+            <ToggleButton value="archives">Archivés · {archivedCount}</ToggleButton>
+            <ToggleButton value="tous">Tous</ToggleButton>
+          </ToggleButtonGroup>
+          <TextField
+            select
+            size="small"
+            label="Trier par"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            sx={{ minWidth: 170 }}
+          >
+            <MenuItem value="montant">Montant</MenuItem>
+            <MenuItem value="nom">Nom</MenuItem>
+            <MenuItem value="echeance">Prochaine échéance</MenuItem>
+          </TextField>
+        </Stack>
+
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="baseline"
+          sx={{ px: 2.5, py: 1.25, bgcolor: "background.default", borderTop: 1, borderColor: "divider" }}
         >
-          <MenuItem value="montant">Montant</MenuItem>
-          <MenuItem value="nom">Nom</MenuItem>
-          <MenuItem value="echeance">Prochaine échéance</MenuItem>
-        </TextField>
-      </Stack>
+          <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+            {visible.length} contrat{visible.length > 1 ? "s" : ""} affiché
+            {visible.length > 1 ? "s" : ""}
+          </Typography>
+          <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
+            {formatEuro(Math.round(activeMonthly))}/mois en actifs
+          </Typography>
+        </Stack>
 
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="baseline"
-        sx={{ pb: 1, mb: 0.5, borderBottom: 1, borderColor: "#1e2029" }}
-      >
-        <Typography sx={{ fontSize: 12, color: "#5c6675" }}>
-          {visible.length} contrat{visible.length > 1 ? "s" : ""} affiché
-          {visible.length > 1 ? "s" : ""}
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 12.5,
-            color: "text.secondary",
-            fontVariantNumeric: "tabular-nums",
-          }}
-        >
-          {formatEuro(Math.round(activeMonthly))}/mois en actifs
-        </Typography>
-      </Stack>
+        {visible.length === 0 ? (
+          <EmptyList
+            hasContracts={contracts.length > 0}
+            filtered={Boolean(search.trim()) || status !== "actifs"}
+            onCreate={() => setCreating(true)}
+          />
+        ) : (
+          <Stack>
+            {visible.map((contract) => {
+              const category = findCategory(categories, contract.category);
+              const orphan = category.slug === NO_CATEGORY.slug;
+              const archived = isArchived(contract);
+              const next = archived ? null : getNextOccurrence(contract, today);
 
-      {visible.length === 0 ? (
-        <EmptyList
-          hasContracts={contracts.length > 0}
-          filtered={Boolean(search.trim()) || status !== "actifs"}
-          onCreate={() => setCreating(true)}
-        />
-      ) : (
-        <Stack>
-          {visible.map((contract) => {
-            const category = findCategory(categories, contract.category);
-            const archived = isArchived(contract);
-            const next = archived ? null : getNextOccurrence(contract, today);
-
-            return (
-              <Box key={contract.id}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={1.5}
-                  sx={{
-                    py: 1.25,
-                    px: 1,
-                    borderRadius: 1.5,
-                    opacity: archived ? 0.6 : 1,
-                    "& + &": { boxShadow: "0 -1px 0 #1e2029" },
-                    "&:hover": { bgcolor: "rgba(255,255,255,0.03)" },
-                  }}
-                >
-                  <Box
+              return (
+                <Box key={contract.id} sx={{ borderTop: 1, borderColor: "divider" }}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1.75}
                     sx={{
-                      width: 9,
-                      height: 9,
-                      borderRadius: "50%",
-                      bgcolor: category.color,
-                      flex: "none",
-                    }}
-                  />
-
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Stack direction="row" alignItems="center" spacing={0.75}>
-                      <Typography
-                        title={contract.name}
-                        sx={{
-                          fontSize: 13.5,
-                          fontWeight: 500,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {contract.name}
-                      </Typography>
-                      {archived && (
-                        <Chip
-                          label="archivé"
-                          size="small"
-                          variant="outlined"
-                          sx={{
-                            height: 17,
-                            fontSize: 10,
-                            borderColor: "#5c6675",
-                            color: "#5c6675",
-                            "& .MuiChip-label": { px: 0.75 },
-                          }}
-                        />
-                      )}
-                    </Stack>
-                    <Typography sx={{ fontSize: 11.5, color: "#5c6675", mt: "1px" }}>
-                      {contract.provider} · {category.label} ·{" "}
-                      {getFrequencyLabel(contract.frequency)}
-                      {next
-                        ? ` · prochaine le ${next.getDate()} ${MONTHS[next.getMonth()]}`
-                        : ""}
-                    </Typography>
-                  </Box>
-
-                  <Typography
-                    sx={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 13,
-                      fontVariantNumeric: "tabular-nums",
-                      whiteSpace: "nowrap",
+                      py: 1.5,
+                      px: { xs: 1.5, sm: 2.5 },
+                      opacity: archived ? 0.65 : 1,
+                      "&:hover": { bgcolor: "action.hover" },
                     }}
                   >
-                    {formatEuro(contract.amount)}
-                  </Typography>
+                    <ContractAvatar contract={contract} category={category} size={36} />
 
-                  <Stack direction="row" spacing={0.5}>
-                    <Button
-                      size="small"
-                      color="inherit"
-                      onClick={() => {
-                        setEditing(contract);
-                        setDeleting(null);
-                      }}
-                    >
-                      Modifier
-                    </Button>
-                    <Button
-                      size="small"
-                      color="inherit"
-                      disabled={pending}
-                      onClick={() =>
-                        run(() => SetContractArchived(contract.id, !archived))
-                      }
-                    >
-                      {archived ? "Restaurer" : "Archiver"}
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => setDeleting(contract.id)}
-                    >
-                      Supprimer
-                    </Button>
-                  </Stack>
-                </Stack>
-
-                {deleting === contract.id && (
-                  <Paper variant="outlined" sx={{ p: 2, my: 1 }}>
-                    <Typography
-                      sx={{
-                        fontFamily: "var(--font-display)",
-                        fontWeight: 600,
-                        fontSize: 13.5,
-                        mb: 0.75,
-                      }}
-                    >
-                      Supprimer «&nbsp;{contract.name}&nbsp;» ?
-                    </Typography>
-                    <Typography
-                      sx={{ fontSize: 12.5, color: "text.secondary", mb: 1.5 }}
-                    >
-                      La suppression est définitive : le contrat et son
-                      historique d&apos;échéances disparaissent.{" "}
-                      {!archived &&
-                        "Pour le retirer du calendrier sans le perdre, archive-le plutôt."}
-                    </Typography>
-                    <Stack direction="row" spacing={1}>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        disabled={pending}
-                        onClick={() => run(() => DeleteContract(contract.id))}
-                      >
-                        Supprimer définitivement
-                      </Button>
-                      {!archived && (
-                        <Button
-                          disabled={pending}
-                          onClick={() =>
-                            run(() => SetContractArchived(contract.id, true))
-                          }
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Stack direction="row" alignItems="center" spacing={0.75}>
+                        <Typography
+                          title={contract.name}
+                          sx={{
+                            fontSize: 14,
+                            fontWeight: 600,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
                         >
-                          Archiver à la place
-                        </Button>
-                      )}
-                      <Button color="inherit" onClick={() => setDeleting(null)}>
-                        Annuler
-                      </Button>
-                    </Stack>
-                  </Paper>
-                )}
-              </Box>
-            );
-          })}
-        </Stack>
-      )}
+                          {contract.name}
+                        </Typography>
+                        {archived && (
+                          <Chip label="archivé" size="small" variant="outlined" sx={{ height: 20, fontSize: 11 }} />
+                        )}
+                      </Stack>
+                      <Typography sx={{ fontSize: 12, color: "text.secondary", mt: "2px" }}>
+                        {contract.provider} · {category.label} ·{" "}
+                        {getFrequencyLabel(contract.frequency)}
+                        {next
+                          ? ` · prochaine le ${next.getDate()} ${MONTHS[next.getMonth()]}`
+                          : ""}
+                      </Typography>
+                    </Box>
 
-      <Box sx={{ mt: 2.25, pt: 1.75, borderTop: 1, borderColor: "#1e2029" }}>
-        <Button variant="outlined" size="small" onClick={() => setCreating(true)}>
-          ＋ Nouveau contrat
-        </Button>
+                    <Box
+                      component="span"
+                      aria-hidden
+                      sx={{
+                        display: { xs: "none", md: "inline-flex" },
+                        alignItems: "center",
+                        gap: 0.75,
+                        flex: "none",
+                        fontSize: 12,
+                        px: 1.25,
+                        py: 0.5,
+                        borderRadius: 999,
+                        bgcolor: orphan ? "warning.light" : "action.hover",
+                        color: orphan ? "#78350f" : "text.primary",
+                      }}
+                    >
+                      <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: category.color }} />
+                      {category.label}
+                    </Box>
+
+                    <Typography sx={{ fontSize: 14, fontWeight: 700, minWidth: 72, textAlign: "right", whiteSpace: "nowrap" }}>
+                      {formatEuro(contract.amount)}
+                    </Typography>
+
+                    <Stack direction="row" spacing={0.25}>
+                      <Tooltip title="Modifier">
+                        <IconButton
+                          size="small"
+                          aria-label="Modifier"
+                          onClick={() => {
+                            setEditing(contract);
+                            setDeleting(null);
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={archived ? "Restaurer" : "Archiver"}>
+                        <span>
+                          <IconButton
+                            size="small"
+                            aria-label={archived ? "Restaurer" : "Archiver"}
+                            disabled={pending}
+                            onClick={() =>
+                              run(() => SetContractArchived(contract.id, !archived))
+                            }
+                          >
+                            {archived ? <UnarchiveIcon fontSize="small" /> : <ArchiveIcon fontSize="small" />}
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                      <Tooltip title="Supprimer">
+                        <IconButton
+                          size="small"
+                          aria-label="Supprimer"
+                          onClick={() => setDeleting(contract.id)}
+                          sx={{ color: "error.main" }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </Stack>
+
+                  {deleting === contract.id && (
+                    <Paper variant="outlined" sx={{ p: 2, mx: 2.5, mb: 1.5, borderRadius: 3 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "var(--font-display)",
+                          fontWeight: 600,
+                          fontSize: 13.5,
+                          mb: 0.75,
+                        }}
+                      >
+                        Supprimer «&nbsp;{contract.name}&nbsp;» ?
+                      </Typography>
+                      <Typography
+                        sx={{ fontSize: 12.5, color: "text.secondary", mb: 1.5 }}
+                      >
+                        La suppression est définitive : le contrat et son
+                        historique d&apos;échéances disparaissent.{" "}
+                        {!archived &&
+                          "Pour le retirer du calendrier sans le perdre, archive-le plutôt."}
+                      </Typography>
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          disabled={pending}
+                          onClick={() => run(() => DeleteContract(contract.id))}
+                        >
+                          Supprimer définitivement
+                        </Button>
+                        {!archived && (
+                          <Button
+                            disabled={pending}
+                            onClick={() =>
+                              run(() => SetContractArchived(contract.id, true))
+                            }
+                          >
+                            Archiver à la place
+                          </Button>
+                        )}
+                        <Button color="inherit" onClick={() => setDeleting(null)}>
+                          Annuler
+                        </Button>
+                      </Stack>
+                    </Paper>
+                  )}
+                </Box>
+              );
+            })}
+          </Stack>
+        )}
+
+        <Box sx={{ px: 2.5, py: 2, borderTop: 1, borderColor: "divider" }}>
+          <Button variant="outlined" onClick={() => setCreating(true)} startIcon={<AddIcon />}>
+            Nouveau contrat
+          </Button>
+        </Box>
       </Box>
 
       {archivedCount > 0 && status === "actifs" && (
@@ -393,7 +426,7 @@ function EmptyList({
   if (!hasContracts) {
     return (
       <Stack alignItems="center" spacing={1} sx={{ py: 6, textAlign: "center" }}>
-        <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15 }}>
+        <Typography sx={{ fontWeight: 600, fontSize: 15 }}>
           Aucun contrat
         </Typography>
         <Typography sx={{ color: "text.secondary", fontSize: 13, maxWidth: "44ch" }}>
@@ -401,8 +434,8 @@ function EmptyList({
           échéances.
         </Typography>
         <Box sx={{ pt: 1 }}>
-          <Button variant="outlined" size="small" onClick={onCreate}>
-            ＋ Nouveau contrat
+          <Button variant="outlined" onClick={onCreate}>
+            Nouveau contrat
           </Button>
         </Box>
       </Stack>
@@ -411,7 +444,7 @@ function EmptyList({
 
   return (
     <Stack alignItems="center" spacing={1} sx={{ py: 6, textAlign: "center" }}>
-      <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15 }}>
+      <Typography sx={{ fontWeight: 600, fontSize: 15 }}>
         Aucun résultat
       </Typography>
       <Typography sx={{ color: "text.secondary", fontSize: 13, maxWidth: "44ch" }}>
