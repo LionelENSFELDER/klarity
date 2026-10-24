@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import MobileNav from "./MobileNav";
 import type { Category } from "@/modules/categories/model";
@@ -121,7 +121,9 @@ describe("MobileNav", () => {
     await userEvent.click(screen.getByText("Énergie"));
 
     // La fermeture est animée : l'entrée disparaît du flux accessible.
-    expect(await screen.findByRole("presentation")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole("link", { name: /Énergie/ })).not.toBeInTheDocument(),
+    );
   });
 });
 

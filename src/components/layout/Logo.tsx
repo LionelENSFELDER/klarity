@@ -1,25 +1,21 @@
-import { Box, Stack, Typography } from "@mui/material";
+import Image from "next/image";
+import { Stack, Typography } from "@mui/material";
 
-/** Logo : un « K » blanc sur l'accent, suivi du nom si `withName`. */
+/**
+ * Logo de Klarity, la même image que l'icône de l'onglet. Le PNG 192 px
+ * reste net en 32 px sur écran haute densité ; le SVG du dossier public
+ * est d'un vert trop pâle pour se lire sur fond clair.
+ */
 export default function Logo({ withName = false }: { withName?: boolean }) {
   const mark = (
-    <Box
-      aria-hidden
-      sx={{
-        width: 32,
-        height: 32,
-        borderRadius: 2.5,
-        bgcolor: "primary.dark",
-        display: "grid",
-        placeItems: "center",
-        flex: "none",
-      }}
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 4v16" />
-        <path d="M18 4 9.5 12 18 20" />
-      </svg>
-    </Box>
+    <Image
+      src="/android-chrome-192x192.png"
+      alt={withName ? "" : "Klarity"}
+      width={32}
+      height={32}
+      priority
+      style={{ flex: "none" }}
+    />
   );
 
   if (!withName) return mark;
