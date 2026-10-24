@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { Providers } from "@/components/providers";
 import { Box } from "@mui/material";
@@ -40,8 +39,8 @@ export default async function RootLayout({
         <AppRouterCacheProvider>
           <Providers>
             {/* La coquille occupe exactement la hauteur de l'écran et ne
-                défile pas : le footer reste donc toujours visible, et chaque
-                zone (rail, contenu) gère son propre défilement.
+                défile pas : chaque zone (rail, contenu) gère son propre
+                défilement.
                 dvh plutôt que vh : sur mobile, vh ignore la barre d'URL. */}
             <Box
               sx={{
@@ -70,7 +69,6 @@ export default async function RootLayout({
               >
                 {children}
               </Box>
-              <Footer />
             </Box>
           </Providers>
         </AppRouterCacheProvider>

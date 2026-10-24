@@ -5,9 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Box,
-  Container,
-  Card,
-  CardContent,
   TextField,
   Button,
   Typography,
@@ -18,6 +15,10 @@ import {
 } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
 import Link from "next/link";
+import AuthLayout from "@/components/auth/AuthLayout";
+import PasswordField from "@/components/auth/PasswordField";
+
+const pill = { borderRadius: 999, minHeight: 50, fontSize: 15 } as const;
 
 function SignInContent() {
   const [email, setEmail] = useState("");
@@ -57,167 +58,66 @@ function SignInContent() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        py: { xs: 6, md: 12 },
-        px: 2,
-      }}
+    <AuthLayout
+      title="Bon retour"
+      subtitle="Connectez-vous pour voir vos prochains prélèvements."
     >
-      <Container maxWidth="sm">
-        <Stack spacing={4} alignItems="center">
-          {/* Logo & Title */}
-          <Stack spacing={3} alignItems="center">
-            <Box
-              sx={{
-                width: 64,
-                height: 64,
-                borderRadius: 3,
-                bgcolor: "primary.main",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: 2,
-              }}
-            >
-              <Typography variant="h4" sx={{ color: "white" }}>
-                📋
-              </Typography>
-            </Box>
-            <Box textAlign="center">
-              <Typography variant="h4" fontWeight={700} gutterBottom>
-                Bienvenue sur Klarity
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Gérez tous vos contrats en un seul endroit
-              </Typography>
-            </Box>
-          </Stack>
+      <Stack component="form" onSubmit={handleCredentialsSubmit} spacing={2.25}>
+        {notice && !error && <Alert severity="success">{notice}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
 
-          {/* Card */}
-          <Card sx={{ width: "100%", maxWidth: 480 }}>
-            <CardContent sx={{ p: 4 }}>
-              <Stack spacing={3}>
-                <Box>
-                  <Typography variant="h5" fontWeight={600} gutterBottom>
-                    Connexion
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Choisissez votre méthode de connexion préférée
-                  </Typography>
-                </Box>
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          placeholder="votre@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
 
-                {/* Form */}
-                <Stack
-                  component="form"
-                  onSubmit={handleCredentialsSubmit}
-                  spacing={3}
-                >
-                  {notice && !error && (
-                    <Alert severity="success" sx={{ width: "100%" }}>
-                      {notice}
-                    </Alert>
-                  )}
-                  {error && (
-                    <Alert severity="error" sx={{ width: "100%" }}>
-                      {error}
-                    </Alert>
-                  )}
+        <PasswordField
+          fullWidth
+          label="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+          error={Boolean(error)}
+        />
 
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    type="email"
-                    placeholder="votre@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
+        <Button type="submit" variant="contained" fullWidth disabled={loading} sx={pill}>
+          {loading ? "Connexion..." : "Se connecter"}
+        </Button>
+      </Stack>
 
-                  <TextField
-                    fullWidth
-                    label="Mot de passe"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                  />
+      <Divider>
+        <Typography variant="caption" color="text.secondary">
+          OU
+        </Typography>
+      </Divider>
 
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    disabled={loading}
-                  >
-                    {loading ? "Connexion..." : "Se connecter"}
-                  </Button>
-                </Stack>
+      <Button
+        onClick={handleGoogleSignIn}
+        variant="outlined"
+        color="inherit"
+        fullWidth
+        startIcon={<GoogleIcon />}
+        sx={{ ...pill, borderColor: "divider" }}
+      >
+        Continuer avec Google
+      </Button>
 
-                <Divider>
-                  <Typography variant="caption" color="text.secondary">
-                    OU
-                  </Typography>
-                </Divider>
-
-                {/* Google Sign In */}
-                <Button
-                  onClick={handleGoogleSignIn}
-                  variant="outlined"
-                  size="large"
-                  fullWidth
-                  startIcon={<GoogleIcon />}
-                >
-                  Continuer avec Google
-                </Button>
-
-                <Box textAlign="center">
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    component="span"
-                  >
-                    Pas encore de compte ?{" "}
-                  </Typography>
-                  <MuiLink
-                    component={Link}
-                    href="/auth/register"
-                    underline="hover"
-                    fontWeight={600}
-                  >
-                    S&apos;inscrire
-                  </MuiLink>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-
-          {/* Footer Text */}
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            textAlign="center"
-            maxWidth={400}
-          >
-            En vous connectant, vous acceptez nos{" "}
-            <MuiLink href="#" underline="hover">
-              conditions d&apos;utilisation
-            </MuiLink>{" "}
-            et notre{" "}
-            <MuiLink href="#" underline="hover">
-              politique de confidentialité
-            </MuiLink>
-          </Typography>
-        </Stack>
-      </Container>
-    </Box>
+      <Box textAlign="center">
+        <Typography variant="body2" color="text.secondary" component="span">
+          Pas encore de compte ?{" "}
+        </Typography>
+        <MuiLink component={Link} href="/auth/register" underline="hover" fontWeight={600}>
+          Créer un compte
+        </MuiLink>
+      </Box>
+    </AuthLayout>
   );
 }
 

@@ -28,6 +28,7 @@ import { formatEuro } from "@/modules/contracts/calendar";
 import { NO_CATEGORY, type Category } from "@/modules/categories/model";
 import AddContractButton from "@/components/contracts/AddContractButton";
 import UserMenu from "./UserMenu";
+import Logo from "./Logo";
 import {
   getUserInitials,
   type SidebarCounts,
@@ -223,29 +224,6 @@ function NavSection({
   );
 }
 
-/** Logo : un « K » blanc sur l'accent. */
-function Logo() {
-  return (
-    <Box
-      aria-hidden
-      sx={{
-        width: 32,
-        height: 32,
-        borderRadius: 2.5,
-        bgcolor: "primary.dark",
-        display: "grid",
-        placeItems: "center",
-        flex: "none",
-      }}
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 4v16" />
-        <path d="M18 4 9.5 12 18 20" />
-      </svg>
-    </Box>
-  );
-}
-
 /** Où en est le mois : déjà prélevé, total, reste. */
 function MonthCard({ total, paid }: { total: number; paid: number }) {
   const today = new Date();
@@ -331,12 +309,9 @@ export default function NavContent({
     <>
     {/* Marque et création : portées par le rail sur desktop, par le tiroir sur mobile */}
     <Stack spacing={2} sx={{ px: 2, pt: 2.5, pb: 1.5 }}>
-      <Stack direction="row" alignItems="center" spacing={1.25} sx={{ px: 0.5 }}>
-        <Logo />
-        <Typography sx={{ fontWeight: 700, fontSize: 18, letterSpacing: "-0.02em" }}>
-          Klarity
-        </Typography>
-      </Stack>
+      <Box sx={{ px: 0.5 }}>
+        <Logo withName />
+      </Box>
       <AddContractButton
         variant="contained"
         fullWidth

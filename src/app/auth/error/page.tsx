@@ -2,17 +2,8 @@
 
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Alert,
-  Chip,
-  Divider,
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import WarningAmberIcon from "@mui/icons-material/WarningAmberRounded";
 import Link from "next/link";
 
 const errors = {
@@ -23,9 +14,15 @@ const errors = {
   Default: "Une erreur inattendue s'est produite.",
 };
 
+const TIPS = [
+  "Vérifiez votre connexion internet",
+  "Réessayez de vous connecter",
+  "Videz le cache de votre navigateur",
+  "Contactez le support si le problème persiste",
+];
+
 function AuthErrorContent() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error") as keyof typeof errors;
+  const error = useSearchParams().get("error") as keyof typeof errors | null;
 
   return (
     <Box
@@ -34,191 +31,80 @@ function AuthErrorContent() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background:
-          "linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%)",
+        bgcolor: "background.default",
         py: { xs: 6, sm: 12 },
-        px: { xs: 2, sm: 3, lg: 4 },
+        px: 2,
       }}
     >
-      <Box sx={{ maxWidth: "28rem", width: "100%" }}>
-        {/* Header */}
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <Box
-            sx={{
-              mx: "auto",
-              height: 64,
-              width: 64,
-              background: "linear-gradient(135deg, #ef4444 0%, #f43f5e 100%)",
-              borderRadius: 3,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 3,
-              boxShadow: 3,
-            }}
-          >
-            <Typography sx={{ fontSize: "1.5rem" }}>❌</Typography>
-          </Box>
-          <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
-            Erreur de connexion
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Un problème est survenu lors de l&apos;authentification
-          </Typography>
-        </Box>
-
-        {/* Main Card */}
-        <Card sx={{ boxShadow: 6, mb: 3 }}>
-          <CardHeader
-            title={
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <span>🚫</span>
-                <Typography
-                  variant="h6"
-                  component="span"
-                  sx={{ fontWeight: 600, color: "error.main" }}
-                >
-                  Connexion échouée
-                </Typography>
-              </Box>
-            }
-            subheader={
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {errors[error] || errors.Default}
-              </Typography>
-            }
-            sx={{ pb: 3 }}
-          />
-
-          <CardContent
-            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-          >
-            {/* Error Alert */}
-            <Alert severity="error" icon="ℹ️">
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  Solutions recommandées :
-                </Typography>
-                <Box component="ul" sx={{ fontSize: "0.875rem", pl: 3, m: 0 }}>
-                  <li>Vérifiez votre connexion internet</li>
-                  <li>Réessayez de vous connecter</li>
-                  <li>Videz le cache de votre navigateur</li>
-                  <li>Contactez le support si le problème persiste</li>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    gap: 2,
-                  }}
-                >
-                  <Button
-                    component={Link}
-                    href="/auth/signin"
-                    variant="contained"
-                    fullWidth
-                    sx={{ height: 44 }}
-                  >
-                    <span style={{ marginRight: 8 }}>🔄</span>
-                    Réessayer la connexion
-                  </Button>
-                  <Button
-                    component={Link}
-                    href="/"
-                    variant="outlined"
-                    fullWidth
-                    sx={{ height: 44 }}
-                  >
-                    <span style={{ marginRight: 8 }}>🏠</span>
-                    Retour à l&apos;accueil
-                  </Button>
-                </Box>
-              </Box>
-            </Alert>
-
-            <Divider />
-
-            <Alert severity="info" icon="🔧">
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    Debug Info
-                  </Typography>
-                  <Chip label="Development" size="small" variant="outlined" />
-                </Box>
-                <Box sx={{ bgcolor: "grey.100", borderRadius: 1, p: 2 }}>
-                  <Typography
-                    component="code"
-                    sx={{ fontSize: "0.75rem", display: "block" }}
-                  >
-                    Error Code: {error || "Unknown"}
-                  </Typography>
-                  <Typography
-                    component="code"
-                    sx={{ fontSize: "0.75rem", display: "block", mt: 0.5 }}
-                  >
-                    Timestamp: {new Date().toISOString()}
-                  </Typography>
-                </Box>
-              </Box>
-            </Alert>
-          </CardContent>
-        </Card>
-
-        {/* Help Section */}
-        <Card
+      <Stack
+        component="section"
+        aria-labelledby="auth-error-title"
+        spacing={2.25}
+        sx={{
+          width: "100%",
+          maxWidth: 460,
+          bgcolor: "background.paper",
+          border: 1,
+          borderColor: "divider",
+          borderRadius: 6,
+          p: { xs: 3, sm: 4 },
+        }}
+      >
+        <Box
+          aria-hidden
           sx={{
-            background: "linear-gradient(90deg, #eff6ff 0%, #eef2ff 100%)",
+            width: 48,
+            height: 48,
+            borderRadius: 3.5,
+            bgcolor: "rgba(239,68,68,0.12)",
+            color: "error.main",
+            display: "grid",
+            placeItems: "center",
           }}
         >
-          <CardContent sx={{ pt: 3 }}>
-            <Box sx={{ textAlign: "center" }}>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 500, color: "primary.dark", mb: 1 }}
-              >
-                Besoin d&apos;aide ?
-              </Typography>
-              <Typography variant="body2" sx={{ color: "primary.dark", mb: 2 }}>
-                Si le problème persiste, voici quelques ressources utiles
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                  gap: 1,
-                }}
-              >
-                <Chip
-                  label="📧 Support technique"
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                />
-                <Chip
-                  label="📚 Documentation"
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                />
-                <Chip
-                  label="💬 Chat en ligne"
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                />
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+          <WarningAmberIcon />
+        </Box>
+        <Box>
+          <Typography id="auth-error-title" component="h1" sx={{ fontSize: 22, fontWeight: 700 }}>
+            Une erreur s&apos;est produite
+          </Typography>
+          <Typography sx={{ color: "text.secondary", mt: 0.75 }}>
+            {(error && errors[error]) || errors.Default}
+          </Typography>
+        </Box>
+        <Stack component="ul" spacing={1} sx={{ m: 0, p: 0, listStyle: "none" }}>
+          {TIPS.map((t) => (
+            <Stack key={t} component="li" direction="row" spacing={1.25} alignItems="center">
+              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main", flex: "none" }} />
+              <Typography sx={{ fontSize: 14 }}>{t}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} sx={{ pt: 0.5 }}>
+          <Button
+            component={Link}
+            href="/auth/signin"
+            variant="contained"
+            sx={{ flex: 1, borderRadius: 999, minHeight: 46 }}
+          >
+            Réessayer de se connecter
+          </Button>
+          <Button
+            component={Link}
+            href="/support"
+            variant="outlined"
+            color="inherit"
+            sx={{ borderRadius: 999, minHeight: 46, px: 3, borderColor: "divider" }}
+          >
+            Support
+          </Button>
+        </Stack>
+        {error && (
+          <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+            Code à transmettre au support : {error}
+          </Typography>
+        )}
+      </Stack>
     </Box>
   );
 }

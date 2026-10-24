@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
-  Container,
-  Card,
-  CardContent,
   TextField,
   Button,
   Typography,
@@ -14,6 +11,10 @@ import {
   Stack,
   Link as MuiLink,
 } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import AuthLayout from "@/components/auth/AuthLayout";
+import PasswordField from "@/components/auth/PasswordField";
 import Link from "next/link";
 import {
   PASSWORD_MIN_LENGTH,
@@ -57,137 +58,84 @@ export default function RegisterPage() {
     }
   };
 
+  const longEnough = password.length >= PASSWORD_MIN_LENGTH;
+
   return (
-    <Box
-      sx={{
-        minHeight: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        py: { xs: 6, md: 12 },
-        px: 2,
-      }}
+    <AuthLayout
+      title="Créer un compte"
+      subtitle="Gratuit. Ajoutez votre premier contrat en une minute."
     >
-      <Container maxWidth="sm">
-        <Stack spacing={4} alignItems="center">
-          {/* Logo & Title */}
-          <Stack spacing={3} alignItems="center">
-            <Box
-              sx={{
-                width: 64,
-                height: 64,
-                borderRadius: 3,
-                bgcolor: "primary.main",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: 2,
-              }}
-            >
-              <Typography variant="h4" sx={{ color: "white" }}>
-                📋
-              </Typography>
-            </Box>
-            <Box textAlign="center">
-              <Typography variant="h4" fontWeight={700} gutterBottom>
-                Créer un compte
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Rejoignez Klarity pour gérer vos contrats
-              </Typography>
-            </Box>
-          </Stack>
+      <Stack component="form" onSubmit={handleSubmit} spacing={2.25}>
+        {error && <Alert severity="error">{error}</Alert>}
 
-          {/* Card */}
-          <Card sx={{ width: "100%", maxWidth: 480 }}>
-            <CardContent sx={{ p: 4 }}>
-              <Stack spacing={3}>
-                <Box>
-                  <Typography variant="h5" fontWeight={600} gutterBottom>
-                    Inscription
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Créez votre compte pour commencer
-                  </Typography>
-                </Box>
+        <TextField
+          fullWidth
+          label="Nom complet"
+          type="text"
+          placeholder="Jean Dupont"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoComplete="name"
+        />
 
-                {/* Form */}
-                <Stack component="form" onSubmit={handleSubmit} spacing={3}>
-                  {error && (
-                    <Alert severity="error" sx={{ width: "100%" }}>
-                      {error}
-                    </Alert>
-                  )}
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          placeholder="jean@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
 
-                  <TextField
-                    fullWidth
-                    label="Nom complet"
-                    type="text"
-                    placeholder="Jean Dupont"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    autoComplete="name"
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    type="email"
-                    placeholder="jean@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Mot de passe"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="new-password"
-                    slotProps={{ htmlInput: { minLength: PASSWORD_MIN_LENGTH } }}
-                    helperText={`Au moins ${PASSWORD_MIN_LENGTH} caractères`}
-                  />
-
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    disabled={loading || password.length < PASSWORD_MIN_LENGTH}
-                  >
-                    {loading ? "Création..." : "Créer mon compte"}
-                  </Button>
-                </Stack>
-
-                <Box textAlign="center">
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    component="span"
-                  >
-                    Déjà un compte ?{" "}
-                  </Typography>
-                  <MuiLink
-                    component={Link}
-                    href="/auth/signin"
-                    underline="hover"
-                    fontWeight={600}
-                  >
-                    Se connecter
-                  </MuiLink>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
+        <PasswordField
+          fullWidth
+          label="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="new-password"
+          slotProps={{ htmlInput: { minLength: PASSWORD_MIN_LENGTH, "aria-describedby": "password-rule" } }}
+        />
+        <Stack
+          id="password-rule"
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          sx={{ mt: "-8px !important", fontSize: 13, color: longEnough ? "success.dark" : "text.secondary" }}
+        >
+          {longEnough ? <CheckIcon sx={{ fontSize: 16 }} /> : <RadioButtonUncheckedIcon sx={{ fontSize: 14 }} />}
+          <span>{PASSWORD_MIN_LENGTH} caractères minimum</span>
         </Stack>
-      </Container>
-    </Box>
+
+        <Typography sx={{ fontSize: 13, color: "text.secondary", lineHeight: 1.5 }}>
+          En créant un compte, vous acceptez les{" "}
+          <MuiLink component={Link} href="/conditions">conditions d&apos;utilisation</MuiLink>{" "}
+          et la{" "}
+          <MuiLink component={Link} href="/confidentialite">politique de confidentialité</MuiLink>.
+        </Typography>
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          disabled={loading || !longEnough}
+          sx={{ borderRadius: 999, minHeight: 50, fontSize: 15 }}
+        >
+          {loading ? "Création..." : "Créer mon compte"}
+        </Button>
+      </Stack>
+
+      <Box textAlign="center">
+        <Typography variant="body2" color="text.secondary" component="span">
+          Déjà inscrit ?{" "}
+        </Typography>
+        <MuiLink component={Link} href="/auth/signin" underline="hover" fontWeight={600}>
+          Se connecter
+        </MuiLink>
+      </Box>
+    </AuthLayout>
   );
 }
