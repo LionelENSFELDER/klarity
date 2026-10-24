@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import EcheancesView from "./EcheancesView";
+import EcheancesView, { type EcheancesSummary } from "./EcheancesView";
 import type { EcheancesParams } from "./params";
 import type { CalendarContract } from "@/modules/contracts/calendar";
 import type { Category } from "@/modules/categories/model";
@@ -54,6 +54,19 @@ const params: EcheancesParams = {
   horizon: 3,
 };
 
+// Résumé neutre : ses montants ne doivent pas se confondre avec ceux testés.
+const summary: EcheancesSummary = {
+  remainingThisMonth: 0,
+  remainingCount: 0,
+  nextMonthTotal: 0,
+  smoothedMonthly: 0,
+  contractCount: 0,
+  renewalsSoon: 0,
+  next: null,
+  renewals: [],
+  categories: [],
+};
+
 function renderView(
   contracts: CalendarContract[],
   over: Partial<EcheancesParams> = {},
@@ -65,6 +78,7 @@ function renderView(
       totalContracts={totalContracts}
       categories={categories}
       params={{ ...params, ...over }}
+      summary={summary}
       todayISO={TODAY_ISO}
     />,
   );
@@ -78,6 +92,18 @@ describe("EcheancesView – liste des échéances", () => {
     expect(screen.getByText("novembre 2026")).toBeInTheDocument();
     // Un seul contrat à 20 € : chaque mois totalise 20 €.
     expect(screen.getAllByText("20 €").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("regroupe les prélèvements d'un même jour sous un intercalaire daté", () => {
+    renderView([
+      make({ id: "a", name: "Netflix", amount: 20, debitDay: 25 }),
+      make({ id: "b", name: "Spotify", amount: 15.5, debitDay: 25 }),
+    ], { horizon: 3 });
+
+    // Un intercalaire par jour, pas par contrat.
+    expect(screen.getAllByText("Dimanche 25 octobre")).toHaveLength(1);
+    expect(screen.getByText("Dans 7 jours")).toBeInTheDocument();
+    expect(screen.getAllByText("35,50 €").length).toBeGreaterThanOrEqual(1);
   });
 
   it("répète un contrat mensuel à chaque mois de l'horizon", () => {

@@ -1,5 +1,11 @@
 import { getSession } from "@/lib/session";
 import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
+import { getMonthTotal, getUpcomingDebits } from "@/modules/contracts/calendar";
+import {
+  getCategoryLoad,
+  getRenewals,
+  getSmoothedMonthlyCost,
+} from "@/modules/contracts/dashboard";
 import { getCategories } from "@/modules/categories/queries";
 import { NO_CATEGORY } from "@/modules/categories/model";
 import { Box } from "@mui/material";
@@ -50,6 +56,23 @@ export default async function CalendarPage({
     today,
   );
 
+  // Le résumé porte sur tout le portefeuille, quel que soit le filtre affiché.
+  const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const remaining = getUpcomingDebits(allContracts, today, 1);
+  const soon = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 90);
+  const renewals = getRenewals(allContracts, today).filter((r) => !r.overdue);
+  const summary = {
+    remainingThisMonth: remaining.reduce((sum, o) => sum + o.contract.amount, 0),
+    remainingCount: remaining.length,
+    nextMonthTotal: getMonthTotal(allContracts, nextMonth.getFullYear(), nextMonth.getMonth()),
+    smoothedMonthly: getSmoothedMonthlyCost(allContracts),
+    contractCount: allContracts.length,
+    renewalsSoon: renewals.filter((r) => r.date <= soon).length,
+    next: getUpcomingDebits(allContracts, today, 12)[0] ?? null,
+    renewals: renewals.slice(0, 3),
+    categories: getCategoryLoad(allContracts, categories),
+  };
+
   return (
     <CategoriesProvider categories={categories}>
       <Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
@@ -63,6 +86,7 @@ export default async function CalendarPage({
           totalContracts={allContracts.length}
           categories={categories}
           params={params}
+          summary={summary}
           todayISO={today.toISOString()}
         />
       </Box>

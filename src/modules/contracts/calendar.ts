@@ -175,6 +175,26 @@ export function groupByMonth(occurrences: Occurrence[]): MonthGroup[] {
   return [...groups.values()];
 }
 
+/** Occurrences d'un même jour, dans l'ordre chronologique. */
+export interface DayGroup {
+  date: Date;
+  items: Occurrence[];
+  total: number;
+}
+
+export function groupByDay(occurrences: Occurrence[]): DayGroup[] {
+  const groups = new Map<string, DayGroup>();
+  for (const occurrence of occurrences) {
+    const { date } = occurrence;
+    const key = date.toDateString();
+    const group = groups.get(key) ?? { date, items: [], total: 0 };
+    group.items.push(occurrence);
+    group.total += occurrence.contract.amount;
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
 /** Coût ramené au mois, pour comparer des contrats de fréquences différentes. */
 export function monthlyCost(contract: CalendarContract): number {
   switch (contract.frequency) {

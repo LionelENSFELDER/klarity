@@ -3,6 +3,7 @@ import {
   effectiveDebitDay,
   getNextOccurrence,
   getUpcomingDebits,
+  groupByDay,
   groupByMonth,
   monthlyCost,
   type CalendarContract,
@@ -130,6 +131,27 @@ describe("groupByMonth", () => {
     expect(groups[0].total).toBe(15);
     expect(groups[0].items).toHaveLength(2);
     expect(groups[1].month).toBe(10);
+  });
+});
+
+describe("groupByDay", () => {
+  it("regroupe les contrats du même jour et totalise", () => {
+    const occ = getUpcomingDebits(
+      [
+        make({ amount: 10, debitDay: 20 }),
+        make({ id: "c2", amount: 5, debitDay: 20 }),
+        make({ id: "c3", amount: 7, debitDay: 25 }),
+      ],
+      TODAY,
+      2,
+    );
+    const groups = groupByDay(occ);
+    // 20 et 25 octobre, puis 20 et 25 novembre.
+    expect(groups).toHaveLength(4);
+    expect(groups[0].date).toEqual(new Date(2026, 9, 20));
+    expect(groups[0].total).toBe(15);
+    expect(groups[0].items).toHaveLength(2);
+    expect(groups[2].date).toEqual(new Date(2026, 10, 20));
   });
 });
 

@@ -4,7 +4,9 @@ import { Box, Stack, Typography, Chip } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import type { CalendarContract, Occurrence } from "@/modules/contracts/calendar";
 import { formatEuro } from "@/modules/contracts/calendar";
+import { getFrequencyLabel } from "@/modules/contracts/categories";
 import { findCategory, NO_CATEGORY, type Category } from "@/modules/categories/model";
+import ContractAvatar from "@/components/contracts/ContractAvatar";
 
 function renewsIn(contract: CalendarContract, year: number, month: number) {
   if (!contract.renewalDate) return false;
@@ -23,8 +25,8 @@ interface DebitRowProps {
   markPast?: boolean;
 }
 
-// Une ligne = une échéance. Le jour ancre la lecture à gauche, le montant
-// à droite ; tout le reste est secondaire.
+// Une ligne = une échéance : la pastille et le nom à gauche, le montant à
+// droite. Le jour est porté par l'intercalaire au-dessus.
 export default function DebitRow({
   occurrence,
   categories,
@@ -35,16 +37,16 @@ export default function DebitRow({
 }: DebitRowProps) {
   const { date, contract } = occurrence;
   const category = findCategory(categories, contract.category);
-  const isToday =
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear();
+  const orphan = category.slug === NO_CATEGORY.slug;
   const renews = renewsIn(contract, date.getFullYear(), date.getMonth());
   const isPast =
     markPast &&
     contract.frequency === "once" &&
     contract.startDate !== null &&
     new Date(contract.startDate) < today;
+  const when = hideDay
+    ? getFrequencyLabel(contract.frequency).toLowerCase()
+    : `${getFrequencyLabel(contract.frequency).toLowerCase()} · le ${date.getDate() === 1 ? "1er" : date.getDate()}`;
 
   return (
     <Box
@@ -53,47 +55,30 @@ export default function DebitRow({
       onClick={() => onEdit(contract)}
       sx={{
         width: "100%",
-        display: "grid",
-        gridTemplateColumns: { xs: "30px 9px minmax(0,1fr) auto", sm: "34px 11px minmax(0,1fr) auto" },
+        display: "flex",
         alignItems: "center",
-        gap: { xs: 1.25, sm: 1.5 },
-        px: 1.25,
-        py: 1.1,
+        gap: 1.75,
+        px: { xs: 1.5, sm: 2.5 },
+        py: 1.5,
         border: 0,
-        borderRadius: 1.5,
-        bgcolor: "transparent",
+        borderTop: 1,
+        borderColor: "divider",
+        bgcolor: "background.paper",
         color: "text.primary",
         textAlign: "left",
         cursor: "pointer",
         font: "inherit",
-        "& + &": { boxShadow: "0 -1px 0 #1e2029" },
-        "&:hover": { bgcolor: "rgba(255,255,255,0.035)", boxShadow: "none" },
-        "&:hover + &": { boxShadow: "none" },
+        "&:hover": { bgcolor: "action.hover" },
       }}
     >
-      <Typography
-        sx={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 13,
-          textAlign: "right",
-          fontVariantNumeric: "tabular-nums",
-          color: isToday ? "primary.main" : "text.secondary",
-          fontWeight: isToday ? 500 : 400,
-        }}
-      >
-        {hideDay ? "—" : date.getDate()}
-      </Typography>
+      <ContractAvatar contract={contract} category={category} />
 
-      <Box
-        sx={{ width: 9, height: 9, borderRadius: "50%", bgcolor: category.color }}
-      />
-
-      <Box sx={{ minWidth: 0 }}>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography
           title={contract.name}
           sx={{
             fontSize: 14,
-            fontWeight: 500,
+            fontWeight: 600,
             lineHeight: 1.35,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -106,7 +91,7 @@ export default function DebitRow({
           direction="row"
           alignItems="center"
           spacing={0.9}
-          sx={{ mt: "1px", overflow: "hidden", whiteSpace: "nowrap" }}
+          sx={{ mt: "2px", overflow: "hidden", whiteSpace: "nowrap" }}
         >
           <Typography
             sx={{
@@ -116,32 +101,49 @@ export default function DebitRow({
               textOverflow: "ellipsis",
             }}
           >
-            {contract.provider}
+            <span>{contract.provider}</span> · {when}
           </Typography>
-          {category.slug === NO_CATEGORY.slug && (
-            <Chip label="sans catégorie" size="small" variant="outlined" sx={tagSx("#5c6675")} />
-          )}
           {renews && (
             <Chip
-              icon={<AutorenewIcon sx={{ fontSize: 11 }} />}
+              icon={<AutorenewIcon />}
               label="renouvellement"
               size="small"
+              color="warning"
               variant="outlined"
-              sx={tagSx("#fbbf24")}
+              sx={tagSx}
             />
           )}
           {isPast && (
-            <Chip label="prélèvement passé" size="small" variant="outlined" sx={tagSx("#5c6675")} />
+            <Chip label="prélèvement passé" size="small" variant="outlined" sx={tagSx} />
           )}
         </Stack>
       </Box>
 
+      <Box
+        component="span"
+        sx={{
+          display: { xs: "none", sm: "inline-flex" },
+          alignItems: "center",
+          gap: 0.75,
+          flex: "none",
+          fontSize: 12,
+          px: 1.25,
+          py: 0.5,
+          borderRadius: 999,
+          bgcolor: orphan ? "warning.light" : "action.hover",
+          color: orphan ? "#78350f" : "text.primary",
+        }}
+      >
+        <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: category.color }} />
+        {category.label}
+      </Box>
+
       <Typography
         sx={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 14,
-          fontWeight: 500,
-          fontVariantNumeric: "tabular-nums",
+          minWidth: 84,
+          textAlign: "right",
+          fontSize: 15,
+          fontWeight: 700,
           whiteSpace: "nowrap",
         }}
       >
@@ -151,14 +153,10 @@ export default function DebitRow({
   );
 }
 
-const tagSx = (color: string) => ({
-  height: 18,
+const tagSx = {
+  height: 20,
   flex: "none",
-  borderColor: color,
-  color,
-  fontSize: 10,
-  letterSpacing: "0.04em",
-  textTransform: "uppercase" as const,
+  fontSize: 11,
   "& .MuiChip-label": { px: 0.75 },
-  "& .MuiChip-icon": { color, ml: 0.5, mr: -0.25 },
-});
+  "& .MuiChip-icon": { fontSize: 12, ml: 0.5, mr: -0.25 },
+};
