@@ -38,7 +38,6 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 const titleSx = {
-  fontFamily: "var(--font-display)",
   fontWeight: 600,
   fontSize: 15,
 } as const;

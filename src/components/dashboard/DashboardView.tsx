@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
-import { CHART_BASE, CHART_EXTRA, CHART_MUTED } from "@/lib/theme";
+import { CHART_BASE, CHART_EXTRA } from "@/lib/theme";
 import {
   formatEuro,
   relativeDay,
@@ -387,7 +387,7 @@ function DayChart({ days, month }: { days: DayLoad[]; month: number }) {
                         width: { xs: 5, sm: 7 },
                         height: { xs: 5, sm: 7 },
                         borderRadius: "50%",
-                        bgcolor: d.day === peak.day ? CHART_BASE : CHART_MUTED,
+                        bgcolor: d.day === peak.day ? CHART_BASE : "text.secondary",
                       }}
                     />
                   ))}

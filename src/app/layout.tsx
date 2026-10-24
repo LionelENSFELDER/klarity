@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header";
 import { Providers } from "@/components/providers";
@@ -10,11 +10,6 @@ import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +27,7 @@ export default async function RootLayout({
       lang="fr"
       // Le script ci-dessous pose la classe du thème avant hydratation.
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      className={inter.variable}
     >
       <body>
         <InitColorSchemeScript attribute="class" defaultMode="system" />

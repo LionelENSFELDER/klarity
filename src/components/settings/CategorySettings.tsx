@@ -199,7 +199,6 @@ export default function CategorySettings({
                 </Box>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-mono)",
                     fontSize: 12.5,
                     color: "text.secondary",
                     fontVariantNumeric: "tabular-nums",

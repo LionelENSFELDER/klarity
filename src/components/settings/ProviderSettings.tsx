@@ -168,7 +168,6 @@ export default function ProviderSettings({
                 </Box>
                 <Typography
                   sx={{
-                    fontFamily: "var(--font-mono)",
                     fontSize: 12.5,
                     color: "text.secondary",
                     fontVariantNumeric: "tabular-nums",

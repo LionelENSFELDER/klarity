@@ -1,9 +1,5 @@
 import { createTheme } from "@mui/material/styles";
 
-// Dégradé signature violet → bleu (éléments actifs et actions principales)
-export const ACCENT_GRADIENT =
-  "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)";
-
 // Teintes de graphique, validées sur fond sombre (contraste, bande de
 // luminosité, séparation en déficience visuelle). Le couple BASE/EXTRA est à
 // ΔE 32,9 en protanopie. Les couleurs de catégorie ne conviennent PAS ici :
@@ -11,7 +7,6 @@ export const ACCENT_GRADIENT =
 // collées à leur libellé dans le rail.
 export const CHART_BASE = "#8b5cf6";
 export const CHART_EXTRA = "#d97706";
-export const CHART_MUTED = "#4b5366";
 
 // Un seul thème, deux palettes : MUI pose la classe sur <html>, retient le
 // choix dans localStorage et l'applique avant hydratation (pas de flash).
@@ -100,34 +95,28 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "var(--font-sans), 'Inter', 'Roboto', sans-serif",
+    fontFamily: "var(--font-sans), 'Inter', sans-serif",
     h1: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 700,
       fontSize: "2.5rem",
     },
     h2: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 600,
       fontSize: "2rem",
     },
     h3: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 600,
       fontSize: "1.75rem",
     },
     h4: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 600,
       fontSize: "1.5rem",
     },
     h5: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 600,
       fontSize: "1.25rem",
     },
     h6: {
-      fontFamily: "var(--font-display), 'Inter', sans-serif",
       fontWeight: 600,
       fontSize: "1rem",
     },

@@ -288,7 +288,7 @@ export default function ContractSettings({
                       <Tooltip title="Modifier">
                         <IconButton
                           size="small"
-                          aria-label="Modifier"
+                          aria-label={`Modifier ${contract.name}`}
                           onClick={() => {
                             setEditing(contract);
                             setDeleting(null);
@@ -301,7 +301,7 @@ export default function ContractSettings({
                         <span>
                           <IconButton
                             size="small"
-                            aria-label={archived ? "Restaurer" : "Archiver"}
+                            aria-label={`${archived ? "Restaurer" : "Archiver"} ${contract.name}`}
                             disabled={pending}
                             onClick={() =>
                               run(() => SetContractArchived(contract.id, !archived))
@@ -314,7 +314,7 @@ export default function ContractSettings({
                       <Tooltip title="Supprimer">
                         <IconButton
                           size="small"
-                          aria-label="Supprimer"
+                          aria-label={`Supprimer ${contract.name}`}
                           onClick={() => setDeleting(contract.id)}
                           sx={{ color: "error.main" }}
                         >
@@ -328,7 +328,6 @@ export default function ContractSettings({
                     <Paper variant="outlined" sx={{ p: 2, mx: 2.5, mb: 1.5, borderRadius: 3 }}>
                       <Typography
                         sx={{
-                          fontFamily: "var(--font-display)",
                           fontWeight: 600,
                           fontSize: 13.5,
                           mb: 0.75,

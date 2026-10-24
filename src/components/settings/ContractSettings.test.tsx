@@ -162,7 +162,7 @@ describe("ContractSettings – actions", () => {
     vi.mocked(SetContractArchived).mockResolvedValue({ success: true });
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Archiver" }));
+    await user.click(screen.getByRole("button", { name: "Archiver Netflix Famille" }));
 
     expect(SetContractArchived).toHaveBeenCalledWith("c1", true);
   });
@@ -173,7 +173,7 @@ describe("ContractSettings – actions", () => {
     renderSettings([archived]);
 
     await user.click(screen.getByRole("button", { name: /Archivés/ }));
-    await user.click(screen.getByRole("button", { name: "Restaurer" }));
+    await user.click(screen.getByRole("button", { name: "Restaurer Ancien forfait" }));
 
     expect(SetContractArchived).toHaveBeenCalledWith("c3", false);
   });
@@ -182,7 +182,7 @@ describe("ContractSettings – actions", () => {
     const user = userEvent.setup();
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Supprimer" }));
+    await user.click(screen.getByRole("button", { name: "Supprimer Netflix Famille" }));
 
     expect(screen.getByText(/Supprimer «/)).toBeInTheDocument();
     expect(screen.getByText(/La suppression est définitive/)).toBeInTheDocument();
@@ -198,7 +198,7 @@ describe("ContractSettings – actions", () => {
     vi.mocked(DeleteContract).mockResolvedValue({ success: true });
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Supprimer" }));
+    await user.click(screen.getByRole("button", { name: "Supprimer Netflix Famille" }));
     await user.click(
       screen.getByRole("button", { name: "Supprimer définitivement" }),
     );
@@ -210,7 +210,7 @@ describe("ContractSettings – actions", () => {
     const user = userEvent.setup();
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Supprimer" }));
+    await user.click(screen.getByRole("button", { name: "Supprimer Netflix Famille" }));
     await user.click(screen.getByRole("button", { name: "Annuler" }));
 
     expect(screen.queryByText(/La suppression est définitive/)).not.toBeInTheDocument();
@@ -224,7 +224,7 @@ describe("ContractSettings – actions", () => {
     });
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Archiver" }));
+    await user.click(screen.getByRole("button", { name: "Archiver Netflix Famille" }));
 
     expect(await screen.findByText("Contrat non trouvé.")).toBeInTheDocument();
   });
@@ -233,7 +233,7 @@ describe("ContractSettings – actions", () => {
     const user = userEvent.setup();
     renderSettings([base]);
 
-    await user.click(screen.getByRole("button", { name: "Modifier" }));
+    await user.click(screen.getByRole("button", { name: "Modifier Netflix Famille" }));
 
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText("Modifier le contrat")).toBeInTheDocument();
