@@ -195,6 +195,21 @@ export function groupByDay(occurrences: Occurrence[]): DayGroup[] {
   return [...groups.values()];
 }
 
+/**
+ * Mois de référence (0-11) d'un trimestriel ou d'un annuel ; null sinon.
+ * Un contrat qui en a déjà un le garde : sans cela, modifier un montant
+ * déplacerait ses prélèvements sur le mois de la modification. À défaut,
+ * c'est le mois en cours, comme à la création.
+ */
+export function resolveAnchorMonth(
+  frequency: string,
+  previous: number | null,
+  today: Date,
+): number | null {
+  if (frequency !== "quarterly" && frequency !== "annual") return null;
+  return previous ?? today.getMonth();
+}
+
 /** Coût ramené au mois, pour comparer des contrats de fréquences différentes. */
 export function monthlyCost(contract: CalendarContract): number {
   switch (contract.frequency) {

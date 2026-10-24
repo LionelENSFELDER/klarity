@@ -20,6 +20,7 @@ import {
   formatEuro,
   getUpcomingDebits,
   monthlyCost,
+  resolveAnchorMonth,
   type CalendarContract,
 } from "@/modules/contracts/calendar";
 import FullIconSearchSelector, {
@@ -48,6 +49,8 @@ interface ContractFormFieldsProps {
   onRenewalDateChange: (value: string) => void;
   selectedIcon: IconOption | null;
   onSelectedIconChange: (value: IconOption | null) => void;
+  /** Mois de référence du contrat modifié : l'aperçu tombe aux bons mois. */
+  anchorMonth?: number | null;
 }
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
@@ -111,6 +114,7 @@ export default function ContractFormFields({
   onRenewalDateChange,
   selectedIcon,
   onSelectedIconChange,
+  anchorMonth = null,
 }: ContractFormFieldsProps) {
   const categories = useCategories();
   const isOnce = frequency === "once";
@@ -332,6 +336,7 @@ export default function ContractFormFields({
         debitDay={debitDay}
         debitDate={debitDate}
         selectedIcon={selectedIcon}
+        anchorMonth={anchorMonth}
       />
     </Box>
   );
@@ -430,6 +435,7 @@ function Preview({
   debitDay,
   debitDate,
   selectedIcon,
+  anchorMonth,
 }: {
   name: string;
   provider: string;
@@ -439,6 +445,7 @@ function Preview({
   debitDay: number | null;
   debitDate: string;
   selectedIcon: IconOption | null;
+  anchorMonth: number | null;
 }) {
   const categories = useCategories();
   const cat = findCategory(categories, category);
@@ -448,7 +455,7 @@ function Preview({
   const today = new Date();
   const day = isOnce ? (debitDate ? new Date(debitDate).getDate() : null) : debitDay;
 
-  // Le serveur ancre trimestriels et annuels sur le mois en cours.
+  // Même règle que le serveur : le mois du contrat, sinon le mois en cours.
   const draft: CalendarContract = {
     id: "apercu",
     name: name.trim() || "Nom du contrat",
@@ -458,7 +465,7 @@ function Preview({
     amount: value,
     frequency,
     debitDay: day ?? 1,
-    anchorMonth: frequency === "quarterly" || frequency === "annual" ? today.getMonth() : null,
+    anchorMonth: resolveAnchorMonth(frequency, anchorMonth, today),
     startDate: isOnce && debitDate ? new Date(debitDate).toISOString() : null,
     renewalDate: null,
     iconType: selectedIcon?.type ?? null,

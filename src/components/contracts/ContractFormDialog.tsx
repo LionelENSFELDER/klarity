@@ -194,6 +194,7 @@ export default function ContractFormDialog({
             onRenewalDateChange={setRenewalDate}
             selectedIcon={selectedIcon}
             onSelectedIconChange={setSelectedIcon}
+            anchorMonth={mode === "edit" ? (contract?.anchorMonth ?? null) : null}
           />
         </Stack>
       </DialogContent>

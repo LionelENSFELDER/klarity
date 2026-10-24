@@ -231,3 +231,21 @@ describe("ContractFormDialog – aperçu et catégories", () => {
     expect(formData.get("category")).toBe("sport");
   });
 });
+
+describe("ContractFormDialog – contrat annuel", () => {
+  it("annonce les prélèvements au mois du contrat, pas au mois en cours", () => {
+    const annual: CalendarContract = {
+      ...contract,
+      frequency: "annual",
+      anchorMonth: 0,
+      debitDay: 3,
+    };
+    render(<ContractFormDialog open mode="edit" contract={annual} onClose={() => {}} />);
+
+    const apercu = within(screen.getByRole("dialog")).getByRole("complementary", { name: "Aperçu" });
+    // Avant correction, l'ancre retombait sur le mois en cours.
+    const dates = within(apercu).getAllByText(/ 3 /);
+    expect(dates.length).toBeGreaterThan(0);
+    for (const d of dates) expect(d).toHaveTextContent(/3 janvier/);
+  });
+});

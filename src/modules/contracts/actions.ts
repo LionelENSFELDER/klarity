@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { resolveAnchorMonth } from "./calendar";
 
 // 🔒 Helpers privés
 async function getSessionUserId() {
@@ -105,11 +106,7 @@ export async function CreateSubscription(formData: FormData) {
   }
   const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
 
-  // Mois de référence pour les fréquences trimestrielle / annuelle
-  const anchorMonth =
-    data.frequency === "quarterly" || data.frequency === "annual"
-      ? new Date().getMonth()
-      : null;
+  const anchorMonth = resolveAnchorMonth(data.frequency, null, new Date());
 
   await prisma.contract.create({
     data: {
@@ -142,7 +139,7 @@ export async function CreateSubscription(formData: FormData) {
 
 export async function EditSubscription(id: string, formData: FormData) {
   const userId = await getSessionUserId();
-  await assertIsUserOwnContrat(id, userId);
+  const existing = await assertIsUserOwnContrat(id, userId);
 
   const parsed = subscriptionSchema.safeParse({
     name: formData.get("name"),
@@ -172,11 +169,11 @@ export async function EditSubscription(id: string, formData: FormData) {
   }
   const debitDay = debitDate ? debitDate.getDate() : (data.debitDay as number);
 
-  // Mois de référence pour les fréquences trimestrielle / annuelle
-  const anchorMonth =
-    data.frequency === "quarterly" || data.frequency === "annual"
-      ? new Date().getMonth()
-      : null;
+  const anchorMonth = resolveAnchorMonth(
+    data.frequency,
+    existing.anchorMonth,
+    new Date(),
+  );
 
   await prisma.contract.update({
     where: { id },

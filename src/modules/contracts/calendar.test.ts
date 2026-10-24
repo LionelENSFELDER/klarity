@@ -7,6 +7,7 @@ import {
   groupByMonth,
   monthlyCost,
   relativeDay,
+  resolveAnchorMonth,
   type CalendarContract,
 } from "./calendar";
 
@@ -164,6 +165,22 @@ describe("relativeDay", () => {
     // Passage à l'heure d'hiver le 25 octobre : le décompte reste entier.
     expect(relativeDay(new Date(2026, 10, 1), TODAY)).toBe("Dans 14 jours");
     expect(relativeDay(new Date(2026, 9, 10), TODAY)).toBe("Il y a 8 jours");
+  });
+});
+
+describe("resolveAnchorMonth", () => {
+  it("garde le mois d'un trimestriel ou d'un annuel déjà ancré", () => {
+    expect(resolveAnchorMonth("annual", 0, TODAY)).toBe(0);
+    expect(resolveAnchorMonth("quarterly", 1, TODAY)).toBe(1);
+  });
+
+  it("ancre sur le mois en cours quand il n'y en a pas encore", () => {
+    expect(resolveAnchorMonth("annual", null, TODAY)).toBe(9);
+  });
+
+  it("n'ancre ni les mensuels ni les ponctuels", () => {
+    expect(resolveAnchorMonth("monthly", 3, TODAY)).toBeNull();
+    expect(resolveAnchorMonth("once", null, TODAY)).toBeNull();
   });
 });
 
