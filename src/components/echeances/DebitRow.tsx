@@ -18,7 +18,7 @@ interface DebitRowProps {
   occurrence: Occurrence;
   categories: Category[];
   today: Date;
-  onEdit: (contract: CalendarContract) => void;
+  onOpen: (contract: CalendarContract) => void;
   /** « Tout » liste des contrats, pas des occurrences : le jour n'a pas de sens. */
   hideDay?: boolean;
   /** Marque un prélèvement unique déjà passé dans la liste « Tout ». */
@@ -31,7 +31,7 @@ export default function DebitRow({
   occurrence,
   categories,
   today,
-  onEdit,
+  onOpen,
   hideDay,
   markPast,
 }: DebitRowProps) {
@@ -52,7 +52,7 @@ export default function DebitRow({
     <Box
       component="button"
       type="button"
-      onClick={() => onEdit(contract)}
+      onClick={() => onOpen(contract)}
       sx={{
         width: "100%",
         display: "flex",

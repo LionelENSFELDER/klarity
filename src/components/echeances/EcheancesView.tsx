@@ -32,6 +32,7 @@ import type { CategoryLoad, Renewal } from "@/modules/contracts/dashboard";
 import { findCategory, NO_CATEGORY, type Category } from "@/modules/categories/model";
 import { HORIZONS, hrefWith, type EcheancesParams } from "./params";
 import ContractFormDialog from "@/components/contracts/ContractFormDialog";
+import ContractDetailDialog from "@/components/contracts/ContractDetailDialog";
 import AddContractButton from "@/components/contracts/AddContractButton";
 import ContractAvatar from "@/components/contracts/ContractAvatar";
 import DebitRow from "./DebitRow";
@@ -100,6 +101,7 @@ export default function EcheancesView({
   todayISO,
 }: EcheancesViewProps) {
   const router = useRouter();
+  const [viewing, setViewing] = useState<CalendarContract | null>(null);
   const [editing, setEditing] = useState<CalendarContract | null>(null);
   const today = new Date(todayISO);
 
@@ -316,7 +318,7 @@ export default function EcheancesView({
             year={today.getFullYear()}
             month={today.getMonth()}
             today={today}
-            onSelect={setEditing}
+            onSelect={setViewing}
           />
         ) : (
           <Stack direction="row" flexWrap="wrap" gap={3} alignItems="flex-start">
@@ -377,7 +379,7 @@ export default function EcheancesView({
                           }}
                           categories={categories}
                           today={today}
-                          onEdit={setEditing}
+                          onOpen={setViewing}
                           hideDay={c.frequency === "once"}
                           markPast
                         />
@@ -431,7 +433,7 @@ export default function EcheancesView({
                             occurrence={o}
                             categories={categories}
                             today={today}
-                            onEdit={setEditing}
+                            onOpen={setViewing}
                           />
                         ))}
                       </Box>
@@ -445,12 +447,19 @@ export default function EcheancesView({
               summary={summary}
               categories={categories}
               today={today}
-              onOpen={setEditing}
+              onOpen={setViewing}
             />
           </Stack>
         )}
       </Stack>
 
+      <ContractDetailDialog
+        contract={viewing}
+        categories={categories}
+        today={today}
+        onClose={() => setViewing(null)}
+        onEdit={setEditing}
+      />
       <ContractFormDialog
         open={editing !== null}
         mode="edit"

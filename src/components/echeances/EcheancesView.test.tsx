@@ -13,6 +13,8 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/modules/contracts/actions", () => ({
   EditSubscription: vi.fn(),
   CreateSubscription: vi.fn(),
+  SetContractArchived: vi.fn(),
+  DeleteContract: vi.fn(),
 }));
 
 // Le vrai sélecteur importe tout `@mui/icons-material` : hors sujet ici.
@@ -119,14 +121,16 @@ describe("EcheancesView – liste des échéances", () => {
     expect(screen.getByText("30 €")).toBeInTheDocument();
   });
 
-  it("ouvre la popup d'édition au clic sur une ligne", async () => {
+  it("ouvre la fiche au clic sur une ligne, puis l'édition depuis la fiche", async () => {
     const user = userEvent.setup();
     renderView([make({ debitDay: 25 })]);
 
     await user.click(screen.getAllByText("Netflix Famille")[0]);
+    const fiche = await screen.findByRole("dialog");
+    expect(within(fiche).getByRole("heading", { name: "Netflix Famille" })).toBeInTheDocument();
 
-    const dialog = await screen.findByRole("dialog");
-    expect(within(dialog).getByText("Modifier le contrat")).toBeInTheDocument();
+    await user.click(within(fiche).getByRole("button", { name: "Modifier" }));
+    const dialog = await screen.findByRole("dialog", { name: /Modifier le contrat/ });
     expect(within(dialog).getByDisplayValue("Netflix Famille")).toBeInTheDocument();
     // Le fournisseur, distinct du nom, est hydraté dans son propre champ.
     expect(within(dialog).getByDisplayValue("Netflix")).toBeInTheDocument();
@@ -218,7 +222,7 @@ describe("EcheancesView – vue calendrier", () => {
     expect(within(panel).getByText("EDF")).toBeInTheDocument();
   });
 
-  it("ouvre le contrat depuis une ligne du panneau", async () => {
+  it("ouvre la fiche du contrat depuis une ligne du panneau", async () => {
     const user = userEvent.setup();
     renderView([make({ name: "Netflix Famille", debitDay: 25 })], calendrier);
 
@@ -226,6 +230,6 @@ describe("EcheancesView – vue calendrier", () => {
     await user.click(within(panel).getByText("Netflix Famille"));
 
     const dialog = await screen.findByRole("dialog");
-    expect(within(dialog).getByText("Modifier le contrat")).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "Netflix Famille" })).toBeInTheDocument();
   });
 });
