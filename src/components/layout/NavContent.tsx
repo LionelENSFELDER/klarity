@@ -12,6 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useColorScheme } from "@mui/material/styles";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -19,6 +20,8 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
 import InsightsIcon from "@mui/icons-material/Insights";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { ACCENT_GRADIENT } from "@/lib/theme";
 import { formatEuro } from "@/modules/contracts/calendar";
 import { NO_CATEGORY, type Category } from "@/modules/categories/model";
@@ -74,11 +77,48 @@ function NavLink({
         color: current ? "#fff" : "text.primary",
         background: current ? ACCENT_GRADIENT : "transparent",
         "&:hover": {
-          background: current ? ACCENT_GRADIENT : "rgba(255,255,255,0.045)",
+          background: current ? ACCENT_GRADIENT : "action.hover",
         },
       }}
     >
       {children}
+    </Box>
+  );
+}
+
+/**
+ * Bascule clair/sombre, habillée comme une entrée du rail. `mode` reste
+ * indéfini jusqu'au montage : on suppose alors le sombre, thème par défaut.
+ */
+function ThemeToggle() {
+  const { mode, systemMode, setMode } = useColorScheme();
+  const isLight = (mode === "system" ? systemMode : mode) === "light";
+  const Icon = isLight ? DarkModeIcon : LightModeIcon;
+
+  return (
+    <Box
+      component="button"
+      type="button"
+      onClick={() => setMode(isLight ? "dark" : "light")}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.2,
+        px: 1,
+        py: 0.9,
+        border: 0,
+        borderRadius: 1.75,
+        bgcolor: "transparent",
+        cursor: "pointer",
+        font: "inherit",
+        textAlign: "left",
+        "&:hover": { bgcolor: "action.hover" },
+      }}
+    >
+      <Icon sx={{ fontSize: 16, opacity: 0.85, color: "text.primary" }} />
+      <Typography sx={{ ...textSx, color: "text.secondary" }}>
+        {isLight ? "Thème sombre" : "Thème clair"}
+      </Typography>
     </Box>
   );
 }
@@ -424,6 +464,7 @@ export default function NavContent({
         <SettingsIcon sx={{ fontSize: 16, opacity: 0.85 }} />
         <Typography sx={{ ...textSx, color: "text.secondary" }}>Réglages</Typography>
       </NavLink>
+      <ThemeToggle />
       <AddContractButton
         variant="contained"
         fullWidth

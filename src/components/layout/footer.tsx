@@ -34,7 +34,7 @@ const Footer = () => {
               © 2025 Klarity
             </Typography>
             <Chip
-              label="Alpha v0.1.0"
+              label="Alpha v2"
               size="small"
               variant="outlined"
               sx={{

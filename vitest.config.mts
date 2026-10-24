@@ -9,6 +9,9 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
     clearMocks: true,
+    // Node ≥ 25 expose son propre localStorage (indéfini sans fichier), qui
+    // masque celui de happy-dom.
+    execArgv: ["--no-experimental-webstorage"],
   },
   resolve: {
     alias: [
