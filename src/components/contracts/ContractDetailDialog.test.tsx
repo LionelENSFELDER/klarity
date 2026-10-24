@@ -55,6 +55,22 @@ describe("ContractDetailDialog", () => {
     expect(within(dialog).getByText(/≈ 34,33 € par mois lissé/)).toBeInTheDocument();
     expect(within(dialog).getByText("dans 71 jours")).toBeInTheDocument();
     expect(within(dialog).getByText("ZA-118734")).toBeInTheDocument();
+    expect(within(dialog).getByText("Annuel, le 3 janvier")).toBeInTheDocument();
+  });
+
+  it("nomme les quatre mois d'un trimestriel", () => {
+    render(
+      <ContractDetailDialog
+        contract={{ ...contract, frequency: "quarterly", anchorMonth: 10, debitDay: 1 }}
+        categories={categories}
+        today={TODAY}
+        onClose={vi.fn()}
+        onEdit={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByText("Trimestriel, le 1er en février, mai, août et novembre"),
+    ).toBeInTheDocument();
   });
 
   it("passe la main au formulaire pour modifier", async () => {

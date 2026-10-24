@@ -210,6 +210,17 @@ export function resolveAnchorMonth(
   return previous ?? today.getMonth();
 }
 
+/**
+ * Mois prélevés (0-11, dans l'ordre de l'année) d'un trimestriel ou d'un
+ * annuel ; vide sinon. Sans ancre, janvier, comme isDebitedInMonth.
+ */
+export function debitMonths(frequency: string, anchor: number | null): number[] {
+  const a = anchor ?? 0;
+  if (frequency === "annual") return [a];
+  if (frequency === "quarterly") return [0, 3, 6, 9].map((k) => (a + k) % 12).sort((x, y) => x - y);
+  return [];
+}
+
 /** Coût ramené au mois, pour comparer des contrats de fréquences différentes. */
 export function monthlyCost(contract: CalendarContract): number {
   switch (contract.frequency) {

@@ -20,6 +20,7 @@ import { useCategories } from "./CategoriesProvider";
 import {
   formatEuro,
   getUpcomingDebits,
+  debitMonths,
   monthlyCost,
   resolveAnchorMonth,
   type CalendarContract,
@@ -73,8 +74,7 @@ const MONTHS = [
 export function anchorHelp(frequency: string, anchor: number | null): string {
   if (anchor === null) return "";
   if (frequency === "annual") return `Prélevé chaque année en ${MONTHS[anchor]}.`;
-  const months = [0, 3, 6, 9].map((k) => (anchor + k) % 12).sort((a, b) => a - b);
-  const names = months.map((m) => MONTHS[m]);
+  const names = debitMonths(frequency, anchor).map((m) => MONTHS[m]);
   return `Prélevé en ${names.slice(0, 3).join(", ")} et ${names[3]}.`;
 }
 

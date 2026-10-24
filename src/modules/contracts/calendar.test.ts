@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  debitMonths,
   effectiveDebitDay,
   getNextOccurrence,
   getUpcomingDebits,
@@ -181,6 +182,16 @@ describe("resolveAnchorMonth", () => {
   it("n'ancre ni les mensuels ni les ponctuels", () => {
     expect(resolveAnchorMonth("monthly", 3, TODAY)).toBeNull();
     expect(resolveAnchorMonth("once", null, TODAY)).toBeNull();
+  });
+});
+
+describe("debitMonths", () => {
+  it("donne le mois d'un annuel et les quatre mois d'un trimestriel", () => {
+    expect(debitMonths("annual", 0)).toEqual([0]);
+    expect(debitMonths("quarterly", 10)).toEqual([1, 4, 7, 10]);
+    // Sans ancre, janvier : la même règle que pour le calendrier.
+    expect(debitMonths("annual", null)).toEqual([0]);
+    expect(debitMonths("monthly", 3)).toEqual([]);
   });
 });
 

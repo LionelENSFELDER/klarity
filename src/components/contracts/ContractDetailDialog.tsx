@@ -16,6 +16,7 @@ import EditIcon from "@mui/icons-material/EditOutlined";
 import ArchiveIcon from "@mui/icons-material/ArchiveOutlined";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import {
+  debitMonths,
   formatEuro,
   getUpcomingDebits,
   monthlyCost,
@@ -32,6 +33,19 @@ const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
   month: "short",
   year: "numeric",
 });
+
+const MONTHS = [
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+];
+
+/** « janvier » pour un annuel, « en janvier, avril, juillet et octobre » pour un trimestriel. */
+function inMonths(contract: CalendarContract): string {
+  const names = debitMonths(contract.frequency, contract.anchorMonth).map((m) => MONTHS[m]);
+  if (names.length === 1) return ` ${names[0]}`;
+  if (names.length === 4) return ` en ${names.slice(0, 3).join(", ")} et ${names[3]}`;
+  return "";
+}
 
 const PERIOD: Record<string, string> = {
   monthly: "/ mois",
@@ -151,7 +165,7 @@ function Detail({
       k: "Fréquence",
       v: once
         ? `${getFrequencyLabel(contract.frequency)}${contract.startDate ? `, le ${DATE_FORMAT.format(new Date(contract.startDate))}` : ""}`
-        : `${getFrequencyLabel(contract.frequency)}, le ${contract.debitDay === 1 ? "1er" : contract.debitDay}`,
+        : `${getFrequencyLabel(contract.frequency)}, le ${contract.debitDay === 1 ? "1er" : contract.debitDay}${inMonths(contract)}`,
     },
     contract.renewalDate && {
       k: "Renouvellement",
