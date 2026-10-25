@@ -325,7 +325,7 @@ export default function EcheancesView({
                           border: 1,
                           fontSize: 13,
                           textDecoration: "none",
-                          borderColor: selected ? "primary.main" : "divider",
+                          borderColor: selected ? "primary.dark" : "divider",
                           bgcolor: selected
                             ? "rgba(var(--mui-palette-primary-mainChannel) / 0.1)"
                             : "transparent",

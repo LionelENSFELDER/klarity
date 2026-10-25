@@ -54,8 +54,8 @@ export default function UserMenu({ user, userInitials }: UserMenuProps) {
           sx={{
             width: 40,
             height: 40,
-            bgcolor: "primary.light",
-            color: "primary.dark",
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
             fontWeight: 600,
             fontSize: "0.875rem",
           }}

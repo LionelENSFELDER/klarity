@@ -80,7 +80,7 @@ export function anchorHelp(frequency: string, anchor: number | null): string {
 
 const choiceSx = (selected: boolean) => ({
   border: selected ? 1.5 : 1,
-  borderColor: selected ? "primary.main" : "divider",
+  borderColor: selected ? "primary.dark" : "divider",
   bgcolor: selected
     ? "rgba(var(--mui-palette-primary-mainChannel) / 0.1)"
     : "transparent",
@@ -88,7 +88,7 @@ const choiceSx = (selected: boolean) => ({
   fontWeight: selected ? 600 : 400,
   font: "inherit",
   cursor: "pointer",
-  "&:hover": { borderColor: "primary.main" },
+  "&:hover": { borderColor: "primary.dark" },
 });
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -305,10 +305,10 @@ export default function ContractFormFields({
                         fontSize: 13,
                         ...(selected && {
                           bgcolor: "primary.main",
-                          borderColor: "primary.main",
-                          color: "#fff",
+                          borderColor: "primary.dark",
+                          color: "primary.contrastText",
                           fontWeight: 700,
-                          "&:hover": { bgcolor: "primary.dark" },
+                          "&:hover": { bgcolor: "primary.main" },
                         }),
                       }}
                     >

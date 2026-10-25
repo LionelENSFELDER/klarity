@@ -57,9 +57,9 @@ const MONTHS = [
 // Entrée active : fond teinté de l'accent. Sur fond sombre le texte prend
 // la variante claire, l'accent plein n'y est pas assez contrasté.
 const currentSx = {
-  bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.12)",
+  bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.4)",
   color: "primary.dark",
-  "&:hover": { bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.18)" },
+  "&:hover": { bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.5)" },
   ".dark &": { color: "primary.light" },
 } as const;
 

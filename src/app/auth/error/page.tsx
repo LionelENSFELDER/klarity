@@ -75,7 +75,7 @@ function AuthErrorContent() {
         <Stack component="ul" spacing={1} sx={{ m: 0, p: 0, listStyle: "none" }}>
           {TIPS.map((t) => (
             <Stack key={t} component="li" direction="row" spacing={1.25} alignItems="center">
-              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main", flex: "none" }} />
+              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.dark", flex: "none" }} />
               <Typography sx={{ fontSize: 14 }}>{t}</Typography>
             </Stack>
           ))}

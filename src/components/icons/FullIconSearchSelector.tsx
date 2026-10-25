@@ -102,7 +102,7 @@ export default function FullIconSearchSelector({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "primary.main",
+                  color: "primary.dark",
                 }}
               >
                 {renderGenericIcon(option.slugOrName)}

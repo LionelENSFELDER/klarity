@@ -164,7 +164,7 @@ export default function MonthGrid({
                   minWidth: 0,
                   p: { xs: 0.5, md: 1.25 },
                   border: isSelected ? 2 : 1,
-                  borderColor: isSelected ? "primary.main" : "divider",
+                  borderColor: isSelected ? "primary.dark" : "divider",
                   borderRadius: 3,
                   bgcolor: isSelected
                     ? "rgba(var(--mui-palette-primary-mainChannel) / 0.06)"
@@ -178,7 +178,7 @@ export default function MonthGrid({
                   alignItems: { xs: "center", md: "stretch" },
                   overflow: "hidden",
                   cursor: clickable ? "pointer" : "default",
-                  "&:hover": clickable ? { borderColor: "primary.main" } : undefined,
+                  "&:hover": clickable ? { borderColor: "primary.dark" } : undefined,
                 }}
               >
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -193,7 +193,7 @@ export default function MonthGrid({
                       fontSize: 13,
                       fontWeight: 600,
                       bgcolor: isToday ? "primary.main" : "transparent",
-                      color: isToday ? "#fff" : past ? "text.secondary" : "text.primary",
+                      color: isToday ? "primary.contrastText" : past ? "text.secondary" : "text.primary",
                     }}
                   >
                     {day}
@@ -222,7 +222,7 @@ export default function MonthGrid({
                         width: 6,
                         height: 6,
                         borderRadius: "50%",
-                        bgcolor: past ? "text.secondary" : "primary.main",
+                        bgcolor: past ? "text.secondary" : "primary.dark",
                       }}
                     />
                     <Stack spacing={0.75} sx={{ display: { xs: "none", md: "flex" } }}>
@@ -244,7 +244,7 @@ export default function MonthGrid({
                             height: "100%",
                             borderRadius: 999,
                             width: `${(total / maxDay) * 100}%`,
-                            bgcolor: past ? "primary.light" : "primary.main",
+                            bgcolor: past ? "text.disabled" : "primary.dark",
                           }}
                         />
                       </Box>

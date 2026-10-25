@@ -17,11 +17,13 @@ export const theme = createTheme({
     dark: {
       palette: {
         mode: "dark",
-        // light sert de couleur de texte sur fond sombre (contraste ≥ 4,5:1).
+        // main : remplissages ; light : texte sur fond sombre ; dark : bordures
+        // et traits. Tous ≥ 4,5:1 sur le fond, contrastText 11:1 sur main.
         primary: {
-          main: "#7c3aed",
-          light: "#a78bfa",
-          dark: "#6d28d9",
+          main: "#cafea7",
+          light: "#e2ffcf",
+          dark: "#9ad776",
+          contrastText: "#1a3a0a",
         },
         secondary: {
           main: "#3b82f6", // Bleu
@@ -57,10 +59,13 @@ export const theme = createTheme({
     light: {
       palette: {
         mode: "light",
+        // Le vert de marque est trop pâle pour du texte ou un trait sur blanc
+        // (1,2:1) : il reste en remplissage, dark porte texte et bordures.
         primary: {
-          main: "#6d28d9",
-          light: "#a78bfa",
-          dark: "#5b21b6",
+          main: "#cafea7",
+          light: "#eaffdb",
+          dark: "#3f6d22",
+          contrastText: "#1a3a0a",
         },
         secondary: {
           main: "#4f46e5", // Indigo
@@ -168,4 +173,3 @@ export const theme = createTheme({
     borderRadius: 10,
   },
 });
-
