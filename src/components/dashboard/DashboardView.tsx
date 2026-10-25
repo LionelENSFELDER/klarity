@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
-import { CHART_BASE, CHART_EXTRA } from "@/lib/theme";
 import {
   formatEuro,
   relativeDay,
@@ -99,6 +98,12 @@ export default function DashboardView({ data }: { data: DashboardData }) {
     </Stack>
   );
 }
+
+// Couleurs des graphiques, prises au thème : le socle suit l'accent (trait
+// lisible sur la carte dans les deux thèmes), les échéances ponctuelles
+// l'ambre. Les deux diffèrent aussi en luminosité, pas seulement en teinte.
+const CHART_BASE = "primary.dark";
+const CHART_EXTRA = "warning.dark";
 
 const round = (n: number) => Math.round(n * 100) / 100;
 

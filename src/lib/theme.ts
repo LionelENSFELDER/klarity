@@ -1,13 +1,5 @@
 import { createTheme } from "@mui/material/styles";
 
-// Teintes de graphique, validées sur fond sombre (contraste, bande de
-// luminosité, séparation en déficience visuelle). Le couple BASE/EXTRA est à
-// ΔE 32,9 en protanopie. Les couleurs de catégorie ne conviennent PAS ici :
-// bleu et violet y sont indiscernables en deutéranopie, elles ne tiennent que
-// collées à leur libellé dans le rail.
-export const CHART_BASE = "#8b5cf6";
-export const CHART_EXTRA = "#d97706";
-
 // Un seul thème, deux palettes : MUI pose la classe sur <html>, retient le
 // choix dans localStorage et l'applique avant hydratation (pas de flash).
 // Sans choix enregistré, c'est le thème du système qui s'applique.
