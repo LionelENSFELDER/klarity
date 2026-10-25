@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Box, Typography } from "@mui/material";
 import { getSession } from "@/lib/session";
 import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
@@ -24,7 +25,7 @@ const TOP_CONTRACTS = 6;
 export default async function TableauDeBordPage() {
   const session = await getSession();
   if (!session?.user?.id) {
-    return <div>Erreur de session</div>;
+    redirect("/auth/signin?session=expiree");
   }
 
   const [contracts, categories, providers] = await Promise.all([

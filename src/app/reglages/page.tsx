@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
@@ -33,7 +34,7 @@ export default async function ReglagesPage({
 }) {
   const session = await getSession();
   if (!session?.user?.id) {
-    return <div>Erreur de session</div>;
+    redirect("/auth/signin?session=expiree");
   }
 
   const raw = await searchParams;

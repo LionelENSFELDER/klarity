@@ -25,7 +25,10 @@ function SignInContent() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   // Message posé par la page d'inscription après création du compte.
-  const notice = useSearchParams().get("message");
+  const params = useSearchParams();
+  const notice = params.get("message");
+  // Posé par une page qui n'a pas pu lire la session.
+  const expired = params.get("session") === "expiree";
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -64,6 +67,9 @@ function SignInContent() {
     >
       <Stack component="form" onSubmit={handleCredentialsSubmit} spacing={2.25}>
         {notice && !error && <Alert severity="success">{notice}</Alert>}
+        {expired && !notice && !error && (
+          <Alert severity="info">Votre session a expiré. Reconnectez-vous.</Alert>
+        )}
         {error && <Alert severity="error">{error}</Alert>}
 
         <TextField

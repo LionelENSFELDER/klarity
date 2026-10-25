@@ -6,9 +6,10 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
-    // Si connecté et essaie d'accéder à la page de login
+    // Si connecté et essaie d'accéder à l'inscription. La page de connexion
+    // n'arrive jamais ici : withAuth la laisse passer sans appeler ce code.
     if (
-      token &&
+      token?.sub &&
       (pathname === "/auth/signin" || pathname === "/auth/register")
     ) {
       return NextResponse.redirect(new URL("/calendar", req.url));
@@ -26,14 +27,15 @@ export default withAuth(
           return true;
         }
 
-        // Routes protégées nécessitent un token
+        // Routes protégées : un jeton sans identifiant utilisateur ne suffit
+        // pas, les pages en ont besoin pour charger les contrats.
         if (
           pathname.startsWith("/calendar") ||
           pathname.startsWith("/reglages") ||
           pathname.startsWith("/tableau-de-bord") ||
           pathname === "/"
         ) {
-          return !!token;
+          return Boolean(token?.sub);
         }
 
         return true;

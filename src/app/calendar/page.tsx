@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getCalendarContracts, getProviders } from "@/modules/contracts/queries";
 import { getMonthTotal, getUpcomingDebits } from "@/modules/contracts/calendar";
@@ -26,7 +27,7 @@ export default async function CalendarPage({
 }) {
   const session = await getSession();
   if (!session?.user?.id) {
-    return <div>Erreur de session</div>;
+    redirect("/auth/signin?session=expiree");
   }
 
   const params = parseParams(await searchParams);
