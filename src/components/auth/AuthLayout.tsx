@@ -66,12 +66,12 @@ export default function AuthLayout({
           m: 2,
           p: 7,
           borderRadius: 7,
-          bgcolor: "#1e1b4b",
-          color: "#fff",
+          bgcolor: "primary.contrastText",
+          color: "common.white",
         }}
       >
         <Box>
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#c4b5fd", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: "primary.main", letterSpacing: "0.04em", textTransform: "uppercase" }}>
             Vos contrats, en clair
           </Typography>
           <Typography sx={{ fontSize: 34, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", mt: 1.5, maxWidth: 460 }}>
@@ -85,7 +85,7 @@ export default function AuthLayout({
               component="li"
               direction="row"
               spacing={2}
-              sx={{ p: 2.25, borderRadius: 4.5, bgcolor: "rgba(255,255,255,0.08)" }}
+              sx={{ p: 2.25, borderRadius: 4.5, bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.12)" }}
             >
               <Box
                 sx={{
@@ -93,8 +93,8 @@ export default function AuthLayout({
                   height: 32,
                   flex: "none",
                   borderRadius: "50%",
-                  bgcolor: "#fff",
-                  color: "#1e1b4b",
+                  bgcolor: "primary.main",
+                  color: "primary.contrastText",
                   fontWeight: 700,
                   display: "grid",
                   placeItems: "center",
@@ -104,7 +104,7 @@ export default function AuthLayout({
               </Box>
               <Box>
                 <Typography sx={{ fontWeight: 600, fontSize: 16 }}>{s.title}</Typography>
-                <Typography sx={{ color: "#d4d2f5", lineHeight: 1.5 }}>{s.text}</Typography>
+                <Typography sx={{ color: "primary.light", lineHeight: 1.5 }}>{s.text}</Typography>
               </Box>
             </Stack>
           ))}

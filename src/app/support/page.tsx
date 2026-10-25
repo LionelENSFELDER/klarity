@@ -21,7 +21,7 @@ const cardSx = {
   p: 2.75,
 } as const;
 
-function CardIcon({ children, tone }: { children: React.ReactNode; tone: string }) {
+function CardIcon({ children, tone }: { children: React.ReactNode; tone: "primary" | "error" | "info" }) {
   return (
     <Box
       aria-hidden
@@ -31,8 +31,8 @@ function CardIcon({ children, tone }: { children: React.ReactNode; tone: string 
         borderRadius: 3,
         display: "grid",
         placeItems: "center",
-        bgcolor: `rgba(${tone} / 0.14)`,
-        color: `rgb(${tone})`,
+        bgcolor: `rgba(var(--mui-palette-${tone}-mainChannel) / 0.14)`,
+        color: `${tone}.dark`,
       }}
     >
       {children}
@@ -50,7 +50,7 @@ export default function SupportPage() {
       <Stack spacing={1} sx={{ maxWidth: 720, mb: 3 }}>
         <Box
           component="span"
-          sx={{ alignSelf: "flex-start", fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 999, bgcolor: "rgba(245,158,11,0.16)", color: "#92400e", ".dark &": { color: "#fcd34d" } }}
+          sx={{ alignSelf: "flex-start", fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 999, bgcolor: "warning.light", color: "warning.contrastText" }}
         >
           Version alpha
         </Box>
@@ -65,7 +65,7 @@ export default function SupportPage() {
 
       <Stack direction="row" flexWrap="wrap" gap={2}>
         <Stack spacing={1.75} sx={cardSx}>
-          <CardIcon tone="109 40 217"><FactCheckIcon /></CardIcon>
+          <CardIcon tone="primary"><FactCheckIcon /></CardIcon>
           <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
             Avant de signaler
           </Typography>
@@ -86,7 +86,7 @@ export default function SupportPage() {
         </Stack>
 
         <Stack spacing={1.75} sx={cardSx}>
-          <CardIcon tone="220 38 38"><ReportIcon /></CardIcon>
+          <CardIcon tone="error"><ReportIcon /></CardIcon>
           <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
             Signaler un problème
           </Typography>
@@ -102,7 +102,7 @@ export default function SupportPage() {
         </Stack>
 
         <Stack spacing={1.75} sx={cardSx}>
-          <CardIcon tone="37 99 235"><LockIcon /></CardIcon>
+          <CardIcon tone="info"><LockIcon /></CardIcon>
           <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
             Demandes sur vos données
           </Typography>
@@ -117,7 +117,7 @@ export default function SupportPage() {
       <Box
         component="section"
         aria-labelledby="limites"
-        sx={{ mt: 2, p: 2.75, borderRadius: 4.5, border: 1, borderColor: "rgba(245,158,11,0.45)", bgcolor: "rgba(245,158,11,0.08)" }}
+        sx={{ mt: 2, p: 2.75, borderRadius: 4.5, border: 1, borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)", bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)" }}
       >
         <Typography id="limites" component="h2" sx={{ fontWeight: 600, fontSize: 15, mb: 1 }}>
           Limites connues

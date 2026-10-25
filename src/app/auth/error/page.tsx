@@ -56,7 +56,7 @@ function AuthErrorContent() {
             width: 48,
             height: 48,
             borderRadius: 3.5,
-            bgcolor: "rgba(239,68,68,0.12)",
+            bgcolor: "rgba(var(--mui-palette-error-mainChannel) / 0.12)",
             color: "error.main",
             display: "grid",
             placeItems: "center",

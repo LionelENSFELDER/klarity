@@ -252,7 +252,7 @@ export default function ContractFormFields({
                 "& .Mui-selected": {
                   bgcolor: "background.paper !important",
                   fontWeight: 600,
-                  boxShadow: "0 1px 2px rgba(16,24,40,0.1)",
+                  boxShadow: 1,
                 },
               }}
             >

@@ -467,8 +467,8 @@ function RenewalList({
         <Typography
           sx={{
             mt: 1.75, p: 1.5, borderRadius: 3, fontSize: 12, lineHeight: 1.55,
-            border: 1, borderColor: "rgba(217,119,6,0.4)",
-            bgcolor: "rgba(217,119,6,0.08)",
+            border: 1, borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)",
+            bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)",
           }}
         >
           <b>

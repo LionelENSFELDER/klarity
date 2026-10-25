@@ -131,7 +131,7 @@ export default function DebitRow({
           py: 0.5,
           borderRadius: 999,
           bgcolor: orphan ? "warning.light" : "action.hover",
-          color: orphan ? "#78350f" : "text.primary",
+          color: orphan ? "warning.contrastText" : "text.primary",
         }}
       >
         <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: category.color }} />

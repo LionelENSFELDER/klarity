@@ -167,7 +167,7 @@ export default function ContractSettings({
               "& .Mui-selected": {
                 bgcolor: "background.paper !important",
                 fontWeight: 600,
-                boxShadow: "0 1px 2px rgba(16,24,40,0.08)",
+                boxShadow: 1,
               },
             }}
           >
@@ -273,7 +273,7 @@ export default function ContractSettings({
                         py: 0.5,
                         borderRadius: 999,
                         bgcolor: orphan ? "warning.light" : "action.hover",
-                        color: orphan ? "#78350f" : "text.primary",
+                        color: orphan ? "warning.contrastText" : "text.primary",
                       }}
                     >
                       <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: category.color }} />

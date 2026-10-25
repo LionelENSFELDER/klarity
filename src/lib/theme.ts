@@ -47,6 +47,7 @@ export const theme = createTheme({
           main: "#f59e0b", // Amber
           light: "#fbbf24",
           dark: "#d97706",
+          contrastText: "#78350f",
         },
         error: {
           main: "#ef4444", // Red
@@ -89,6 +90,7 @@ export const theme = createTheme({
           main: "#f59e0b", // Amber
           light: "#fbbf24",
           dark: "#d97706",
+          contrastText: "#78350f",
         },
         error: {
           main: "#ef4444", // Red

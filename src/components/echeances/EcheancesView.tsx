@@ -250,7 +250,7 @@ export default function EcheancesView({
                 "& .Mui-selected": {
                   bgcolor: "background.paper !important",
                   fontWeight: 600,
-                  boxShadow: "0 1px 2px rgba(16,24,40,0.08)",
+                  boxShadow: 1,
                 },
               }}
             >
@@ -508,9 +508,9 @@ function SidePanel({
       {next && (
         <Stack
           spacing={1.75}
-          sx={{ borderRadius: 4.5, p: 2.5, bgcolor: "#111827", color: "#fff" }}
+          sx={{ borderRadius: 4.5, p: 2.5, bgcolor: "primary.contrastText", color: "common.white" }}
         >
-          <Typography sx={{ fontSize: 13, color: "#c7cbd4" }}>Prochain prélèvement</Typography>
+          <Typography sx={{ fontSize: 13, color: "primary.light" }}>Prochain prélèvement</Typography>
           <Stack direction="row" spacing={1.5} alignItems="center">
             <ContractAvatar
               contract={next.contract}
@@ -521,7 +521,7 @@ function SidePanel({
               <Typography sx={{ fontWeight: 600, fontSize: 16 }} noWrap>
                 {next.contract.name}
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#c7cbd4" }}>
+              <Typography sx={{ fontSize: 12, color: "primary.light" }}>
                 {cap(DAY_FORMAT.format(new Date(next.date)))} · {relativeDay(new Date(next.date), today).toLowerCase()}
               </Typography>
             </Box>
@@ -537,8 +537,8 @@ function SidePanel({
               height: 40,
               border: 0,
               borderRadius: 2.5,
-              bgcolor: "#fff",
-              color: "#111827",
+              bgcolor: "primary.main",
+              color: "primary.contrastText",
               font: "inherit",
               fontWeight: 600,
               cursor: "pointer",
