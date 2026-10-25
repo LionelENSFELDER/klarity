@@ -90,6 +90,52 @@ export function getCategoryLoad(
     .sort((a, b) => b.monthlyCost - a.monthlyCost);
 }
 
+export interface CategoryProviderFlow {
+  category: string;
+  provider: string;
+  monthlyCost: number;
+}
+
+export const OTHER_PROVIDERS = "Autres fournisseurs";
+
+/**
+ * Flux catégorie → fournisseur en coût mensuel lissé, pour le diagramme de
+ * Sankey. Au-delà de `maxProviders`, les plus légers sont regroupés : un
+ * Sankey à vingt branches ne se lit plus. Les ponctuels (0 €/mois) sont exclus.
+ */
+export function getCategoryProviderFlows(
+  contracts: CalendarContract[],
+  categories: Category[],
+  maxProviders: number,
+): CategoryProviderFlow[] {
+  const costed = contracts
+    .map((c) => ({ c, cost: monthlyCost(c) }))
+    .filter((x) => x.cost > 0);
+
+  const byProvider = new Map<string, number>();
+  for (const { c, cost } of costed) {
+    byProvider.set(c.provider, (byProvider.get(c.provider) ?? 0) + cost);
+  }
+  const ranked = [...byProvider.entries()].sort((a, b) => b[1] - a[1]);
+  // Regrouper un seul fournisseur ne simplifie rien : on ne regroupe qu'à partir de deux.
+  const kept = new Set(
+    ranked.length > maxProviders + 1
+      ? ranked.slice(0, maxProviders).map(([p]) => p)
+      : ranked.map(([p]) => p),
+  );
+
+  const flows = new Map<string, CategoryProviderFlow>();
+  for (const { c, cost } of costed) {
+    const category = findCategory(categories, c.category).slug;
+    const provider = kept.has(c.provider) ? c.provider : OTHER_PROVIDERS;
+    const key = `${category}\u0000${provider}`;
+    const flow = flows.get(key) ?? { category, provider, monthlyCost: 0 };
+    flow.monthlyCost += cost;
+    flows.set(key, flow);
+  }
+  return [...flows.values()].sort((a, b) => b.monthlyCost - a.monthlyCost);
+}
+
 /** Contrats les plus lourds, comparés au mois pour être comparables. */
 export function getTopContracts(
   contracts: CalendarContract[],

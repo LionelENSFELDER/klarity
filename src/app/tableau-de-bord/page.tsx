@@ -7,6 +7,7 @@ import { buildSidebarCounts } from "@/modules/contracts/sidebar";
 import { getUpcomingDebits } from "@/modules/contracts/calendar";
 import {
   getCategoryLoad,
+  getCategoryProviderFlows,
   getDayLoad,
   getMonthlyProjection,
   getRenewals,
@@ -21,6 +22,8 @@ export const dynamic = "force-dynamic";
 /** Horizon de la projection : un cycle annuel complet, trimestriels compris. */
 const PROJECTION_MONTHS = 12;
 const TOP_CONTRACTS = 6;
+/** Au-delà, les fournisseurs les plus légers sont regroupés dans le Sankey. */
+const SANKEY_PROVIDERS = 8;
 
 export default async function TableauDeBordPage() {
   const session = await getSession();
@@ -53,6 +56,7 @@ export default async function TableauDeBordPage() {
     days: getDayLoad(contracts, today.getFullYear(), today.getMonth()),
     renewals: getRenewals(contracts, today),
     categoryList: categories,
+    flows: getCategoryProviderFlows(contracts, categories, SANKEY_PROVIDERS),
     today,
   };
 

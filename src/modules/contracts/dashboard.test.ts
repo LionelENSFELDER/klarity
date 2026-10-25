@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
+  OTHER_PROVIDERS,
   getCategoryLoad,
+  getCategoryProviderFlows,
   getDayLoad,
   getMonthlyProjection,
   getRenewals,
@@ -186,5 +188,36 @@ describe("getSmoothedMonthlyCost", () => {
       make({ amount: 500, frequency: "once" }),
     ]);
     expect(total).toBe(140); // 100 + 30 + 10 + 0
+  });
+});
+
+describe("getCategoryProviderFlows", () => {
+  it("cumule par couple catégorie-fournisseur, en coût lissé, sans les ponctuels", () => {
+    const flows = getCategoryProviderFlows(
+      [
+        make({ id: "a", provider: "EDF", category: "energie", amount: 60 }),
+        make({ id: "b", provider: "EDF", category: "energie", amount: 30 }),
+        make({ id: "c", provider: "EDF", category: "abonnement", amount: 120, frequency: "annual", anchorMonth: 0 }),
+        make({ id: "d", provider: "Billet", category: "abonnement", amount: 50, frequency: "once" }),
+      ],
+      categories,
+      8,
+    );
+    expect(flows).toEqual([
+      { category: "energie", provider: "EDF", monthlyCost: 90 },
+      { category: "abonnement", provider: "EDF", monthlyCost: 10 },
+    ]);
+  });
+
+  it("regroupe les fournisseurs les plus légers au-delà du maximum", () => {
+    const contracts = ["A", "B", "C", "D"].map((p, i) =>
+      make({ id: p, provider: p, amount: 40 - i * 10 }),
+    );
+    const providers = (max: number) =>
+      getCategoryProviderFlows(contracts, categories, max).map((f) => f.provider);
+
+    expect(providers(2)).toEqual(["A", "B", OTHER_PROVIDERS]);
+    // Un seul fournisseur à regrouper : on le garde sous son nom.
+    expect(providers(3)).toEqual(["A", "B", "C", "D"]);
   });
 });
