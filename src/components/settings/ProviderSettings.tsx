@@ -8,12 +8,16 @@ import {
   Alert,
   Box,
   Button,
+  IconButton,
   MenuItem,
   Paper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import MergeIcon from "@mui/icons-material/CallMerge";
 import { MergeProviders, RenameProvider } from "@/modules/categories/actions";
 import { normalizeName } from "@/modules/categories/model";
 import { formatEuro } from "@/modules/contracts/calendar";
@@ -185,30 +189,36 @@ export default function ProviderSettings({
                 >
                   {formatEuro(Math.round(p.monthlyCost))}/mois
                 </Typography>
-                <Stack direction="row" spacing={0.5}>
-                  <Button
-                    size="small"
-                    color="inherit"
-                    onClick={() => {
-                      setEditing(p.name);
-                      setDraft(p.name);
-                      setMerging(null);
-                    }}
-                  >
-                    Renommer
-                  </Button>
-                  <Button
-                    size="small"
-                    color="inherit"
-                    disabled={providers.length < 2}
-                    onClick={() => {
-                      setMerging(p.name);
-                      setEditing(null);
-                      setTarget(providers.find((x) => x.name !== p.name)?.name ?? "");
-                    }}
-                  >
-                    Fusionner
-                  </Button>
+                <Stack direction="row" spacing={0.25}>
+                  <Tooltip title="Renommer">
+                    <IconButton
+                      size="small"
+                      aria-label={`Renommer ${p.name}`}
+                      onClick={() => {
+                        setEditing(p.name);
+                        setDraft(p.name);
+                        setMerging(null);
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Fusionner avec un autre fournisseur">
+                    <span>
+                      <IconButton
+                        size="small"
+                        aria-label={`Fusionner ${p.name}`}
+                        disabled={providers.length < 2}
+                        onClick={() => {
+                          setMerging(p.name);
+                          setEditing(null);
+                          setTarget(providers.find((x) => x.name !== p.name)?.name ?? "");
+                        }}
+                      >
+                        <MergeIcon fontSize="small" />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 </Stack>
               </Stack>
 

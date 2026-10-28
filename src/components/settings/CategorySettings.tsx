@@ -8,12 +8,16 @@ import {
   Alert,
   Box,
   Button,
+  IconButton,
   MenuItem,
   Paper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import {
   CreateCategory,
   DeleteCategory,
@@ -216,32 +220,38 @@ export default function CategorySettings({
                 >
                   {stats.count ? `${formatEuro(Math.round(stats.monthlyCost))}/mois` : "—"}
                 </Typography>
-                <Stack direction="row" spacing={0.5}>
-                  <Button
-                    size="small"
-                    color="inherit"
-                    onClick={() => {
-                      setEditing(cat.id);
-                      setDraft(cat.label);
-                      setDeleting(null);
-                    }}
-                  >
-                    Modifier
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={() => {
-                      setDeleting(cat.id);
-                      setEditing(null);
-                      setReassign(
-                        categories.find((c) => c.id !== cat.id)?.slug ??
-                          NO_CATEGORY.slug,
-                      );
-                    }}
-                  >
-                    Supprimer
-                  </Button>
+                {/* Icônes plutôt que libellés : sur mobile, les boutons texte écrasaient le nom. */}
+                <Stack direction="row" spacing={0.25}>
+                  <Tooltip title="Modifier">
+                    <IconButton
+                      size="small"
+                      aria-label={`Modifier ${cat.label}`}
+                      onClick={() => {
+                        setEditing(cat.id);
+                        setDraft(cat.label);
+                        setDeleting(null);
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Supprimer">
+                    <IconButton
+                      size="small"
+                      aria-label={`Supprimer ${cat.label}`}
+                      sx={{ color: "error.main" }}
+                      onClick={() => {
+                        setDeleting(cat.id);
+                        setEditing(null);
+                        setReassign(
+                          categories.find((c) => c.id !== cat.id)?.slug ??
+                            NO_CATEGORY.slug,
+                        );
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Stack>
               </Stack>
 

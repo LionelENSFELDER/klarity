@@ -243,7 +243,7 @@ export default function ContractSettings({
                   <Stack
                     direction="row"
                     alignItems="center"
-                    spacing={1.75}
+                    spacing={{ xs: 1, sm: 1.75 }}
                     sx={{
                       py: 1.5,
                       px: { xs: 1.5, sm: 2.5 },
@@ -272,6 +272,10 @@ export default function ContractSettings({
                         )}
                       </Stack>
                       <Typography sx={{ fontSize: 12, color: "text.secondary", mt: "2px" }}>
+                        {/* Sur mobile le montant passe ici : la colonne de droite manquait de place pour le nom. */}
+                        <Box component="span" sx={{ display: { sm: "none" }, fontWeight: 700, color: "text.primary" }}>
+                          {formatEuro(contract.amount)} ·{" "}
+                        </Box>
                         {contract.provider} · {category.label} ·{" "}
                         {getFrequencyLabel(contract.frequency)}
                         {next
@@ -300,7 +304,7 @@ export default function ContractSettings({
                       {category.label}
                     </Box>
 
-                    <Typography sx={{ fontSize: 14, fontWeight: 700, minWidth: 72, textAlign: "right", whiteSpace: "nowrap" }}>
+                    <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, fontWeight: 700, minWidth: 72, textAlign: "right", whiteSpace: "nowrap" }}>
                       {formatEuro(contract.amount)}
                     </Typography>
 
