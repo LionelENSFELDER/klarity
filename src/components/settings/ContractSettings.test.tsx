@@ -229,6 +229,16 @@ describe("ContractSettings – actions", () => {
     expect(await screen.findByText("Contrat non trouvé.")).toBeInTheDocument();
   });
 
+  it("affiche un message quand l'action lève (session expirée)", async () => {
+    const user = userEvent.setup();
+    vi.mocked(SetContractArchived).mockRejectedValue(new Error("Non autorisé"));
+    renderSettings([base]);
+
+    await user.click(screen.getByRole("button", { name: "Archiver Netflix Famille" }));
+
+    expect(await screen.findByText(/L'action n'a pas abouti/)).toBeInTheDocument();
+  });
+
   it("ouvre la popup d'édition sur Modifier", async () => {
     const user = userEvent.setup();
     renderSettings([base]);
