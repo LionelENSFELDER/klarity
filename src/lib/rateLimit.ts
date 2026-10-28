@@ -4,22 +4,14 @@
 // avant une ouverture publique.
 const hits = new Map<string, number[]>();
 
-/**
- * Enregistre une tentative pour `key` et dit si elle reste sous la limite :
- * au plus `max` tentatives sur les `windowMs` dernières millisecondes.
- */
-export function allowAttempt(
+/** Vrai si `key` a déjà `max` tentatives sur les `windowMs` dernières ms. */
+export function isLimited(
   key: string,
   max: number,
   windowMs: number,
   now = Date.now(),
 ): boolean {
   const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
-  if (recent.length >= max) {
-    hits.set(key, recent);
-    return false;
-  }
-  recent.push(now);
   hits.set(key, recent);
   // Borne la mémoire : les clés anciennes disparaissent au fil des appels.
   if (hits.size > 10_000) {
@@ -27,6 +19,23 @@ export function allowAttempt(
       if (times.every((t) => now - t >= windowMs)) hits.delete(k);
     }
   }
+  return recent.length >= max;
+}
+
+/** Compte une tentative pour `key`. */
+export function recordAttempt(key: string, now = Date.now()): void {
+  hits.set(key, [...(hits.get(key) ?? []), now]);
+}
+
+/** Compte la tentative et dit si elle reste sous la limite. */
+export function allowAttempt(
+  key: string,
+  max: number,
+  windowMs: number,
+  now = Date.now(),
+): boolean {
+  if (isLimited(key, max, windowMs, now)) return false;
+  recordAttempt(key, now);
   return true;
 }
 

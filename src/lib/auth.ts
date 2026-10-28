@@ -5,7 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 import { normalizeEmail } from "./email";
-import { allowAttempt, clientIp } from "./rateLimit";
+import { clientIp, isLimited, recordAttempt } from "./rateLimit";
 import { TOO_MANY_ATTEMPTS } from "./messages";
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
@@ -40,15 +40,24 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Par compte (essai de mots de passe sur une adresse) et par IP
-        // (essai d'adresses en série). NextAuth transmet le message levé.
+        // (essai d'adresses en série). Seuls les échecs comptent : se
+        // connecter souvent, depuis plusieurs appareils, ne bloque personne.
+        // NextAuth transmet le message levé.
         const email = normalizeEmail(credentials.email as string);
         const ip = clientIp(req?.headers);
+        const emailKey = `login:${email}`;
+        const ipKey = ip ? `login-ip:${ip}` : null;
         if (
-          !allowAttempt(`login:${email}`, 10, FIFTEEN_MINUTES) ||
-          (ip && !allowAttempt(`login-ip:${ip}`, 30, FIFTEEN_MINUTES))
+          isLimited(emailKey, 10, FIFTEEN_MINUTES) ||
+          (ipKey && isLimited(ipKey, 30, FIFTEEN_MINUTES))
         ) {
           throw new Error(TOO_MANY_ATTEMPTS);
         }
+        const fail = () => {
+          recordAttempt(emailKey);
+          if (ipKey) recordAttempt(ipKey);
+          return null;
+        };
 
         // Même normalisation qu'à l'inscription : l'index unique de
         // Postgres est sensible à la casse.
@@ -57,7 +66,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          return null;
+          return fail();
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -66,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          return null;
+          return fail();
         }
 
         return {
