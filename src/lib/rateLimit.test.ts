@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { allowAttempt, clientIp } from "./rateLimit";
+import { allowAttempt, clientIp, isLimited, recordAttempt } from "./rateLimit";
 
 describe("allowAttempt", () => {
   it("bloque au-delà de la limite puis relâche après la fenêtre", () => {
@@ -17,6 +17,16 @@ describe("allowAttempt", () => {
     expect(allowAttempt(a, 1, 60_000)).toBe(true);
     expect(allowAttempt(a, 1, 60_000)).toBe(false);
     expect(allowAttempt(b, 1, 60_000)).toBe(true);
+  });
+});
+
+describe("isLimited / recordAttempt", () => {
+  it("ne compte que ce qui est enregistré : vérifier ne consomme rien", () => {
+    const key = `check-${Math.random()}`;
+    for (let i = 0; i < 20; i++) expect(isLimited(key, 2, 60_000)).toBe(false);
+    recordAttempt(key);
+    recordAttempt(key);
+    expect(isLimited(key, 2, 60_000)).toBe(true);
   });
 });
 
