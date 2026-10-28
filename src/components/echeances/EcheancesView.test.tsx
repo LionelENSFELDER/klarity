@@ -142,6 +142,7 @@ describe("EcheancesView – états vides", () => {
     renderView([], {}, 0);
     expect(screen.getByText("Bienvenue sur Klarity")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Ajouter mon premier contrat/ })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Résumé" })).not.toBeInTheDocument();
   });
 
   it("annonce la prochaine échéance quand l'horizon est trop court", () => {

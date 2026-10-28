@@ -55,7 +55,10 @@ function SignInContent() {
       } else if (result?.error) {
         setError("Connexion impossible pour le moment. Réessayez dans un instant.");
       } else {
-        router.push("/calendar");
+        // refresh : le layout racine (header, menu mobile) a été rendu sans
+        // session et n'est pas re-rendu par une simple navigation client.
+        router.replace("/calendar");
+        router.refresh();
       }
     } catch {
       setError("Connexion impossible. Vérifiez votre connexion internet et réessayez.");
