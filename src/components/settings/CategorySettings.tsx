@@ -89,13 +89,13 @@ export default function CategorySettings({
         </Alert>
       )}
 
-      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 4.5, overflow: "hidden", px: 1 }}>
+      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden", px: 1 }}>
         {categories.map((cat) => {
           const stats = usage[cat.slug] ?? { count: 0, monthlyCost: 0 };
 
           if (editing === cat.id) {
             return (
-              <Paper key={cat.id} variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
+              <Paper key={cat.id} variant="outlined" sx={{ p: 2, my: 1, borderRadius: 1 }}>
                 <Stack direction="row" spacing={1.25} alignItems="center">
                   <TextField
                     size="small"
@@ -133,7 +133,7 @@ export default function CategorySettings({
                       sx={{
                         width: 22,
                         height: 22,
-                        borderRadius: 1.5,
+                        borderRadius: 1,
                         bgcolor: color,
                         border: 2,
                         borderColor: cat.color === color ? "text.primary" : "transparent",
@@ -156,7 +156,7 @@ export default function CategorySettings({
                 sx={{
                   py: 1.25,
                   px: 1,
-                  borderRadius: 1.5,
+                  borderRadius: 1,
                   "& + &": { borderTop: 1, borderColor: "divider" },
                   "&:hover": { bgcolor: "action.hover" },
                 }}
@@ -172,7 +172,7 @@ export default function CategorySettings({
                   sx={{
                     width: 20,
                     height: 20,
-                    borderRadius: 1.5,
+                    borderRadius: 1,
                     bgcolor: cat.color,
                     border: 1, borderColor: "divider",
                     flex: "none",
@@ -239,7 +239,7 @@ export default function CategorySettings({
               </Stack>
 
               {deleting === cat.id && (
-                <Paper variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
+                <Paper variant="outlined" sx={{ p: 2, my: 1, borderRadius: 1 }}>
                   <Typography
                     sx={{ fontWeight: 600, fontSize: 13.5, mb: 0.75 }}
                   >

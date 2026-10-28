@@ -38,7 +38,7 @@ export default function ContractAvatar({
         width: size,
         height: size,
         flex: "none",
-        borderRadius: size >= 36 ? 3 : "50%",
+        borderRadius: size >= 36 ? 1 : "50%",
         display: "grid",
         placeItems: "center",
         bgcolor: light.bg,

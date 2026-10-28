@@ -88,7 +88,7 @@ function NavLink({
         gap: 1.25,
         px: 1.25,
         minHeight: 38,
-        borderRadius: 2.5,
+        borderRadius: 1,
         textDecoration: "none",
         color: "text.primary",
         fontWeight: 500,
@@ -116,7 +116,7 @@ function ThemeToggle() {
       <IconButton
         aria-label={label}
         onClick={() => setMode(isLight ? "dark" : "light")}
-        sx={{ border: 1, borderColor: "divider", borderRadius: 2, width: 36, height: 36 }}
+        sx={{ border: 1, borderColor: "divider", borderRadius: 1, width: 36, height: 36 }}
       >
         <Icon sx={{ fontSize: 17 }} />
       </IconButton>
@@ -231,7 +231,7 @@ function MonthCard({ total, paid }: { total: number; paid: number }) {
   return (
     <Stack
       spacing={1.1}
-      sx={{ border: 1, borderColor: "divider", borderRadius: 3.5, p: 1.75, bgcolor: "background.default" }}
+      sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.75, bgcolor: "background.default" }}
     >
       <Stack direction="row" justifyContent="space-between">
         <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
@@ -316,7 +316,7 @@ export default function NavContent({
         variant="contained"
         fullWidth
         startIcon={<AddIcon />}
-        sx={{ borderRadius: 3, minHeight: 44, fontSize: 14 }}
+        sx={{ borderRadius: 1, minHeight: 44, fontSize: 14 }}
       >
         Nouveau contrat
       </AddContractButton>
@@ -420,7 +420,7 @@ export default function NavContent({
         direction="row"
         alignItems="center"
         spacing={1.25}
-        sx={{ border: 1, borderColor: "divider", borderRadius: 3.5, p: 1.25 }}
+        sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.25 }}
       >
         <UserMenu user={user} userInitials={getUserInitials(user.name)} />
         <Box sx={{ flex: 1, minWidth: 0 }}>

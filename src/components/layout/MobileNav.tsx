@@ -35,7 +35,7 @@ export default function MobileNav({
           height: 44,
           border: 1,
           borderColor: "divider",
-          borderRadius: 3,
+          borderRadius: 1,
         }}
       >
         <MenuIcon />

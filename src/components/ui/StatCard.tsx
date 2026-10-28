@@ -17,7 +17,7 @@ export default function StatCard({
         bgcolor: "background.paper",
         border: 1,
         borderColor: "divider",
-        borderRadius: 4,
+        borderRadius: 1,
         px: 2.5,
         py: 2.25,
       }}

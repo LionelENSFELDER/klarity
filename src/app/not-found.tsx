@@ -15,7 +15,7 @@ export default function NotFound() {
           component={Link}
           href="/calendar"
           variant="contained"
-          sx={{ flex: 1, borderRadius: 999, minHeight: 46 }}
+          sx={{ flex: 1, borderRadius: 1, minHeight: 46 }}
         >
           Retour aux échéances
         </Button>

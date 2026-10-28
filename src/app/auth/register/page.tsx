@@ -122,7 +122,7 @@ export default function RegisterPage() {
           variant="contained"
           fullWidth
           disabled={loading || !longEnough}
-          sx={{ borderRadius: 999, minHeight: 50, fontSize: 15 }}
+          sx={{ borderRadius: 1, minHeight: 50, fontSize: 15 }}
         >
           {loading ? "Création..." : "Créer mon compte"}
         </Button>

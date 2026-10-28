@@ -29,7 +29,7 @@ const cardSx = {
   bgcolor: "background.paper",
   border: 1,
   borderColor: "divider",
-  borderRadius: 4.5,
+  borderRadius: 1,
 } as const;
 
 interface MonthGridProps {
@@ -165,7 +165,7 @@ export default function MonthGrid({
                   p: { xs: 0.5, md: 1.25 },
                   border: isSelected ? 2 : 1,
                   borderColor: isSelected ? "primary.dark" : "divider",
-                  borderRadius: 3,
+                  borderRadius: 1,
                   bgcolor: isSelected
                     ? "rgba(var(--mui-palette-primary-mainChannel) / 0.06)"
                     : "background.paper",
@@ -329,7 +329,7 @@ function DayPanel({
             fontWeight: 600,
             px: 1.25,
             py: 0.5,
-            borderRadius: 999,
+            borderRadius: 1,
             bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.1)",
             color: "primary.dark",
             ".dark &": { color: "primary.light" },
@@ -343,7 +343,7 @@ function DayPanel({
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ borderRadius: 3.5, bgcolor: "background.default", px: 2, py: 1.75 }}
+        sx={{ borderRadius: 1, bgcolor: "background.default", px: 2, py: 1.75 }}
       >
         <Typography sx={{ color: "text.secondary" }}>Total du jour</Typography>
         <Typography sx={{ fontSize: 22, fontWeight: 700 }}>{euro(total)}</Typography>
@@ -364,7 +364,7 @@ function DayPanel({
               p: 1,
               mx: -1,
               border: 0,
-              borderRadius: 3,
+              borderRadius: 1,
               bgcolor: "transparent",
               color: "text.primary",
               font: "inherit",

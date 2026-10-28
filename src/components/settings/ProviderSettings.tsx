@@ -95,11 +95,11 @@ export default function ProviderSettings({
         </Alert>
       ))}
 
-      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 4.5, overflow: "hidden", px: 1 }}>
+      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden", px: 1 }}>
         {providers.map((p) => {
           if (editing === p.name) {
             return (
-              <Paper key={p.name} variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
+              <Paper key={p.name} variant="outlined" sx={{ p: 2, my: 1, borderRadius: 1 }}>
                 <Stack direction="row" spacing={1.25} alignItems="center">
                   <TextField
                     size="small"
@@ -137,7 +137,7 @@ export default function ProviderSettings({
                 sx={{
                   py: 1.25,
                   px: 1,
-                  borderRadius: 1.5,
+                  borderRadius: 1,
                   "& + &": { borderTop: 1, borderColor: "divider" },
                   "&:hover": { bgcolor: "action.hover" },
                 }}
@@ -206,7 +206,7 @@ export default function ProviderSettings({
               </Stack>
 
               {merging === p.name && (
-                <Paper variant="outlined" sx={{ p: 2, my: 1, borderRadius: 3 }}>
+                <Paper variant="outlined" sx={{ p: 2, my: 1, borderRadius: 1 }}>
                   <Typography
                     sx={{ fontWeight: 600, fontSize: 13.5, mb: 0.75 }}
                   >

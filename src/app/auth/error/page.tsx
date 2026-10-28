@@ -46,7 +46,7 @@ function AuthErrorContent() {
           bgcolor: "background.paper",
           border: 1,
           borderColor: "divider",
-          borderRadius: 6,
+          borderRadius: 1,
           p: { xs: 3, sm: 4 },
         }}
       >
@@ -55,7 +55,7 @@ function AuthErrorContent() {
           sx={{
             width: 48,
             height: 48,
-            borderRadius: 3.5,
+            borderRadius: 1,
             bgcolor: "rgba(var(--mui-palette-error-mainChannel) / 0.12)",
             color: "error.main",
             display: "grid",
@@ -85,7 +85,7 @@ function AuthErrorContent() {
             component={Link}
             href="/auth/signin"
             variant="contained"
-            sx={{ flex: 1, borderRadius: 999, minHeight: 46 }}
+            sx={{ flex: 1, borderRadius: 1, minHeight: 46 }}
           >
             Réessayer de se connecter
           </Button>
@@ -94,7 +94,7 @@ function AuthErrorContent() {
             href="/support"
             variant="outlined"
             color="inherit"
-            sx={{ borderRadius: 999, minHeight: 46, px: 3, borderColor: "divider" }}
+            sx={{ borderRadius: 1, minHeight: 46, px: 3, borderColor: "divider" }}
           >
             Support
           </Button>

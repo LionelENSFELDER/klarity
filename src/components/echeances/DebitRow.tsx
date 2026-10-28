@@ -129,7 +129,7 @@ export default function DebitRow({
           fontSize: 12,
           px: 1.25,
           py: 0.5,
-          borderRadius: 999,
+          borderRadius: 1,
           bgcolor: orphan ? "warning.light" : "action.hover",
           color: orphan ? "warning.contrastText" : "text.primary",
         }}

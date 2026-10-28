@@ -103,7 +103,7 @@ export default function ContractDetailDialog({
       maxWidth="xs"
       fullWidth
       aria-labelledby="contract-detail-title"
-      slotProps={{ paper: { sx: { borderRadius: 6, p: { xs: 2.5, sm: 3.5 } } } }}
+      slotProps={{ paper: { sx: { borderRadius: 1, p: { xs: 2.5, sm: 3.5 } } } }}
     >
       {contract && (
         <Detail
@@ -201,7 +201,7 @@ function Detail({
             fontWeight: 600,
             px: 1.25,
             py: 0.5,
-            borderRadius: 999,
+            borderRadius: 1,
             bgcolor: "action.hover",
           }}
         >
@@ -215,7 +215,7 @@ function Detail({
         justifyContent="space-between"
         alignItems="center"
         gap={2}
-        sx={{ borderRadius: 4, bgcolor: "background.default", px: 2.25, py: 2 }}
+        sx={{ borderRadius: 1, bgcolor: "background.default", px: 2.25, py: 2 }}
       >
         <Box>
           <Typography sx={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.15 }}>
@@ -275,7 +275,7 @@ function Detail({
       {error && <Alert severity="error">{error}</Alert>}
 
       {confirming ? (
-        <Stack spacing={1.5} sx={{ border: 1, borderColor: "error.light", borderRadius: 4, p: 2 }}>
+        <Stack spacing={1.5} sx={{ border: 1, borderColor: "error.light", borderRadius: 1, p: 2 }}>
           <Typography sx={{ fontWeight: 600 }}>
             Supprimer «&nbsp;{contract.name}&nbsp;» ?
           </Typography>
@@ -301,7 +301,7 @@ function Detail({
             variant="contained"
             startIcon={<EditIcon />}
             onClick={onEdit}
-            sx={{ flex: 1, minHeight: 46, borderRadius: 999 }}
+            sx={{ flex: 1, minHeight: 46, borderRadius: 1 }}
           >
             Modifier
           </Button>
@@ -311,7 +311,7 @@ function Detail({
             startIcon={<ArchiveIcon />}
             disabled={pending}
             onClick={onArchive}
-            sx={{ flex: 1, minHeight: 46, borderRadius: 999, borderColor: "divider" }}
+            sx={{ flex: 1, minHeight: 46, borderRadius: 1, borderColor: "divider" }}
           >
             Archiver
           </Button>
