@@ -40,12 +40,16 @@ function parseAmount(value: unknown): number | null {
 // Création d'une souscription (vue calendrier)
 // ============================================
 
+const TEXT_MAX = 100;
+const TOO_LONG = `${TEXT_MAX} caractères maximum`;
+
 const subscriptionSchema = z
   .object({
-    name: z.string().trim().min(1, "Le nom du contrat est requis"),
-    provider: z.string().trim().optional(),
-    category: z.string().min(1, "La catégorie est requise"),
-    amount: z.number().positive("Le montant doit être positif"),
+    // Bornes de longueur : un champ texte sans limite permet de remplir la base.
+    name: z.string().trim().min(1, "Le nom du contrat est requis").max(TEXT_MAX, TOO_LONG),
+    provider: z.string().trim().max(TEXT_MAX, TOO_LONG).optional(),
+    category: z.string().min(1, "La catégorie est requise").max(64),
+    amount: z.number().positive("Le montant doit être positif").max(1_000_000, "Le montant est trop élevé"),
     frequency: z.enum(["once", "monthly", "quarterly", "annual"]),
     debitDay: z.number().int().min(1).max(31).nullable(),
     // Mois de référence (0-11) d'un trimestriel ou d'un annuel.
@@ -55,11 +59,13 @@ const subscriptionSchema = z
       .min(0, "Le mois de référence est invalide")
       .max(11, "Le mois de référence est invalide")
       .nullable(),
-    debitDate: z.string().optional(), // date complète pour "une fois"
-    contractNumber: z.string().trim().optional(),
-    renewalDate: z.string().optional(),
-    iconType: z.string().optional().nullable(),
-    iconValue: z.string().optional().nullable(),
+    debitDate: z.string().max(32).optional(), // date complète pour "une fois"
+    contractNumber: z.string().trim().max(TEXT_MAX, TOO_LONG).optional(),
+    renewalDate: z.string().max(32).optional(),
+    iconType: z.enum(["brand", "generic"]).optional().nullable(),
+    // Une icône de marque est chargée depuis cdn.simpleicons.org/<slug> :
+    // seul un slug (lettres et chiffres) peut entrer dans l'URL.
+    iconValue: z.string().regex(/^[A-Za-z0-9]{1,64}$/, "Icône invalide").optional().nullable(),
   })
   .refine(
     (data) =>

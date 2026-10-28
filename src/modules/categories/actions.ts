@@ -8,6 +8,8 @@ import { CATEGORY_PALETTE, NO_CATEGORY, normalizeName, slugify } from "./model";
 
 type Result = { success: true } | { error: string };
 
+const LABEL_MAX = 40;
+
 async function getSessionUserId() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("Non autorisé");
@@ -23,6 +25,7 @@ export async function CreateCategory(label: string): Promise<Result> {
   const userId = await getSessionUserId();
   const trimmed = label.trim();
   if (!trimmed) return { error: "Le nom ne peut pas être vide." };
+  if (trimmed.length > LABEL_MAX) return { error: `${LABEL_MAX} caractères maximum.` };
 
   const existing = await prisma.category.findMany({ where: { userId } });
   if (existing.some((c) => normalizeName(c.label) === normalizeName(trimmed))) {
@@ -47,6 +50,7 @@ export async function RenameCategory(id: string, label: string): Promise<Result>
   const userId = await getSessionUserId();
   const trimmed = label.trim();
   if (!trimmed) return { error: "Le nom ne peut pas être vide." };
+  if (trimmed.length > LABEL_MAX) return { error: `${LABEL_MAX} caractères maximum.` };
 
   const siblings = await prisma.category.findMany({ where: { userId } });
   if (!siblings.some((c) => c.id === id)) return { error: "Catégorie introuvable." };
@@ -127,6 +131,7 @@ export async function RenameProvider(
   const userId = await getSessionUserId();
   const trimmed = to.trim();
   if (!trimmed) return { error: "Le nom du fournisseur ne peut pas être vide." };
+  if (trimmed.length > 100) return { error: "100 caractères maximum." };
 
   // Renommer vers une variante d'un fournisseur existant revient à fusionner.
   const others = await prisma.contract.findMany({

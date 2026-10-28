@@ -1,6 +1,7 @@
 import { normalizeEmail } from "@/lib/email";
 
 export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 72;
 
 /** Message affiché sur la page de connexion après une inscription réussie. */
 export const REGISTRATION_SUCCESS_MESSAGE = "Compte créé avec succès";
@@ -40,6 +41,19 @@ export function validateRegistration(
   const email = normalizeEmail(rawEmail);
   if (!EMAIL_SHAPE.test(email)) {
     return { ok: false, error: "Adresse e-mail invalide" };
+  }
+
+  // bcrypt ne lit que les 72 premiers octets, et hacher une chaîne énorme
+  // coûte du CPU au serveur : on borne avant.
+  if (rawPassword.length > PASSWORD_MAX_LENGTH) {
+    return {
+      ok: false,
+      error: `Le mot de passe doit contenir au plus ${PASSWORD_MAX_LENGTH} caractères`,
+    };
+  }
+
+  if (email.length > 254 || rawName.length > 100) {
+    return { ok: false, error: "Nom ou adresse e-mail trop long" };
   }
 
   if (rawPassword.length < PASSWORD_MIN_LENGTH) {
