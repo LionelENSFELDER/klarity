@@ -289,12 +289,15 @@ export default function EcheancesView({
           </Stack>
         </Stack>
 
-        {/* Indicateurs : tout le portefeuille, quel que soit le filtre */}
-        <Box component="section" aria-label="Résumé" sx={statGridSx}>
-          {kpis.map((k) => (
-            <StatCard key={k.label} {...k} />
-          ))}
-        </Box>
+        {/* Indicateurs : tout le portefeuille, quel que soit le filtre.
+            Masqués sans contrat : quatre « 0 € » repoussaient l'accueil sous la ligne de flottaison. */}
+        {totalContracts > 0 && (
+          <Box component="section" aria-label="Résumé" sx={statGridSx}>
+            {kpis.map((k) => (
+              <StatCard key={k.label} {...k} />
+            ))}
+          </Box>
+        )}
 
         {params.vue === "calendrier" ? (
           <MonthGrid
