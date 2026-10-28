@@ -140,7 +140,8 @@ describe("EcheancesView – liste des échéances", () => {
 describe("EcheancesView – états vides", () => {
   it("distingue l'absence de contrat de l'absence d'échéance", () => {
     renderView([], {}, 0);
-    expect(screen.getByText("Aucun contrat")).toBeInTheDocument();
+    expect(screen.getByText("Bienvenue sur Klarity")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Ajouter mon premier contrat/ })).toBeInTheDocument();
   });
 
   it("annonce la prochaine échéance quand l'horizon est trop court", () => {
