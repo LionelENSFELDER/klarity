@@ -140,7 +140,7 @@ export default function ContractFormFields({
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 260px" },
+        gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 260px" },
         gap: 4,
         alignItems: "start",
       }}
@@ -228,7 +228,7 @@ export default function ContractFormFields({
                   endAdornment: <InputAdornment position="end">€</InputAdornment>,
                 },
               }}
-              sx={{ flex: "1 1 160px" }}
+              sx={{ flex: { sm: "1 1 160px" } }}
             />
             <ToggleButtonGroup
               value={frequency}
@@ -236,7 +236,8 @@ export default function ContractFormFields({
               aria-label="Fréquence"
               onChange={(_, v) => v && onFrequencyChange(v)}
               sx={{
-                flex: "2 1 300px",
+                // En colonne (mobile), une base flex jouerait sur la hauteur.
+                flex: { sm: "2 1 300px" },
                 bgcolor: "action.hover",
                 p: 0.5,
                 borderRadius: 3.5,
@@ -244,6 +245,9 @@ export default function ContractFormFields({
                 boxSizing: "border-box",
                 "& .MuiToggleButton-root": {
                   flex: 1,
+                  minWidth: 0,
+                  px: { xs: 0.5, sm: 1.5 },
+                  fontSize: { xs: 13, sm: 14 },
                   border: 0,
                   borderRadius: "10px !important",
                   textTransform: "none",
