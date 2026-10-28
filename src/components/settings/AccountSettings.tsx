@@ -10,7 +10,7 @@ const cardSx = {
   bgcolor: "background.paper",
   border: 1,
   borderColor: "divider",
-  borderRadius: 4.5,
+  borderRadius: 1,
   p: { xs: 2, sm: 2.75 },
 } as const;
 
