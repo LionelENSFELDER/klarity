@@ -9,7 +9,9 @@ export const metadata: Metadata = {
   title: "Support — Klarity",
 };
 
-const linkSx = { color: "primary.dark", ".dark &": { color: "primary.light" } } as const;
+const SUPPORT_EMAIL = "ensfelder.lionel+klarity@gmail.com";
+
+const linkSx ={ color: "primary.dark", ".dark &": { color: "primary.light" } } as const;
 
 const cardSx = {
   flex: "1 1 280px",
@@ -96,9 +98,16 @@ export default function SupportPage() {
             contrat concerné suffisent dans la plupart des cas.
           </Typography>
           <Box sx={{ flex: 1 }} />
-          <Box sx={{ border: "1px dashed", borderColor: "divider", borderRadius: 999, py: 1.25, textAlign: "center", fontSize: 14, color: "text.secondary" }}>
-            Canal de contact à définir — il sera indiqué ici.
-          </Box>
+          <Button
+            href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Klarity — signalement")}`}
+            variant="contained"
+            sx={{ borderRadius: 999, minHeight: 46 }}
+          >
+            Écrire au support
+          </Button>
+          <Typography sx={{ fontSize: 13, color: "text.secondary", textAlign: "center", wordBreak: "break-all" }}>
+            {SUPPORT_EMAIL}
+          </Typography>
         </Stack>
 
         <Stack spacing={1.75} sx={cardSx}>
@@ -107,9 +116,9 @@ export default function SupportPage() {
             Demandes sur vos données
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: "text.secondary" }}>
-            Export ou suppression de compte : la demande passe par le même
-            canal, en attendant que ces actions soient disponibles directement
-            dans l&apos;application.
+            Export ou suppression de compte : écrivez à la même adresse en
+            précisant l&apos;e-mail de votre compte, en attendant que ces
+            actions soient disponibles directement dans l&apos;application.
           </Typography>
         </Stack>
       </Stack>
