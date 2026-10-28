@@ -57,7 +57,7 @@ export const theme = createTheme({
         primary: {
           main: "#cafea7",
           light: "#eaffdb",
-          dark: "#91FE48",
+          dark: "#3a7418", // 5,7:1 sur blanc
           contrastText: "#1a3a0a",
         },
         secondary: {
@@ -144,6 +144,8 @@ export const theme = createTheme({
         },
       },
     },
+    // Texte et traits en couleur primaire : `main` (vert de marque) est
+    // illisible sur fond clair, `dark` porte le texte dans les deux thèmes.
     MuiButton: {
       styleOverrides: {
         root: {
@@ -151,6 +153,28 @@ export const theme = createTheme({
           fontWeight: 600,
           boxShadow: "none",
         },
+        textPrimary: ({ theme }) => ({ color: theme.vars.palette.primary.dark }),
+        outlinedPrimary: ({ theme }) => ({
+          color: theme.vars.palette.primary.dark,
+          borderColor: theme.vars.palette.primary.dark,
+        }),
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: ({ theme }) => ({ color: theme.vars.palette.primary.dark }),
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "&.Mui-selected": { color: theme.vars.palette.primary.dark },
+        }),
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: ({ theme }) => ({ backgroundColor: theme.vars.palette.primary.dark }),
       },
     },
     MuiChip: {
