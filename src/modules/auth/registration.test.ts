@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { normalizeEmail } from "@/lib/email";
-import { PASSWORD_MIN_LENGTH, validateRegistration } from "./registration";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, validateRegistration } from "./registration";
 
 const valid = {
   name: "Jean Dupont",
@@ -59,6 +59,13 @@ describe("validateRegistration", () => {
 
     expect(validateRegistration({ ...valid, password: short })).toMatchObject({ ok: false });
     expect(validateRegistration({ ...valid, password: exact })).toMatchObject({ ok: true });
+  });
+
+  it("borne la longueur du mot de passe et du nom", () => {
+    const max = "a".repeat(PASSWORD_MAX_LENGTH);
+    expect(validateRegistration({ ...valid, password: max })).toMatchObject({ ok: true });
+    expect(validateRegistration({ ...valid, password: max + "a" })).toMatchObject({ ok: false });
+    expect(validateRegistration({ ...valid, name: "a".repeat(101) })).toMatchObject({ ok: false });
   });
 
   it("ne tronque ni ne modifie le mot de passe", () => {
