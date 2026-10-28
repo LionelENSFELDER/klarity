@@ -10,13 +10,8 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import {
-  AccountCircle,
-  CreditCard,
-  Palette,
-  Help,
-  Logout,
-} from "@mui/icons-material";
+import { Help, Logout } from "@mui/icons-material";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
 
 interface UserMenuProps {
@@ -84,20 +79,7 @@ export default function UserMenu({ user, userInitials }: UserMenuProps) {
           </Typography>
         </Box>
         <Divider />
-        <MenuItem>
-          <AccountCircle sx={{ mr: 1.5 }} fontSize="small" />
-          Profil
-        </MenuItem>
-        <MenuItem>
-          <CreditCard sx={{ mr: 1.5 }} fontSize="small" />
-          Facturation
-        </MenuItem>
-        <MenuItem>
-          <Palette sx={{ mr: 1.5 }} fontSize="small" />
-          Thème
-        </MenuItem>
-        <Divider />
-        <MenuItem>
+        <MenuItem component={Link} href="/support">
           <Help sx={{ mr: 1.5 }} fontSize="small" />
           Aide & Support
         </MenuItem>
