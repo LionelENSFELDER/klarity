@@ -3,13 +3,15 @@
 **Application de gestion administrative personnelle**
 Version : brouillon v0.1 — issu des échanges de cadrage
 
+> Mise à jour v1 : l'import de documents (PDF) est retiré du périmètre.
+
 ---
 
 ## 1.1 Contexte et objectif
 
 Klarity est une application web qui centralise les contrats et abonnements du quotidien (assurances, énergie, télécom, streaming, crédits, etc.) pour répondre à deux besoins :
 
-1. **Retrouver en un clic** les informations d'un contrat donné (référence, montant, échéance, numéro de contact, document).
+1. **Retrouver en un clic** les informations d'un contrat donné (référence, montant, échéance, numéro de contact).
 2. **Visualiser sur un calendrier** les dates de prélèvement de l'ensemble des souscriptions, afin d'anticiper les sorties d'argent du mois.
 
 Principe directeur : rester simple et pratique — pas d'usine à gaz. Chaque écran doit répondre à un besoin précis, sans fonctionnalités superflues.
@@ -55,7 +57,7 @@ Utilise la stack technique actuelle (voir package.json).
 
 - Date sélectionnée en en-tête.
 - Liste des contrats prélevés ce jour (nom, catégorie, montant).
-- Clic sur un contrat → dépliage des informations : référence contrat, fréquence, date de renouvellement / échéance, bouton "Voir le contrat" et bouton de téléchargement du document associé.
+- Clic sur un contrat → dépliage des informations : référence contrat, fréquence, date de renouvellement / échéance, bouton "Voir le contrat".
 
 ### 3.3 Vue Ajout d'un contrat / abonnement
 
@@ -72,7 +74,6 @@ Utilise la stack technique actuelle (voir package.json).
 | Jour de prélèvement               | Oui         | Fréquence récurrente : sélection du jour du mois (1 à 31) via une mini-grille. Fréquence "une fois" : sélection de la date complète du prélèvement                   |
 | Référence contrat                 | Non         | Texte libre                                                                                                                                                          |
 | Date de renouvellement / échéance | Non         | Date                                                                                                                                                                 |
-| Document du contrat               | Non         | Import de fichier (PDF)                                                                                                                                              |
 
 **Interaction :**
 
@@ -107,7 +108,6 @@ Chaque catégorie est associée à une couleur distinctive, réutilisée de faç
 - Jour du mois de prélèvement (ou date complète pour un prélèvement unique)
 - Référence contrat (optionnel)
 - Date de renouvellement / échéance (optionnel)
-- Document associé (optionnel)
 
 ---
 
