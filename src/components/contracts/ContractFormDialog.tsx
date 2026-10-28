@@ -10,6 +10,8 @@ import {
   Button,
   Alert,
   Stack,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
 import type { CalendarContract } from "@/modules/contracts/calendar";
@@ -46,6 +48,8 @@ export default function ContractFormDialog({
   onClose,
 }: ContractFormDialogProps) {
   const router = useRouter();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -172,8 +176,10 @@ export default function ContractFormDialog({
       onClose={onClose}
       maxWidth="md"
       fullWidth
+      // Formulaire long : en plein écran sur mobile, le clavier ne masque pas les champs.
+      fullScreen={fullScreen}
       scroll="paper"
-      slotProps={{ paper: { sx: { borderRadius: 6 } } }}
+      slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 6 } } }}
     >
       <DialogTitle sx={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em", px: { xs: 2.5, sm: 4 }, pt: 3 }}>
         {mode === "edit" ? "Modifier le contrat" : "Ajouter un contrat"}
