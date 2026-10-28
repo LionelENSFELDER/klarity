@@ -262,9 +262,9 @@ describe("ContractFormDialog – mois de référence", () => {
     render(<ContractFormDialog open mode="create" onClose={() => {}} />);
     const dialog = screen.getByRole("dialog");
 
-    expect(within(dialog).queryByLabelText("Mois de référence")).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Mois du prélèvement")).not.toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Annuel" }));
-    expect(within(dialog).getByLabelText("Mois de référence")).toBeInTheDocument();
+    expect(within(dialog).getByLabelText("Mois du prélèvement")).toBeInTheDocument();
   });
 
   it("envoie le mois choisi à la création", async () => {
@@ -278,7 +278,7 @@ describe("ContractFormDialog – mois de référence", () => {
     await user.type(within(dialog).getByLabelText(/Montant/), "412");
     await user.click(within(dialog).getByRole("button", { name: "Annuel" }));
     await user.click(within(dialog).getByRole("button", { name: "3" }));
-    await user.click(within(dialog).getByLabelText("Mois de référence"));
+    await user.click(within(dialog).getByLabelText("Mois du prélèvement"));
     await user.click(await screen.findByRole("option", { name: "Mars" }));
 
     expect(within(dialog).getByText("Prélevé chaque année en mars.")).toBeInTheDocument();
