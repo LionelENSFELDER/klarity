@@ -60,16 +60,24 @@ export default function EmptyState({
   horizon,
   today,
 }: EmptyStateProps) {
+  // Premier lancement : c'est le seul écran qui explique à quoi sert l'app.
   if (totalContracts === 0) {
     return (
       <Shell>
-        <Typography sx={titleSx}>Aucun contrat</Typography>
+        <Typography sx={{ ...titleSx, fontSize: 18 }}>Bienvenue sur Klarity</Typography>
         <Typography sx={textSx}>
-          Ajoute un premier contrat pour voir ses prélèvements apparaître ici.
+          Ajoute tes abonnements et contrats : Klarity te montre ce qui sera
+          prélevé, et quand. Commence par celui que tu paies le plus souvent,
+          un téléphone ou une box par exemple.
         </Typography>
-        <Box sx={{ pt: 1 }}>
-          <AddContractButton variant="outlined" size="small">
-            ＋ Nouveau contrat
+        <Stack component="ol" spacing={0.75} sx={{ ...textSx, textAlign: "left", pl: 2.5, m: 0, pt: 0.5 }}>
+          <li>Nom, montant et jour de prélèvement suffisent.</li>
+          <li>Les échéances apparaissent ici et dans le calendrier.</li>
+          <li>Les catégories se renomment dans Réglages.</li>
+        </Stack>
+        <Box sx={{ pt: 1.5 }}>
+          <AddContractButton variant="contained">
+            ＋ Ajouter mon premier contrat
           </AddContractButton>
         </Box>
       </Shell>

@@ -72,7 +72,8 @@ const MONTHS = [
 
 /** « Prélevé chaque année en janvier » ou les quatre mois d'un trimestriel. */
 export function anchorHelp(frequency: string, anchor: number | null): string {
-  if (anchor === null) return "";
+  // Le champ est la cause n°1 des échéances « manquantes » : on l'explique avant saisie.
+  if (anchor === null) return "Le mois où tombe un prélèvement, ex. mars pour une assurance payée en mars.";
   if (frequency === "annual") return `Prélevé chaque année en ${MONTHS[anchor]}.`;
   const names = debitMonths(frequency, anchor).map((m) => MONTHS[m]);
   return `Prélevé en ${names.slice(0, 3).join(", ")} et ${names[3]}.`;

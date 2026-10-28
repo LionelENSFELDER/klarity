@@ -322,4 +322,8 @@ describe("anchorHelp", () => {
     // Trimestriel ancré en novembre : les quatre mois, dans l'ordre de l'année.
     expect(anchorHelp("quarterly", 10)).toBe("Prélevé en février, mai, août et novembre.");
   });
+
+  it("explique le champ tant qu'aucun mois n'est choisi", () => {
+    expect(anchorHelp("annual", null)).toMatch(/^Le mois où tombe un prélèvement/);
+  });
 });
