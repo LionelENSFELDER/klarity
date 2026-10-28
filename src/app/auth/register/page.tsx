@@ -48,11 +48,12 @@ export default function RegisterPage() {
           `/auth/signin?message=${encodeURIComponent(REGISTRATION_SUCCESS_MESSAGE)}`,
         );
       } else {
-        const data = await response.json();
-        setError(data.error || "Une erreur s'est produite");
+        // Une 500 peut renvoyer autre chose que du JSON.
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || "Le compte n'a pas pu être créé. Réessayez dans un instant.");
       }
     } catch {
-      setError("Une erreur s'est produite");
+      setError("Inscription impossible. Vérifiez votre connexion internet et réessayez.");
     } finally {
       setLoading(false);
     }

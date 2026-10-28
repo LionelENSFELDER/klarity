@@ -6,12 +6,22 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmberRounded";
 import Link from "next/link";
 
+// Codes renvoyés par NextAuth dans ?error=.
 const errors = {
-  Configuration: "Il y a un problème avec la configuration du serveur.",
-  AccessDenied:
-    "Accès refusé. Vous n'avez pas l'autorisation d'accéder à cette application.",
-  Verification: "Le token de vérification a expiré ou a déjà été utilisé.",
-  Default: "Une erreur inattendue s'est produite.",
+  // Même e-mail déjà inscrit avec un mot de passe : NextAuth refuse de lier
+  // le compte Google pour éviter une prise de contrôle.
+  OAuthAccountNotLinked:
+    "Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec votre e-mail et votre mot de passe.",
+  OAuthSignin: "La connexion avec Google n'a pas pu démarrer. Réessayez dans un instant.",
+  OAuthCallback: "Google n'a pas confirmé la connexion. Réessayez, ou utilisez votre e-mail et votre mot de passe.",
+  OAuthCreateAccount: "Le compte n'a pas pu être créé à partir de Google. Réessayez dans un instant.",
+  Callback: "La connexion n'a pas pu aboutir. Réessayez dans un instant.",
+  CredentialsSignin: "Email ou mot de passe incorrect.",
+  SessionRequired: "Votre session a expiré. Reconnectez-vous pour continuer.",
+  Configuration: "La connexion est momentanément indisponible de notre côté. Réessayez plus tard.",
+  AccessDenied: "Accès refusé pour ce compte.",
+  Verification: "Ce lien de connexion a expiré ou a déjà été utilisé.",
+  Default: "La connexion n'a pas pu aboutir. Réessayez dans un instant.",
 };
 
 const TIPS = [
