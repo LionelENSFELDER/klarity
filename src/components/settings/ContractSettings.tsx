@@ -125,7 +125,7 @@ export default function ContractSettings({
         </Alert>
       )}
 
-      <Box sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 4.5, overflow: "hidden" }}>
+      <Box sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden" }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={1.25}
@@ -158,10 +158,10 @@ export default function ContractSettings({
             sx={{
               bgcolor: "action.hover",
               p: 0.5,
-              borderRadius: 2.5,
+              borderRadius: 1,
               "& .MuiToggleButton-root": {
                 border: 0,
-                borderRadius: "8px !important",
+                borderRadius: "var(--mui-shape-borderRadius) !important",
                 px: 1.5,
                 textTransform: "none",
                 color: "text.primary",
@@ -273,7 +273,7 @@ export default function ContractSettings({
                         fontSize: 12,
                         px: 1.25,
                         py: 0.5,
-                        borderRadius: 999,
+                        borderRadius: 1,
                         bgcolor: orphan ? "warning.light" : "action.hover",
                         color: orphan ? "warning.contrastText" : "text.primary",
                       }}
@@ -327,7 +327,7 @@ export default function ContractSettings({
                   </Stack>
 
                   {deleting === contract.id && (
-                    <Paper variant="outlined" sx={{ p: 2, mx: 2.5, mb: 1.5, borderRadius: 3 }}>
+                    <Paper variant="outlined" sx={{ p: 2, mx: 2.5, mb: 1.5, borderRadius: 1 }}>
                       <Typography
                         sx={{
                           fontWeight: 600,

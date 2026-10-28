@@ -197,7 +197,7 @@ export default function ContractFormFields({
                       gap: 1,
                       height: 38,
                       px: 1.75,
-                      borderRadius: 999,
+                      borderRadius: 1,
                       fontSize: 14,
                     }}
                   >
@@ -240,7 +240,7 @@ export default function ContractFormFields({
                 flex: { sm: "2 1 300px" },
                 bgcolor: "action.hover",
                 p: 0.5,
-                borderRadius: 3.5,
+                borderRadius: 1,
                 height: 56,
                 boxSizing: "border-box",
                 "& .MuiToggleButton-root": {
@@ -249,7 +249,7 @@ export default function ContractFormFields({
                   px: { xs: 0.5, sm: 1.5 },
                   fontSize: { xs: 13, sm: 14 },
                   border: 0,
-                  borderRadius: "10px !important",
+                  borderRadius: "var(--mui-shape-borderRadius) !important",
                   textTransform: "none",
                   color: "text.primary",
                 },
@@ -305,7 +305,7 @@ export default function ContractFormFields({
                       sx={{
                         ...choiceSx(selected),
                         height: 38,
-                        borderRadius: 2.5,
+                        borderRadius: 1,
                         fontSize: 13,
                         ...(selected && {
                           bgcolor: "primary.main",
@@ -403,7 +403,7 @@ function NewCategory({
         sx={{
           height: 38,
           px: 1.75,
-          borderRadius: 999,
+          borderRadius: 1,
           border: "1px dashed",
           borderColor: "divider",
           bgcolor: "transparent",
@@ -518,7 +518,7 @@ function Preview({
       <Typography sx={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "text.secondary" }}>
         Aperçu en direct
       </Typography>
-      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ border: 1, borderColor: "divider", borderRadius: 4, p: 1.75 }}>
+      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.75 }}>
         <ContractAvatar contract={draft} category={cat} size={40} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontWeight: 600 }} noWrap>{draft.name}</Typography>
@@ -532,7 +532,7 @@ function Preview({
         </Typography>
       </Stack>
 
-      <Stack spacing={1.25} sx={{ border: 1, borderColor: "divider", borderRadius: 4, p: 2 }}>
+      <Stack spacing={1.25} sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 2 }}>
         <Typography sx={{ fontWeight: 600 }}>Prochains prélèvements</Typography>
         {upcoming.length === 0 ? (
           <Typography sx={{ fontSize: 13, color: "text.secondary" }}>

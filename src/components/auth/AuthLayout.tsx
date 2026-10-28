@@ -65,7 +65,7 @@ export default function AuthLayout({
           flex: "1 1 480px",
           m: 2,
           p: 7,
-          borderRadius: 7,
+          borderRadius: 1,
           bgcolor: "primary.contrastText",
           color: "common.white",
         }}
@@ -85,7 +85,7 @@ export default function AuthLayout({
               component="li"
               direction="row"
               spacing={2}
-              sx={{ p: 2.25, borderRadius: 4.5, bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.12)" }}
+              sx={{ p: 2.25, borderRadius: 1, bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.12)" }}
             >
               <Box
                 sx={{

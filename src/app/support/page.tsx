@@ -19,7 +19,7 @@ const cardSx = {
   bgcolor: "background.paper",
   border: 1,
   borderColor: "divider",
-  borderRadius: 4.5,
+  borderRadius: 1,
   p: 2.75,
 } as const;
 
@@ -30,7 +30,7 @@ function CardIcon({ children, tone }: { children: React.ReactNode; tone: "primar
       sx={{
         width: 40,
         height: 40,
-        borderRadius: 3,
+        borderRadius: 1,
         display: "grid",
         placeItems: "center",
         bgcolor: `rgba(var(--mui-palette-${tone}-mainChannel) / 0.14)`,
@@ -52,7 +52,7 @@ export default function SupportPage() {
       <Stack spacing={1} sx={{ maxWidth: 720, mb: 3 }}>
         <Box
           component="span"
-          sx={{ alignSelf: "flex-start", fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 999, bgcolor: "warning.light", color: "warning.contrastText" }}
+          sx={{ alignSelf: "flex-start", fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 1, bgcolor: "warning.light", color: "warning.contrastText" }}
         >
           Version alpha
         </Box>
@@ -101,7 +101,7 @@ export default function SupportPage() {
           <Button
             href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Klarity — signalement")}`}
             variant="contained"
-            sx={{ borderRadius: 999, minHeight: 46 }}
+            sx={{ borderRadius: 1, minHeight: 46 }}
           >
             Écrire au support
           </Button>
@@ -126,7 +126,7 @@ export default function SupportPage() {
       <Box
         component="section"
         aria-labelledby="limites"
-        sx={{ mt: 2, p: 2.75, borderRadius: 4.5, border: 1, borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)", bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)" }}
+        sx={{ mt: 2, p: 2.75, borderRadius: 1, border: 1, borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)", bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)" }}
       >
         <Typography id="limites" component="h2" sx={{ fontWeight: 600, fontSize: 15, mb: 1 }}>
           Limites connues

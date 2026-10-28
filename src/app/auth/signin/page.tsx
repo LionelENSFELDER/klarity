@@ -18,7 +18,7 @@ import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import PasswordField from "@/components/auth/PasswordField";
 
-const pill = { borderRadius: 999, minHeight: 50, fontSize: 15 } as const;
+const pill = { borderRadius: 1, minHeight: 50, fontSize: 15 } as const;
 
 function SignInContent() {
   const [email, setEmail] = useState("");

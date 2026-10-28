@@ -193,7 +193,7 @@ function Card({
         bgcolor: "background.paper",
         border: 1,
         borderColor: "divider",
-        borderRadius: 4.5,
+        borderRadius: 1,
         p: flush ? 0 : { xs: 2, sm: 2.75 },
         overflow: "hidden",
       }}
@@ -634,7 +634,7 @@ function RenewalList({
                   fontWeight: 600,
                   px: 1.25,
                   py: 0.4,
-                  borderRadius: 999,
+                  borderRadius: 1,
                   bgcolor: "action.hover",
                   whiteSpace: "nowrap",
                 }}
@@ -651,7 +651,7 @@ function RenewalList({
           sx={{
             mt: 1.75,
             p: 1.5,
-            borderRadius: 3,
+            borderRadius: 1,
             fontSize: 12,
             lineHeight: 1.55,
             border: 1,
@@ -780,7 +780,7 @@ function TopTable({
                         fontSize: 12,
                         px: 1.25,
                         py: 0.5,
-                        borderRadius: 999,
+                        borderRadius: 1,
                         bgcolor: "action.hover",
                       }}
                     >

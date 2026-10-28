@@ -133,7 +133,6 @@ export const theme = createTheme({
         root: ({ theme }) => ({
           backgroundImage: "none",
           backgroundColor: theme.vars.palette.background.paper,
-          borderRadius: 16,
           border: `1px solid ${theme.vars.palette.divider}`,
         }),
       },
@@ -149,7 +148,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: 10,
           fontWeight: 600,
           boxShadow: "none",
         },
@@ -157,13 +155,14 @@ export const theme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        root: {
-          borderRadius: 999,
-        },
+        root: ({ theme }) => ({
+          borderRadius: theme.vars.shape.borderRadius,
+        }),
       },
     },
   },
+  // Rayon unique de l'app : dans `sx`, `borderRadius: 1` vaut cette valeur.
   shape: {
-    borderRadius: 10,
+    borderRadius: 8,
   },
 });

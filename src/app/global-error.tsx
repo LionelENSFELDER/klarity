@@ -17,7 +17,7 @@ export default function GlobalError({
           <p style={{ color: "#555", lineHeight: 1.5 }}>
             Tes données ne sont pas perdues. Réessaie dans un instant.
           </p>
-          <button onClick={reset} style={{ padding: "12px 24px", borderRadius: 999, border: 0, background: "#cafea7", fontSize: 15, cursor: "pointer" }}>
+          <button onClick={reset} style={{ padding: "12px 24px", borderRadius: 8, border: 0, background: "#cafea7", fontSize: 15, cursor: "pointer" }}>
             Réessayer
           </button>
           {error.digest && (

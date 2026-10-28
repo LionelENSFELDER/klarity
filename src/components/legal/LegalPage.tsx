@@ -59,7 +59,7 @@ export default function LegalPage({
                 sx={{
                   px: 1.5,
                   py: 1,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   fontSize: 14,
                   color: "text.secondary",
                   textDecoration: "none",
@@ -79,7 +79,7 @@ export default function LegalPage({
                 key={d.href}
                 component={Link}
                 href={d.href}
-                sx={{ px: 1.5, py: 1, borderRadius: 2, fontSize: 14, color: "primary.dark", ".dark &": { color: "primary.light" } }}
+                sx={{ px: 1.5, py: 1, borderRadius: 1, fontSize: 14, color: "primary.dark", ".dark &": { color: "primary.light" } }}
               >
                 {d.label}
               </Box>
@@ -96,7 +96,7 @@ export default function LegalPage({
             bgcolor: "background.paper",
             border: 1,
             borderColor: "divider",
-            borderRadius: 4.5,
+            borderRadius: 1,
             p: { xs: 2.5, md: 4.5 },
           }}
         >

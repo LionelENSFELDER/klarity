@@ -27,7 +27,7 @@ export default function ErrorPage({
       message="Tes données ne sont pas perdues. Réessaie ; si le problème revient, ta session a peut-être expiré : reconnecte-toi."
       actions={
         <>
-          <Button onClick={reset} variant="contained" sx={{ flex: 1, borderRadius: 999, minHeight: 46 }}>
+          <Button onClick={reset} variant="contained" sx={{ flex: 1, borderRadius: 1, minHeight: 46 }}>
             Réessayer
           </Button>
           <Button
@@ -35,7 +35,7 @@ export default function ErrorPage({
             href="/auth/signin"
             variant="outlined"
             color="inherit"
-            sx={{ borderRadius: 999, minHeight: 46, px: 3, borderColor: "divider" }}
+            sx={{ borderRadius: 1, minHeight: 46, px: 3, borderColor: "divider" }}
           >
             Se reconnecter
           </Button>

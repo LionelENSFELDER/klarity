@@ -90,7 +90,7 @@ const cardSx = {
   bgcolor: "background.paper",
   border: 1,
   borderColor: "divider",
-  borderRadius: 4.5,
+  borderRadius: 1,
 } as const;
 
 export default function EcheancesView({
@@ -237,10 +237,10 @@ export default function EcheancesView({
               sx={{
                 bgcolor: "action.hover",
                 p: 0.5,
-                borderRadius: 3,
+                borderRadius: 1,
                 "& .MuiToggleButton-root": {
                   border: 0,
-                  borderRadius: "9px !important",
+                  borderRadius: "var(--mui-shape-borderRadius) !important",
                   px: 1.75,
                   gap: 0.75,
                   textTransform: "none",
@@ -273,7 +273,7 @@ export default function EcheancesView({
                 <IconButton
                   disabled
                   aria-label="Notifications (bientôt disponibles)"
-                  sx={{ border: 1, borderColor: "divider", borderRadius: 3, width: 44, height: 44 }}
+                  sx={{ border: 1, borderColor: "divider", borderRadius: 1, width: 44, height: 44 }}
                 >
                   <NotificationsNoneIcon sx={{ fontSize: 20 }} />
                 </IconButton>
@@ -282,7 +282,7 @@ export default function EcheancesView({
             <AddContractButton
               variant="contained"
               startIcon={<AddIcon />}
-              sx={{ minHeight: 44, borderRadius: 3, px: 2 }}
+              sx={{ minHeight: 44, borderRadius: 1, px: 2 }}
             >
               Ajouter
             </AddContractButton>
@@ -321,7 +321,7 @@ export default function EcheancesView({
                         sx={{
                           px: 1.75,
                           py: 0.75,
-                          borderRadius: 999,
+                          borderRadius: 1,
                           border: 1,
                           fontSize: 13,
                           textDecoration: "none",
@@ -508,7 +508,7 @@ function SidePanel({
       {next && (
         <Stack
           spacing={1.75}
-          sx={{ borderRadius: 4.5, p: 2.5, bgcolor: "primary.contrastText", color: "common.white" }}
+          sx={{ borderRadius: 1, p: 2.5, bgcolor: "primary.contrastText", color: "common.white" }}
         >
           <Typography sx={{ fontSize: 13, color: "primary.light" }}>Prochain prélèvement</Typography>
           <Stack direction="row" spacing={1.5} alignItems="center">
@@ -536,7 +536,7 @@ function SidePanel({
             sx={{
               height: 40,
               border: 0,
-              borderRadius: 2.5,
+              borderRadius: 1,
               bgcolor: "primary.main",
               color: "primary.contrastText",
               font: "inherit",
@@ -568,7 +568,7 @@ function SidePanel({
                     alignItems: "center",
                     border: 1,
                     borderColor: "divider",
-                    borderRadius: 2.5,
+                    borderRadius: 1,
                     py: 0.5,
                   }}
                 >

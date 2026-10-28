@@ -179,7 +179,7 @@ export default function ContractFormDialog({
       // Formulaire long : en plein écran sur mobile, le clavier ne masque pas les champs.
       fullScreen={fullScreen}
       scroll="paper"
-      slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 6 } } }}
+      slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 1 } } }}
     >
       <DialogTitle sx={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em", px: { xs: 2.5, sm: 4 }, pt: 3 }}>
         {mode === "edit" ? "Modifier le contrat" : "Ajouter un contrat"}
@@ -219,7 +219,7 @@ export default function ContractFormDialog({
           color="inherit"
           variant="outlined"
           disabled={loading}
-          sx={{ borderRadius: 999, minHeight: 46, px: 3, borderColor: "divider" }}
+          sx={{ borderRadius: 1, minHeight: 46, px: 3, borderColor: "divider" }}
         >
           Annuler
         </Button>
@@ -227,7 +227,7 @@ export default function ContractFormDialog({
           variant="contained"
           onClick={handleSubmit}
           disabled={!isValid || loading}
-          sx={{ borderRadius: 999, minHeight: 46, px: 3.5 }}
+          sx={{ borderRadius: 1, minHeight: 46, px: 3.5 }}
         >
           {loading
             ? "Enregistrement…"

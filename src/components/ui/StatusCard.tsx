@@ -34,7 +34,7 @@ export default function StatusCard({ icon, tone, title, message, actions, footno
           bgcolor: "background.paper",
           border: 1,
           borderColor: "divider",
-          borderRadius: 6,
+          borderRadius: 1,
           p: { xs: 3, sm: 4 },
         }}
       >
@@ -43,7 +43,7 @@ export default function StatusCard({ icon, tone, title, message, actions, footno
           sx={{
             width: 48,
             height: 48,
-            borderRadius: 3.5,
+            borderRadius: 1,
             bgcolor: `rgba(var(--mui-palette-${tone}-mainChannel) / 0.12)`,
             color: `${tone}.main`,
             display: "grid",
