@@ -331,7 +331,8 @@ export default function ContractFormFields({
           {(frequency === "quarterly" || frequency === "annual") && (
             <TextField
               select
-              label="Mois de référence"
+              // « Mois de référence » est opaque : le libellé dit ce que l'on choisit.
+              label={frequency === "annual" ? "Mois du prélèvement" : "Un des mois de prélèvement"}
               value={anchorMonth ?? ""}
               onChange={(e) => onAnchorMonthChange(Number(e.target.value))}
               helperText={anchorHelp(frequency, anchorMonth)}
