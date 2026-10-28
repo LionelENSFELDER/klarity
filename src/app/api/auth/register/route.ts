@@ -2,8 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { validateRegistration } from "@/modules/auth/registration";
+import { allowAttempt, clientIp } from "@/lib/rateLimit";
 
 export async function POST(request: NextRequest) {
+  // Chaque inscription coûte un hachage bcrypt : on freine les rafales.
+  const ip = clientIp(request.headers);
+  if (ip && !allowAttempt(`register:${ip}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Trop de comptes créés depuis cette connexion. Réessayez dans une heure." },
+      { status: 429 },
+    );
+  }
+
   try {
     const body = await request.json();
     const parsed = validateRegistration(body);

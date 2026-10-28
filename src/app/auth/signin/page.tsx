@@ -17,6 +17,7 @@ import { Google as GoogleIcon } from "@mui/icons-material";
 import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import PasswordField from "@/components/auth/PasswordField";
+import { TOO_MANY_ATTEMPTS } from "@/lib/messages";
 
 const pill = { borderRadius: 999, minHeight: 50, fontSize: 15 } as const;
 
@@ -49,6 +50,8 @@ function SignInContent() {
         setError(
           "Email ou mot de passe incorrect. Si vous avez créé votre compte avec Google, utilisez « Continuer avec Google ».",
         );
+      } else if (result?.error === TOO_MANY_ATTEMPTS) {
+        setError("Trop de tentatives. Patientez 15 minutes avant de réessayer.");
       } else if (result?.error) {
         setError("Connexion impossible pour le moment. Réessayez dans un instant.");
       } else {
