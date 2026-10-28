@@ -116,9 +116,11 @@ export default function SupportPage() {
             Demandes sur vos données
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: "text.secondary" }}>
-            Export ou suppression de compte : écrivez à la même adresse en
-            précisant l&apos;e-mail de votre compte, en attendant que ces
-            actions soient disponibles directement dans l&apos;application.
+            Export et suppression de compte se font directement dans{" "}
+            <Box component={Link} href="/reglages?onglet=compte" sx={linkSx}>
+              Réglages › Compte
+            </Box>
+            . Pour toute autre demande, écrivez à l&apos;adresse ci-dessus.
           </Typography>
         </Stack>
       </Stack>
