@@ -41,7 +41,7 @@ export default function ConfidentialitePage() {
           title: "Conservation et suppression",
           body: [
             "Vos données sont conservées tant que le compte existe. La suppression d'un contrat l'efface de la base ; la suppression du compte efface les contrats associés.",
-            "Un export et une suppression de compte en libre-service restent à construire : d'ici là, la demande se fait par le canal de support.",
+            "L'export de vos données et la suppression de votre compte se font en libre-service dans Réglages › Compte. La suppression est immédiate et définitive.",
           ],
         },
         {

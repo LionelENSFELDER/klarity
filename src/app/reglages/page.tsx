@@ -14,6 +14,7 @@ import AppSidebar from "@/components/layout/AppSidebar";
 import CategorySettings from "@/components/settings/CategorySettings";
 import ProviderSettings from "@/components/settings/ProviderSettings";
 import ContractSettings from "@/components/settings/ContractSettings";
+import AccountSettings from "@/components/settings/AccountSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ const ONGLETS = [
   { id: "contrats", label: "Contrats" },
   { id: "categories", label: "Catégories" },
   { id: "fournisseurs", label: "Fournisseurs" },
+  { id: "compte", label: "Compte" },
 ] as const;
 
 type Onglet = (typeof ONGLETS)[number]["id"];
@@ -59,10 +61,11 @@ export default async function ReglagesPage({
   }
 
   const counts = buildSidebarCounts(contracts, categories, providers, 3, new Date());
-  const tabCounts: Record<Onglet, number> = {
+  const tabCounts: Record<Onglet, number | null> = {
     contrats: allContracts.length,
     categories: categories.length,
     fournisseurs: providers.length,
+    compte: null,
   };
 
   return (
@@ -75,7 +78,7 @@ export default async function ReglagesPage({
       <Box sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
         <Box sx={{ px: { xs: 2, md: 4 }, pt: { xs: 2, md: 3.5 }, pb: 5, maxWidth: 1200 }}>
           <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
-            Contrats, catégories et fournisseurs
+            Contrats, catégories, fournisseurs et compte
           </Typography>
           <Typography
             component="h1"
@@ -97,9 +100,11 @@ export default async function ReglagesPage({
                 label={
                   <span>
                     {o.label}{" "}
-                    <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
-                      {tabCounts[o.id]}
-                    </Box>
+                    {tabCounts[o.id] !== null && (
+                      <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                        {tabCounts[o.id]}
+                      </Box>
+                    )}
                   </span>
                 }
                 component={Link}
@@ -117,6 +122,9 @@ export default async function ReglagesPage({
           )}
           {onglet === "fournisseurs" && (
             <ProviderSettings providers={providers} />
+          )}
+          {onglet === "compte" && (
+            <AccountSettings email={session.user.email ?? ""} />
           )}
         </Box>
       </Box>
