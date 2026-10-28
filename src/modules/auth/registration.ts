@@ -3,7 +3,7 @@ import { normalizeEmail } from "@/lib/email";
 export const PASSWORD_MIN_LENGTH = 8;
 
 /** Message affiché sur la page de connexion après une inscription réussie. */
-export const REGISTRATION_SUCCESS_MESSAGE = "Compte créé avec succès";
+export const REGISTRATION_SUCCESS_MESSAGE = "Compte créé. Connectez-vous pour commencer.";
 
 export interface RegistrationInput {
   name?: unknown;

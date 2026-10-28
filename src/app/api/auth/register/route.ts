@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Un utilisateur avec cet email existe déjà" },
+        { error: "Un compte existe déjà avec cet e-mail. Connectez-vous, ou utilisez « Continuer avec Google » si vous l'avez créé ainsi." },
         { status: 400 },
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Erreur lors de l'inscription:", error);
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      { error: "Le compte n'a pas pu être créé. Réessayez dans un instant." },
       { status: 500 },
     );
   }

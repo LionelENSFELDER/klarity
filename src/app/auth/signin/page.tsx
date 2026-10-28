@@ -44,13 +44,18 @@ function SignInContent() {
         redirect: false,
       });
 
-      if (result?.error) {
-        setError("Email ou mot de passe incorrect");
+      if (result?.error === "CredentialsSignin") {
+        // Un compte créé via Google n'a pas de mot de passe : même refus.
+        setError(
+          "Email ou mot de passe incorrect. Si vous avez créé votre compte avec Google, utilisez « Continuer avec Google ».",
+        );
+      } else if (result?.error) {
+        setError("Connexion impossible pour le moment. Réessayez dans un instant.");
       } else {
         router.push("/calendar");
       }
     } catch {
-      setError("Une erreur s'est produite");
+      setError("Connexion impossible. Vérifiez votre connexion internet et réessayez.");
     } finally {
       setLoading(false);
     }
