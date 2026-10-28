@@ -1,5 +1,6 @@
 "use client";
 
+import { ACTION_FAILED } from "@/lib/messages";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -44,7 +45,8 @@ export default function ProviderSettings({
 
   const run = (fn: () => Promise<{ success: true } | { error: string }>) => {
     startTransition(async () => {
-      const result = await fn();
+      // Une action peut lever (session expirée, réseau) au lieu de renvoyer { error }.
+      const result = await fn().catch(() => ({ error: ACTION_FAILED }));
       if ("error" in result) {
         setError(result.error);
         return;
