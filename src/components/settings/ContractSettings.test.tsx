@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContractSettings from "./ContractSettings";
+import { NotifyProvider } from "@/components/providers/NotifyProvider";
 import {
   DeleteContract,
   SetContractArchived,
@@ -69,7 +70,9 @@ const archived = make({
 
 function renderSettings(contracts: ManagedContract[]) {
   return render(
-    <ContractSettings contracts={contracts} categories={categories} />,
+    <NotifyProvider>
+      <ContractSettings contracts={contracts} categories={categories} />
+    </NotifyProvider>,
   );
 }
 
@@ -227,6 +230,19 @@ describe("ContractSettings – actions", () => {
     await user.click(screen.getByRole("button", { name: "Archiver Netflix Famille" }));
 
     expect(await screen.findByText("Contrat non trouvé.")).toBeInTheDocument();
+  });
+
+  it("confirme l'archivage et permet de l'annuler", async () => {
+    const user = userEvent.setup();
+    vi.mocked(SetContractArchived).mockResolvedValue({ success: true });
+    renderSettings([base]);
+
+    await user.click(screen.getByRole("button", { name: "Archiver Netflix Famille" }));
+    expect(await screen.findByText("« Netflix Famille » archivé")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Annuler" }));
+    expect(SetContractArchived).toHaveBeenLastCalledWith("c1", false);
+    expect(await screen.findByText("« Netflix Famille » restauré")).toBeInTheDocument();
   });
 
   it("affiche un message quand l'action lève (session expirée)", async () => {

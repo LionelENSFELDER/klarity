@@ -16,6 +16,7 @@ import {
 import { CreateSubscription, EditSubscription } from "@/modules/contracts/actions";
 import type { CalendarContract } from "@/modules/contracts/calendar";
 import ContractFormFields from "./ContractFormFields";
+import { useNotify } from "@/components/providers/NotifyProvider";
 import type { IconOption } from "@/components/icons/FullIconSearchSelector";
 
 type ContractFormDialogProps =
@@ -48,6 +49,7 @@ export default function ContractFormDialog({
   onClose,
 }: ContractFormDialogProps) {
   const router = useRouter();
+  const notify = useNotify();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -163,6 +165,7 @@ export default function ContractFormDialog({
       }
       router.refresh();
       onClose();
+      notify(mode === "edit" ? "Contrat modifié" : `« ${name.trim()} » ajouté au calendrier`);
     } catch {
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {

@@ -1,6 +1,7 @@
 "use client";
 
 import { ACTION_FAILED } from "@/lib/messages";
+import { useNotify } from "@/components/providers/NotifyProvider";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -53,7 +54,12 @@ export default function CategorySettings({
     setError("");
   };
 
-  const run = (fn: () => Promise<{ success: true } | { error: string }>) => {
+  const notify = useNotify();
+
+  const run = (
+    fn: () => Promise<{ success: true } | { error: string }>,
+    notice?: string,
+  ) => {
     startTransition(async () => {
       // Une action peut lever (session expirée, réseau) au lieu de renvoyer { error }.
       const result = await fn().catch(() => ({ error: ACTION_FAILED }));
@@ -63,6 +69,7 @@ export default function CategorySettings({
       }
       reset();
       router.refresh();
+      if (notice) notify(notice);
     });
   };
 
@@ -276,7 +283,7 @@ export default function CategorySettings({
                       variant="outlined"
                       color="error"
                       disabled={pending}
-                      onClick={() => run(() => DeleteCategory(cat.id, reassign))}
+                      onClick={() => run(() => DeleteCategory(cat.id, reassign), `Catégorie « ${cat.label} » supprimée`)}
                     >
                       Supprimer
                     </Button>
