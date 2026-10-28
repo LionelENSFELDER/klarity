@@ -1,6 +1,7 @@
 "use client";
 
 import { ACTION_FAILED } from "@/lib/messages";
+import { useNotify } from "@/components/providers/NotifyProvider";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -43,7 +44,12 @@ export default function ProviderSettings({
     setError("");
   };
 
-  const run = (fn: () => Promise<{ success: true } | { error: string }>) => {
+  const notify = useNotify();
+
+  const run = (
+    fn: () => Promise<{ success: true } | { error: string }>,
+    notice?: string,
+  ) => {
     startTransition(async () => {
       // Une action peut lever (session expirée, réseau) au lieu de renvoyer { error }.
       const result = await fn().catch(() => ({ error: ACTION_FAILED }));
@@ -53,6 +59,7 @@ export default function ProviderSettings({
       }
       reset();
       router.refresh();
+      if (notice) notify(notice);
     });
   };
 
@@ -83,7 +90,7 @@ export default function ProviderSettings({
               size="small"
               color="inherit"
               disabled={pending}
-              onClick={() => run(() => MergeProviders(group[1], group[0]))}
+              onClick={() => run(() => MergeProviders(group[1], group[0]), `« ${group[1]} » fusionné dans « ${group[0]} »`)}
             >
               Fusionner
             </Button>
@@ -237,7 +244,7 @@ export default function ProviderSettings({
                     <Button
                       variant="contained"
                       disabled={pending || !target}
-                      onClick={() => run(() => MergeProviders(p.name, target))}
+                      onClick={() => run(() => MergeProviders(p.name, target), `« ${p.name} » fusionné dans « ${target} »`)}
                     >
                       Fusionner
                     </Button>

@@ -25,6 +25,8 @@ import {
 } from "@/modules/contracts/calendar";
 import { getFrequencyLabel } from "@/modules/contracts/categories";
 import { DeleteContract, SetContractArchived } from "@/modules/contracts/actions";
+import { ACTION_FAILED } from "@/lib/messages";
+import { useNotify } from "@/components/providers/NotifyProvider";
 import { findCategory, type Category } from "@/modules/categories/model";
 import ContractAvatar from "./ContractAvatar";
 
@@ -84,15 +86,22 @@ export default function ContractDetailDialog({
     onClose();
   };
 
-  const run = (fn: () => Promise<{ success: true } | { error: string }>) => {
+  const notify = useNotify();
+
+  const run = (
+    fn: () => Promise<{ success: true } | { error: string }>,
+    notice: Parameters<typeof notify>[0],
+  ) => {
     startTransition(async () => {
-      const result = await fn();
+      // Une action peut lever (session expirée, réseau) au lieu de renvoyer { error }.
+      const result = await fn().catch(() => ({ error: ACTION_FAILED }));
       if ("error" in result) {
         setError(result.error);
         return;
       }
       close();
       router.refresh();
+      notify(notice);
     });
   };
 
@@ -118,10 +127,22 @@ export default function ContractDetailDialog({
             close();
             onEdit(contract);
           }}
-          onArchive={() => run(() => SetContractArchived(contract.id, true))}
+          onArchive={() =>
+            run(() => SetContractArchived(contract.id, true), {
+              message: `« ${contract.name} » archivé`,
+              action: {
+                label: "Annuler",
+                onClick: () =>
+                  SetContractArchived(contract.id, false).then(
+                    () => router.refresh(),
+                    () => notify(ACTION_FAILED),
+                  ),
+              },
+            })
+          }
           onAskDelete={() => setConfirming(true)}
           onCancelDelete={() => setConfirming(false)}
-          onDelete={() => run(() => DeleteContract(contract.id))}
+          onDelete={() => run(() => DeleteContract(contract.id), `« ${contract.name} » supprimé`)}
         />
       )}
     </Dialog>

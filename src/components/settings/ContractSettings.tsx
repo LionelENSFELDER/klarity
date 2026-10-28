@@ -1,6 +1,7 @@
 "use client";
 
 import { ACTION_FAILED } from "@/lib/messages";
+import { useNotify } from "@/components/providers/NotifyProvider";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -71,7 +72,12 @@ export default function ContractSettings({
 
   const today = useMemo(() => new Date(), []);
 
-  const run = (fn: () => Promise<{ success: true } | { error: string }>) => {
+  const notify = useNotify();
+
+  const run = (
+    fn: () => Promise<{ success: true } | { error: string }>,
+    notice?: Parameters<typeof notify>[0],
+  ) => {
     startTransition(async () => {
       // Une action peut lever (session expirée, réseau) au lieu de renvoyer { error }.
       const result = await fn().catch(() => ({ error: ACTION_FAILED }));
@@ -82,8 +88,20 @@ export default function ContractSettings({
       setError("");
       setDeleting(null);
       router.refresh();
+      if (notice) notify(notice);
     });
   };
+
+  const setArchived = (contract: ManagedContract, archived: boolean) =>
+    run(
+      () => SetContractArchived(contract.id, archived),
+      archived
+        ? {
+            message: `« ${contract.name} » archivé`,
+            action: { label: "Annuler", onClick: () => setArchived(contract, false) },
+          }
+        : `« ${contract.name} » restauré`,
+    );
 
   const visible = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -306,7 +324,7 @@ export default function ContractSettings({
                             aria-label={`${archived ? "Restaurer" : "Archiver"} ${contract.name}`}
                             disabled={pending}
                             onClick={() =>
-                              run(() => SetContractArchived(contract.id, !archived))
+                              setArchived(contract, !archived)
                             }
                           >
                             {archived ? <UnarchiveIcon fontSize="small" /> : <ArchiveIcon fontSize="small" />}
@@ -350,7 +368,7 @@ export default function ContractSettings({
                           variant="outlined"
                           color="error"
                           disabled={pending}
-                          onClick={() => run(() => DeleteContract(contract.id))}
+                          onClick={() => run(() => DeleteContract(contract.id), `« ${contract.name} » supprimé`)}
                         >
                           Supprimer définitivement
                         </Button>
@@ -358,7 +376,7 @@ export default function ContractSettings({
                           <Button
                             disabled={pending}
                             onClick={() =>
-                              run(() => SetContractArchived(contract.id, true))
+                              setArchived(contract, true)
                             }
                           >
                             Archiver à la place
