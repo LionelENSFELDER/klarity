@@ -11,7 +11,7 @@ const Header = async () => {
   const session = await getSession();
 
   // Pas de session : pas de header (pages d'authentification).
-  if (!session) {
+  if (!session?.user?.id) {
     return null;
   }
 
