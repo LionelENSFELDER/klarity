@@ -5,6 +5,7 @@ import Logo from "@/components/layout/Logo";
 const LEGAL = [
   { label: "Conditions", href: "/conditions" },
   { label: "Confidentialité", href: "/confidentialite" },
+  { label: "Mentions légales", href: "/mentions-legales" },
   { label: "Support", href: "/support" },
 ];
 
