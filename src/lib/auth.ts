@@ -9,6 +9,7 @@ import { clientIp, isLimited, recordAttempt } from "./rateLimit";
 import { TOO_MANY_ATTEMPTS } from "./messages";
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const ONE_HOUR = 60 * 60 * 1000;
 
 // En production, une variable manquante doit casser le démarrage, pas la
 // première connexion d'un utilisateur.
@@ -39,23 +40,27 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Par compte (essai de mots de passe sur une adresse) et par IP
-        // (essai d'adresses en série). Seuls les échecs comptent : se
-        // connecter souvent, depuis plusieurs appareils, ne bloque personne.
+        // Trois compteurs, seuls les échecs comptent :
+        // - compte + IP : freine l'essai de mots de passe depuis une source,
+        //   sans qu'un inconnu puisse bloquer le compte de quelqu'un d'autre
+        //   (le titulaire, depuis son IP, garde son propre compteur) ;
+        // - IP : freine l'essai d'adresses en série ;
+        // - compte, plus large : freine une attaque répartie sur de
+        //   nombreuses IP.
         // NextAuth transmet le message levé.
         const email = normalizeEmail(credentials.email as string);
         const ip = clientIp(req?.headers);
-        const emailKey = `login:${email}`;
-        const ipKey = ip ? `login-ip:${ip}` : null;
-        if (
-          isLimited(emailKey, 10, FIFTEEN_MINUTES) ||
-          (ipKey && isLimited(ipKey, 30, FIFTEEN_MINUTES))
-        ) {
+        const keys: [string, number, number][] = [
+          [`login:${email}:${ip ?? "?"}`, 10, FIFTEEN_MINUTES],
+          [`login-account:${email}`, 100, ONE_HOUR],
+        ];
+        if (ip) keys.push([`login-ip:${ip}`, 30, FIFTEEN_MINUTES]);
+        const limited = await Promise.all(keys.map(([k, max, win]) => isLimited(k, max, win)));
+        if (limited.some(Boolean)) {
           throw new Error(TOO_MANY_ATTEMPTS);
         }
-        const fail = () => {
-          recordAttempt(emailKey);
-          if (ipKey) recordAttempt(ipKey);
+        const fail = async () => {
+          await Promise.all(keys.map(([k]) => recordAttempt(k)));
           return null;
         };
 
