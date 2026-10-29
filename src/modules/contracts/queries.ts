@@ -23,7 +23,7 @@ export const getCalendarContracts = cache(async (): Promise<CalendarContract[]> 
     provider: c.provider,
     contractNumber: c.contractNumber,
     category: c.category,
-    amount: c.amount || c.monthlyAmount || 0,
+    amount: c.amount,
     frequency: c.frequency,
     debitDay: c.debitDay,
     anchorMonth: c.anchorMonth,
@@ -53,27 +53,6 @@ export const getProviders = cache(async (): Promise<
     .map(([name, v]) => ({ name, ...v }))
     .sort((a, b) => b.monthlyCost - a.monthlyCost || a.name.localeCompare(b.name, "fr"));
 });
-
-export async function getContratsStats() {
-  const session = await getSession();
-  if (!session?.user?.id) return null;
-
-  const contrats = await prisma.contract.findMany({
-    where: { userId: session.user.id, status: "active" },
-    select: { monthlyAmount: true, annualAmount: true, status: true },
-  });
-
-  const totalMensuel = contrats.reduce(
-    (sum, c) => sum + (c.monthlyAmount ?? 0),
-    0,
-  );
-
-  return {
-    totalContrats: contrats.length,
-    totalMensuel,
-    totalAnnuel: totalMensuel * 12,
-  };
-}
 
 /**
  * Contrat enrichi pour la page de gestion : le statut et la date de création
@@ -105,7 +84,7 @@ export async function getAllContracts(): Promise<ManagedContract[]> {
     provider: c.provider,
     contractNumber: c.contractNumber,
     category: c.category,
-    amount: c.amount || c.monthlyAmount || 0,
+    amount: c.amount,
     frequency: c.frequency,
     debitDay: c.debitDay,
     anchorMonth: c.anchorMonth,

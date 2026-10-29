@@ -130,8 +130,6 @@ export async function CreateSubscription(formData: FormData) {
       startDate: debitDate,
       contractNumber: data.contractNumber || null,
       renewalDate: parseDate(data.renewalDate),
-      monthlyAmount: data.frequency === "monthly" ? data.amount : null,
-      annualAmount: data.frequency === "annual" ? data.amount : null,
     },
   });
 
@@ -194,8 +192,6 @@ export async function EditSubscription(id: string, formData: FormData) {
       startDate: debitDate,
       contractNumber: data.contractNumber || null,
       renewalDate: parseDate(data.renewalDate),
-      monthlyAmount: data.frequency === "monthly" ? data.amount : null,
-      annualAmount: data.frequency === "annual" ? data.amount : null,
       updatedAt: new Date(),
     },
   });

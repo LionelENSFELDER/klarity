@@ -128,10 +128,6 @@ model Contract {
   debitDay         Int      @default(1) @map("debit_day") // jour du mois (1-31)
   anchorMonth      Int?     @map("anchor_month") // mois de référence (0-11) pour trimestriel/annuel
   
-  // Financier (legacy)
-  monthlyAmount    Float?   @map("monthly_amount")
-  annualAmount     Float?   @map("annual_amount")
-  
   // Contact
   clientPhone      String?  @map("client_phone")
   website          String?
@@ -147,10 +143,6 @@ model Contract {
   // Metadata
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
-
-  // Icônes
-  iconType  String? @map("icon_type") // "brand" ou "generic"
-  iconValue String? @map("icon_value") // slug (ex: "netflix") ou nom (ex: "Cloud")
 
   @@map("contracts")
 }
