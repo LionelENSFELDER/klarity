@@ -10,7 +10,7 @@ export default function ConditionsPage() {
     <LegalPage
       title="Conditions d'utilisation"
       updatedAt="18 octobre 2026"
-      intro="Klarity est en version alpha. Utiliser l'application vaut acceptation des points ci-dessous."
+      intro="Klarity est en version bêta. Utiliser l'application vaut acceptation des points ci-dessous."
       sections={[
         {
           title: "Statut du service",

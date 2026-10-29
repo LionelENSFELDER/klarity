@@ -17,6 +17,7 @@ interface LegalPageProps {
 const DOCUMENTS = [
   { label: "Conditions d'utilisation", href: "/conditions" },
   { label: "Confidentialité", href: "/confidentialite" },
+  { label: "Mentions légales", href: "/mentions-legales" },
   { label: "Support", href: "/support" },
 ];
 
