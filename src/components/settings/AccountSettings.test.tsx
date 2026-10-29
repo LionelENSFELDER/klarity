@@ -4,8 +4,10 @@ import userEvent from "@testing-library/user-event";
 import AccountSettings from "./AccountSettings";
 import { signOut } from "next-auth/react";
 import { DeleteAccount, SignOutEverywhere } from "@/modules/account/actions";
+import { ChangePassword } from "@/modules/auth/password";
 
 vi.mock("next-auth/react", () => ({ signOut: vi.fn() }));
+vi.mock("@/modules/auth/password", () => ({ ChangePassword: vi.fn() }));
 vi.mock("@/modules/account/actions", () => ({
   DeleteAccount: vi.fn(),
   SignOutEverywhere: vi.fn(),
@@ -35,6 +37,28 @@ describe("AccountSettings", () => {
     expect(signOut).toHaveBeenCalledWith({
       callbackUrl: expect.stringContaining("/auth/signin"),
     });
+  });
+
+  it("change le mot de passe puis déconnecte", async () => {
+    const user = userEvent.setup();
+    vi.mocked(ChangePassword).mockResolvedValue({ success: true });
+    render(<AccountSettings email="jean@example.com" />);
+
+    await user.type(screen.getByLabelText(/Mot de passe actuel/), "ancien-mot-de-passe");
+    await user.type(screen.getByLabelText(/Nouveau mot de passe/), "nouveau-mot-de-passe");
+    await user.click(screen.getByRole("button", { name: "Changer le mot de passe" }));
+
+    expect(ChangePassword).toHaveBeenCalledWith("ancien-mot-de-passe", "nouveau-mot-de-passe");
+    expect(signOut).toHaveBeenCalled();
+  });
+
+  it("renvoie un compte Google vers « mot de passe oublié »", () => {
+    render(<AccountSettings email="jean@example.com" hasPassword={false} />);
+    expect(screen.queryByLabelText(/Mot de passe actuel/)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Mot de passe oublié/ })).toHaveAttribute(
+      "href",
+      "/auth/mot-de-passe-oublie",
+    );
   });
 
   it("affiche l'erreur renvoyée par le serveur", async () => {

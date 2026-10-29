@@ -1,11 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { normalizeEmail } from "@/lib/email";
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, validateRegistration } from "./registration";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  validatePassword,
+  validateRegistration,
+} from "./registration";
 
 const valid = {
   name: "Jean Dupont",
   email: "jean@example.com",
-  password: "motdepasse",
+  password: "motdepasse-solide",
 };
 
 describe("normalizeEmail", () => {
@@ -27,12 +32,12 @@ describe("validateRegistration", () => {
       ok: true,
       name: "Jean Dupont",
       email: "jean@example.com",
-      password: "motdepasse",
+      password: "motdepasse-solide",
     });
   });
 
   it("refuse un email ou un mot de passe absent", () => {
-    expect(validateRegistration({ password: "motdepasse" })).toMatchObject({ ok: false });
+    expect(validateRegistration({ password: "motdepasse-solide" })).toMatchObject({ ok: false });
     expect(validateRegistration({ email: "jean@example.com" })).toMatchObject({ ok: false });
     expect(validateRegistration({})).toMatchObject({ ok: false });
   });
@@ -66,6 +71,13 @@ describe("validateRegistration", () => {
     expect(validateRegistration({ ...valid, password: max })).toMatchObject({ ok: true });
     expect(validateRegistration({ ...valid, password: max + "a" })).toMatchObject({ ok: false });
     expect(validateRegistration({ ...valid, name: "a".repeat(101) })).toMatchObject({ ok: false });
+  });
+
+  it("compte la borne haute en octets, pas en caractères", () => {
+    // « é » occupe 2 octets : 37 caractères, 74 octets.
+    const accents = "é".repeat(37);
+    expect(validatePassword(accents)).toMatch(/octets/);
+    expect(validatePassword("é".repeat(36))).toBeNull();
   });
 
   it("ne tronque ni ne modifie le mot de passe", () => {
