@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { monthlyCost } from "../src/modules/contracts/calendar";
 
 const prisma = new PrismaClient();
 
@@ -38,7 +39,6 @@ async function main() {
       frequency: "monthly",
       debitDay: 5,
       renewalDate: new Date("2026-03-15"),
-      monthlyAmount: 45.5,
     },
     {
       name: "Assurance Auto",
@@ -49,7 +49,6 @@ async function main() {
       frequency: "monthly",
       debitDay: 28,
       renewalDate: new Date("2026-09-28"),
-      monthlyAmount: 82.0,
     },
     {
       name: "EDF Électricité",
@@ -58,7 +57,6 @@ async function main() {
       amount: 65.0,
       frequency: "monthly",
       debitDay: 15,
-      monthlyAmount: 65.0,
     },
     {
       name: "Orange Mobile + Internet",
@@ -69,7 +67,6 @@ async function main() {
       frequency: "monthly",
       debitDay: 10,
       renewalDate: new Date("2027-01-10"),
-      monthlyAmount: 89.9,
     },
     {
       name: "Alan Mutuelle Santé",
@@ -80,7 +77,6 @@ async function main() {
       frequency: "monthly",
       debitDay: 1,
       renewalDate: new Date("2026-12-31"),
-      monthlyAmount: 156.2,
     },
     {
       name: "Crédit Immobilier",
@@ -90,7 +86,6 @@ async function main() {
       amount: 845.0,
       frequency: "monthly",
       debitDay: 5,
-      monthlyAmount: 845.0,
     },
     {
       name: "Netflix",
@@ -99,7 +94,6 @@ async function main() {
       amount: 13.49,
       frequency: "monthly",
       debitDay: 13,
-      monthlyAmount: 13.49,
     },
     {
       name: "Spotify",
@@ -108,7 +102,6 @@ async function main() {
       amount: 10.99,
       frequency: "monthly",
       debitDay: 18,
-      monthlyAmount: 10.99,
     },
     {
       name: "Assurance Vie - Frais annuels",
@@ -118,7 +111,6 @@ async function main() {
       frequency: "annual",
       debitDay: 20,
       anchorMonth: 2, // mars
-      annualAmount: 120.0,
     },
     {
       name: "Eau - Régie municipale",
@@ -153,8 +145,10 @@ async function main() {
     activeContracts: await prisma.contract.count({
       where: { status: "active" },
     }),
-    totalMonthly: contracts.reduce((sum, c) => sum + (c.monthlyAmount || 0), 0),
-    totalAnnual: contracts.reduce((sum, c) => sum + (c.annualAmount || 0), 0),
+    totalMonthly: contracts.reduce(
+      (sum, c) => sum + monthlyCost({ ...c, startDate: null, renewalDate: null }),
+      0,
+    ),
   };
 
   console.log("\n📊 Database Statistics:");
@@ -163,7 +157,7 @@ async function main() {
     `   Contracts: ${stats.totalContracts} (${stats.activeContracts} active)`,
   );
   console.log(`   Monthly cost: ${stats.totalMonthly.toFixed(2)}€`);
-  console.log(`   Annual cost: ${stats.totalAnnual.toFixed(2)}€`);
+  console.log(`   Annual cost: ${(stats.totalMonthly * 12).toFixed(2)}€`);
 
   console.log("\n🎉 Database seeded successfully!");
   console.log("\n🔐 Test login credentials:");
