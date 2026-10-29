@@ -24,7 +24,8 @@ export function validatePassword(password: unknown): string | null {
 }
 
 /** Message affiché sur la page de connexion après une inscription réussie. */
-export const REGISTRATION_SUCCESS_MESSAGE = "Compte créé. Connectez-vous pour commencer.";
+export const REGISTRATION_SUCCESS_MESSAGE =
+  "Vérifiez votre boîte mail : un lien de confirmation vient de partir. Ouvrez-le, puis connectez-vous.";
 
 export interface RegistrationInput {
   name?: unknown;

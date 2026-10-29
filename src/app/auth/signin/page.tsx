@@ -17,7 +17,8 @@ import { Google as GoogleIcon } from "@mui/icons-material";
 import Link from "next/link";
 import AuthLayout from "@/components/auth/AuthLayout";
 import PasswordField from "@/components/auth/PasswordField";
-import { TOO_MANY_ATTEMPTS } from "@/lib/messages";
+import { ACTION_FAILED, EMAIL_NOT_VERIFIED, TOO_MANY_ATTEMPTS } from "@/lib/messages";
+import { ResendVerification } from "@/modules/auth/verifyActions";
 
 const pill = { borderRadius: 1, minHeight: 50, fontSize: 15 } as const;
 
@@ -31,12 +32,23 @@ function SignInContent() {
   // Posé par une page qui n'a pas pu lire la session.
   const expired = params.get("session") === "expiree";
   const [loading, setLoading] = useState(false);
+  // Adresse pas encore confirmée : on propose de renvoyer le lien.
+  const [unverified, setUnverified] = useState(false);
+  const [resent, setResent] = useState(false);
   const router = useRouter();
+
+  const resend = async () => {
+    const result = await ResendVerification(email).catch(() => ({ error: ACTION_FAILED }));
+    if ("error" in result) setError(result.error);
+    else setResent(true);
+  };
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setUnverified(false);
+    setResent(false);
 
     try {
       const result = await signIn("credentials", {
@@ -50,6 +62,8 @@ function SignInContent() {
         setError(
           "Email ou mot de passe incorrect. Si vous avez créé votre compte avec Google, utilisez « Continuer avec Google ».",
         );
+      } else if (result?.error === EMAIL_NOT_VERIFIED) {
+        setUnverified(true);
       } else if (result?.error === TOO_MANY_ATTEMPTS) {
         setError("Trop de tentatives. Patientez 15 minutes avant de réessayer.");
       } else if (result?.error) {
@@ -82,6 +96,22 @@ function SignInContent() {
           <Alert severity="info">Votre session a expiré. Reconnectez-vous.</Alert>
         )}
         {error && <Alert severity="error">{error}</Alert>}
+        {unverified && (
+          <Alert
+            severity="warning"
+            action={
+              !resent && (
+                <Button color="inherit" size="small" onClick={resend}>
+                  Renvoyer le lien
+                </Button>
+              )
+            }
+          >
+            {resent
+              ? "Lien renvoyé. Ouvrez-le depuis votre boîte mail, puis reconnectez-vous."
+              : "Confirmez d'abord votre adresse avec le lien reçu par e-mail."}
+          </Alert>
+        )}
 
         <TextField
           fullWidth

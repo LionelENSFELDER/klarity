@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 import { normalizeEmail } from "./email";
 import { clientIp, isLimited, recordAttempt } from "./rateLimit";
-import { TOO_MANY_ATTEMPTS } from "./messages";
+import { EMAIL_NOT_VERIFIED, TOO_MANY_ATTEMPTS } from "./messages";
 import { resolveToken } from "./sessionToken";
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
@@ -29,6 +29,9 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: requireEnv("GOOGLE_CLIENT_ID"),
       clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
+      // Google garantit la possession de l'adresse (vérifié dans signIn) :
+      // un compte e-mail existant peut être relié au lieu d'être bloqué.
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -84,6 +87,11 @@ export const authOptions: NextAuthOptions = {
           return fail();
         }
 
+        // Après le mot de passe : un inconnu n'apprend rien sur le compte.
+        if (!user.emailVerified) {
+          throw new Error(EMAIL_NOT_VERIFIED);
+        }
+
         return {
           id: user.id,
           email: user.email,
@@ -99,6 +107,25 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    // Connexion Google sur une adresse qui a déjà un compte e-mail : Google
+    // prouve la possession de l'adresse. Un compte jamais vérifié a pu être
+    // créé par un tiers : son mot de passe est retiré et ses sessions fermées.
+    async signIn({ account, profile }) {
+      if (account?.provider !== "google") return true;
+      const google = profile as { email?: string; email_verified?: boolean } | undefined;
+      if (!google?.email || google.email_verified === false) return false;
+
+      const existing = await prisma.user.findUnique({
+        where: { email: normalizeEmail(google.email) },
+      });
+      if (existing && !existing.emailVerified) {
+        await prisma.user.update({
+          where: { id: existing.id },
+          data: { emailVerified: new Date(), password: null, tokenVersion: { increment: 1 } },
+        });
+      }
+      return true;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
