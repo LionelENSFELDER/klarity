@@ -7,6 +7,7 @@ import { prisma } from "./db";
 import { normalizeEmail } from "./email";
 import { clientIp, isLimited, recordAttempt } from "./rateLimit";
 import { TOO_MANY_ATTEMPTS } from "./messages";
+import { resolveToken } from "./sessionToken";
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 const ONE_HOUR = 60 * 60 * 1000;
@@ -104,11 +105,16 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    // Relit la version de session en base à chaque lecture : une session
+    // révoquée ou un compte supprimé ne passe plus (voir sessionToken).
     async jwt({ user, token }) {
-      if (user) {
-        token.sub = user.id;
-      }
-      return token;
+      return resolveToken(token, user?.id, async (id) => {
+        const found = await prisma.user.findUnique({
+          where: { id },
+          select: { tokenVersion: true },
+        });
+        return found?.tokenVersion ?? null;
+      });
     },
   },
 

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { signOut } from "next-auth/react";
 import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
-import { DeleteAccount } from "@/modules/account/actions";
+import { DeleteAccount, SignOutEverywhere } from "@/modules/account/actions";
 import { ACTION_FAILED } from "@/lib/messages";
 
 const cardSx = {
@@ -11,6 +11,42 @@ const cardSx = {
   borderRadius: 2,
   p: { xs: 2, sm: 2.75 },
 } as const;
+
+/** Ferme les sessions de tous les appareils, celle-ci comprise. */
+function SessionsCard() {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  const signOutEverywhere = () =>
+    startTransition(async () => {
+      const result = await SignOutEverywhere().catch(() => ({ error: ACTION_FAILED }));
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      await signOut({
+        callbackUrl: `/auth/signin?message=${encodeURIComponent("Toutes les sessions sont fermées. Reconnecte-toi.")}`,
+      });
+    });
+
+  return (
+    <Stack spacing={1.25} sx={cardSx}>
+      <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
+        Sessions
+      </Typography>
+      <Typography sx={{ fontSize: 14, color: "text.secondary", lineHeight: 1.55 }}>
+        Un appareil perdu, un ordinateur partagé ? Ferme toutes les sessions
+        ouvertes, sur tous les appareils, celle-ci comprise.
+      </Typography>
+      {error && <Alert severity="error">{error}</Alert>}
+      <Box>
+        <Button variant="outlined" disabled={pending} onClick={signOutEverywhere}>
+          {pending ? "Déconnexion…" : "Se déconnecter de tous les appareils"}
+        </Button>
+      </Box>
+    </Stack>
+  );
+}
 
 export default function AccountSettings({ email }: { email: string }) {
   const [pending, startTransition] = useTransition();
@@ -46,6 +82,8 @@ export default function AccountSettings({ email }: { email: string }) {
           </Button>
         </Box>
       </Stack>
+
+      <SessionsCard />
 
       <Stack spacing={1.25} sx={{ ...cardSx, borderColor: "error.light" }}>
         <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>

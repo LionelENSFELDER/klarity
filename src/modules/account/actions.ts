@@ -26,3 +26,18 @@ export async function DeleteAccount(confirmEmail: string): Promise<Result> {
   await prisma.user.delete({ where: { id: user.id } });
   return { success: true };
 }
+
+/**
+ * Ferme toutes les sessions ouvertes, sur tous les appareils : la version de
+ * session change, les jetons existants ne passent plus (voir lib/sessionToken).
+ */
+export async function SignOutEverywhere(): Promise<Result> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return { error: "Session expirée. Reconnecte-toi." };
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { tokenVersion: { increment: 1 } },
+  });
+  return { success: true };
+}

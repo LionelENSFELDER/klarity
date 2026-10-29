@@ -1,22 +1,10 @@
 import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
 
+// Pas de redirection des pages d'auth quand un jeton est présent : le
+// middleware ne lit pas la base, il ne sait pas si la session a été révoquée
+// (voir lib/sessionToken), et renvoyer une session révoquée vers /calendar
+// bouclerait avec la redirection des pages vers la connexion.
 export default withAuth(
-  function middleware(req) {
-    const { pathname } = req.nextUrl;
-    const token = req.nextauth.token;
-
-    // Si connecté et essaie d'accéder à l'inscription. La page de connexion
-    // n'arrive jamais ici : withAuth la laisse passer sans appeler ce code.
-    if (
-      token?.sub &&
-      (pathname === "/auth/signin" || pathname === "/auth/register")
-    ) {
-      return NextResponse.redirect(new URL("/calendar", req.url));
-    }
-
-    return NextResponse.next();
-  },
   {
     callbacks: {
       authorized: ({ token, req }) => {
