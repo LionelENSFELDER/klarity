@@ -106,10 +106,32 @@ export const theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: {
+      styleOverrides: (theme) => ({
         // Les montants s'alignent d'une ligne à l'autre.
         body: { fontVariantNumeric: "tabular-nums" },
-      },
+        // Barres de défilement fines, pouce en pilule gris chaud, piste
+        // invisible : elles se fondent dans les cartes et le fond.
+        // Standard (Chrome, Firefox) puis pseudo-éléments pour Safari.
+        "*": {
+          scrollbarWidth: "thin",
+          scrollbarColor: "#d3d1cb transparent",
+          ...theme.applyStyles("dark", { scrollbarColor: "#3a3e37 transparent" }),
+        },
+        "*::-webkit-scrollbar": { width: 10, height: 10 },
+        "*::-webkit-scrollbar-track": { background: "transparent" },
+        "*::-webkit-scrollbar-thumb": {
+          backgroundColor: "#d3d1cb",
+          borderRadius: 999,
+          border: "3px solid transparent",
+          backgroundClip: "content-box",
+          ...theme.applyStyles("dark", { backgroundColor: "#3a3e37" }),
+        },
+        "*::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#b9b7b0",
+          ...theme.applyStyles("dark", { backgroundColor: "#4a4f46" }),
+        },
+        "*::-webkit-scrollbar-corner": { background: "transparent" },
+      }),
     },
     // Carte : blanche, rayon 28, ni bordure ni ombre (voir ui/surface).
     MuiCard: {
