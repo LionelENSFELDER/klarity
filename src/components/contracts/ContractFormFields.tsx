@@ -29,6 +29,7 @@ import FullIconSearchSelector, {
   IconOption,
 } from "@/components/icons/FullIconSearchSelector";
 import ContractAvatar from "./ContractAvatar";
+import { insetSx } from "@/components/ui/surface";
 
 interface ContractFormFieldsProps {
   name: string;
@@ -239,9 +240,6 @@ export default function ContractFormFields({
               sx={{
                 // En colonne (mobile), une base flex jouerait sur la hauteur.
                 flex: { sm: "2 1 300px" },
-                bgcolor: "action.hover",
-                p: 0.5,
-                borderRadius: 1,
                 height: 56,
                 boxSizing: "border-box",
                 "& .MuiToggleButton-root": {
@@ -249,15 +247,6 @@ export default function ContractFormFields({
                   minWidth: 0,
                   px: { xs: 0.5, sm: 1.5 },
                   fontSize: { xs: 13, sm: 14 },
-                  border: 0,
-                  borderRadius: "var(--mui-shape-borderRadius) !important",
-                  textTransform: "none",
-                  color: "text.primary",
-                },
-                "& .Mui-selected": {
-                  bgcolor: "background.paper !important",
-                  fontWeight: 600,
-                  boxShadow: 1,
                 },
               }}
             >
@@ -312,7 +301,7 @@ export default function ContractFormFields({
                           bgcolor: "primary.main",
                           borderColor: "primary.dark",
                           color: "primary.contrastText",
-                          fontWeight: 700,
+                          fontWeight: 500,
                           "&:hover": { bgcolor: "primary.main" },
                         }),
                       }}
@@ -520,7 +509,7 @@ function Preview({
       <Typography sx={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "text.secondary" }}>
         Aperçu en direct
       </Typography>
-      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.75 }}>
+      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ ...insetSx, p: 1.75 }}>
         <ContractAvatar contract={draft} category={cat} size={40} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontWeight: 600 }} noWrap>{draft.name}</Typography>
@@ -529,12 +518,12 @@ function Preview({
             {day !== null && !isOnce ? ` · le ${day === 1 ? "1er" : day}` : ""}
           </Typography>
         </Box>
-        <Typography sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+        <Typography sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>
           {value > 0 ? formatEuro(value) : "—"}
         </Typography>
       </Stack>
 
-      <Stack spacing={1.25} sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 2 }}>
+      <Stack spacing={1.25} sx={{ ...insetSx, p: 2 }}>
         <Typography sx={{ fontWeight: 600 }}>Prochains prélèvements</Typography>
         {upcoming.length === 0 ? (
           <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
@@ -555,13 +544,13 @@ function Preview({
             <Box sx={{ height: "1px", bgcolor: "divider" }} />
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ fontSize: 13, color: "text.secondary" }}>Par mois, lissé</Typography>
-              <Typography sx={{ fontSize: 13, fontWeight: 700 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
                 {formatEuro(Math.round(perMonth * 100) / 100)}
               </Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ fontSize: 13, color: "text.secondary" }}>Sur 12 mois</Typography>
-              <Typography sx={{ fontSize: 13, fontWeight: 700 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
                 {formatEuro(Math.round(perMonth * 12 * 100) / 100)}
               </Typography>
             </Stack>

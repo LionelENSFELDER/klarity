@@ -54,9 +54,7 @@ function AuthErrorContent() {
           width: "100%",
           maxWidth: 460,
           bgcolor: "background.paper",
-          border: 1,
-          borderColor: "divider",
-          borderRadius: 1,
+          borderRadius: 2,
           p: { xs: 3, sm: 4 },
         }}
       >
@@ -65,7 +63,7 @@ function AuthErrorContent() {
           sx={{
             width: 48,
             height: 48,
-            borderRadius: 1,
+            borderRadius: "50%",
             bgcolor: "rgba(var(--mui-palette-error-mainChannel) / 0.12)",
             color: "error.main",
             display: "grid",
@@ -75,7 +73,7 @@ function AuthErrorContent() {
           <WarningAmberIcon />
         </Box>
         <Box>
-          <Typography id="auth-error-title" component="h1" sx={{ fontSize: 22, fontWeight: 700 }}>
+          <Typography id="auth-error-title" component="h1" sx={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.02em" }}>
             Une erreur s&apos;est produite
           </Typography>
           <Typography sx={{ color: "text.secondary", mt: 0.75 }}>

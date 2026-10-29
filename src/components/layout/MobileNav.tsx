@@ -33,9 +33,8 @@ export default function MobileNav({
           display: { xs: "flex", md: "none" },
           width: 44,
           height: 44,
-          border: 1,
-          borderColor: "divider",
-          borderRadius: 1,
+          bgcolor: "background.paper",
+          "&:hover": { bgcolor: "background.paper" },
         }}
       >
         <MenuIcon />
@@ -45,7 +44,11 @@ export default function MobileNav({
         anchor="left"
         open={open}
         onClose={() => setOpen(false)}
-        slotProps={{ paper: { sx: { width: 288, bgcolor: "background.paper" } } }}
+        slotProps={{
+          paper: {
+            sx: { width: 300, bgcolor: "background.default", borderRadius: "0 28px 28px 0" },
+          },
+        }}
       >
         <Box
           component="nav"

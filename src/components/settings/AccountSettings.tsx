@@ -8,9 +8,7 @@ import { ACTION_FAILED } from "@/lib/messages";
 
 const cardSx = {
   bgcolor: "background.paper",
-  border: 1,
-  borderColor: "divider",
-  borderRadius: 1,
+  borderRadius: 2,
   p: { xs: 2, sm: 2.75 },
 } as const;
 
@@ -35,7 +33,7 @@ export default function AccountSettings({ email }: { email: string }) {
   return (
     <Stack spacing={2}>
       <Stack spacing={1.25} sx={cardSx}>
-        <Typography component="h2" sx={{ fontWeight: 600, fontSize: 16 }}>
+        <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
           Exporter mes données
         </Typography>
         <Typography sx={{ fontSize: 14, color: "text.secondary", lineHeight: 1.55 }}>
@@ -50,7 +48,7 @@ export default function AccountSettings({ email }: { email: string }) {
       </Stack>
 
       <Stack spacing={1.25} sx={{ ...cardSx, borderColor: "error.light" }}>
-        <Typography component="h2" sx={{ fontWeight: 600, fontSize: 16 }}>
+        <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
           Supprimer mon compte
         </Typography>
         <Typography sx={{ fontSize: 14, color: "text.secondary", lineHeight: 1.55 }}>

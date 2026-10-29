@@ -206,7 +206,7 @@ function Detail({
 
       <Stack direction="row" justifyContent="space-between" alignItems="flex-end" gap={1.5}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography id="contract-detail-title" component="h2" sx={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>
+          <Typography id="contract-detail-title" component="h2" sx={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.02em" }}>
             {contract.name}
           </Typography>
           {provider && <Typography sx={{ color: "text.secondary" }}>{provider}</Typography>}
@@ -239,7 +239,7 @@ function Detail({
         sx={{ borderRadius: 1, bgcolor: "background.default", px: 2.25, py: 2 }}
       >
         <Box>
-          <Typography sx={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+          <Typography sx={{ fontSize: 30, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.15 }}>
             {formatEuro(contract.amount)}
             {PERIOD[contract.frequency] && (
               <Box component="span" sx={{ fontSize: 15, fontWeight: 500, color: "text.secondary" }}>
@@ -256,7 +256,7 @@ function Detail({
         {next && (
           <Box sx={{ textAlign: "right" }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Prochain prélèvement</Typography>
-            <Typography sx={{ fontWeight: 700 }}>{DATE_FORMAT.format(next.date)}</Typography>
+            <Typography sx={{ fontWeight: 500 }}>{DATE_FORMAT.format(next.date)}</Typography>
             <Typography sx={{ fontSize: 12, fontWeight: 600, color: "warning.dark" }}>
               {relativeDay(next.date, today).toLowerCase()}
             </Typography>

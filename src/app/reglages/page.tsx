@@ -76,13 +76,13 @@ export default async function ReglagesPage({
         user={session.user}
       />
       <Box sx={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-        <Box sx={{ px: { xs: 2, md: 4 }, pt: { xs: 2, md: 3.5 }, pb: 5, maxWidth: 1200 }}>
-          <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+        <Box sx={{ px: { xs: 2, md: 3 }, pt: { xs: 1, md: 3 }, pb: 5, maxWidth: 1200 }}>
+          <Typography sx={{ color: "text.secondary", fontSize: 14 }}>
             Contrats, catégories, fournisseurs et compte
           </Typography>
           <Typography
             component="h1"
-            sx={{ fontWeight: 700, fontSize: { xs: 22, md: 28 }, letterSpacing: "-0.02em", mt: 0.5 }}
+            sx={{ fontWeight: 400, fontSize: { xs: 28, md: 32 }, letterSpacing: "-0.02em", mt: 0.25 }}
           >
             Réglages
           </Typography>
@@ -91,7 +91,7 @@ export default async function ReglagesPage({
             value={onglet}
             variant="scrollable"
             allowScrollButtonsMobile
-            sx={{ borderBottom: 1, borderColor: "divider", mt: 2, mb: 2.5 }}
+            sx={{ mt: 2.5, mb: 2.5, bgcolor: "rgba(0 0 0 / 0.05)", ".dark &": { bgcolor: "action.hover" } }}
           >
             {ONGLETS.map((o) => (
               <Tab
@@ -101,7 +101,7 @@ export default async function ReglagesPage({
                   <span>
                     {o.label}{" "}
                     {tabCounts[o.id] !== null && (
-                      <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                      <Box component="span" sx={{ color: "text.secondary", fontWeight: 400 }}>
                         {tabCounts[o.id]}
                       </Box>
                     )}
@@ -109,7 +109,7 @@ export default async function ReglagesPage({
                 }
                 component={Link}
                 href={`/reglages?onglet=${o.id}`}
-                sx={{ textTransform: "none", fontWeight: 600, fontSize: 14 }}
+                sx={{ px: 2.25 }}
               />
             ))}
           </Tabs>

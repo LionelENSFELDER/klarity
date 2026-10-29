@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import { cardSx } from "./surface";
 
 /** Carte d'indicateur : un libellé, un chiffre, une précision. */
 export default function StatCard({
@@ -15,21 +16,20 @@ export default function StatCard({
       spacing={{ xs: 0.75, sm: 1.25 }}
       sx={{
         minWidth: 0,
-        bgcolor: "background.paper",
-        border: 1,
-        borderColor: "divider",
-        borderRadius: 1,
-        px: { xs: 1.75, sm: 2.5 },
-        py: { xs: 1.5, sm: 2.25 },
+        ...cardSx,
+        borderRadius: { xs: 1.5, sm: 2 },
+        px: { xs: 2, sm: 2.75 },
+        py: { xs: 1.75, sm: 2.5 },
       }}
     >
-      <Typography sx={{ fontSize: { xs: 12, sm: 13 }, fontWeight: 500, color: "text.secondary" }}>
+      <Typography sx={{ fontSize: { xs: 13, sm: 14 }, color: "text.secondary" }}>
         {label}
       </Typography>
-      <Typography sx={{ fontSize: { xs: 20, sm: 26 }, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1, whiteSpace: "nowrap" }}>
+      {/* Le chiffre d'abord, en grand corps fin. */}
+      <Typography sx={{ fontSize: { xs: 26, sm: 38 }, fontWeight: 400, letterSpacing: "-0.03em", lineHeight: 1, whiteSpace: "nowrap" }}>
         {value}
       </Typography>
-      <Typography sx={{ fontSize: 12, color: "text.secondary" }}>{note}</Typography>
+      <Typography sx={{ fontSize: { xs: 12, sm: 13 }, color: "text.secondary" }}>{note}</Typography>
     </Stack>
   );
 }

@@ -27,6 +27,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { formatEuro } from "@/modules/contracts/calendar";
 import { NO_CATEGORY, type Category } from "@/modules/categories/model";
 import AddContractButton from "@/components/contracts/AddContractButton";
+import { countBadgeSx, hatch } from "@/components/ui/surface";
 import UserMenu from "./UserMenu";
 import Logo from "./Logo";
 import {
@@ -54,13 +55,12 @@ const MONTHS = [
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 
-// Entrée active : fond teinté de l'accent. Sur fond sombre le texte prend
-// la variante claire, l'accent plein n'y est pas assez contrasté.
+// Le rail est posé sur le fond : l'entrée active devient une pilule blanche.
 const currentSx = {
-  bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.4)",
-  color: "primary.dark",
-  "&:hover": { bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.5)" },
-  ".dark &": { color: "primary.light" },
+  bgcolor: "background.paper",
+  fontWeight: 600,
+  boxShadow: "0 1px 2px rgba(20,22,18,0.06)",
+  "&:hover": { bgcolor: "background.paper" },
 } as const;
 
 // Chaque entrée est un lien : l'état vit dans l'URL, donc le retour
@@ -85,13 +85,13 @@ function NavLink({
       sx={{
         display: "flex",
         alignItems: "center",
-        gap: 1.25,
-        px: 1.25,
-        minHeight: 38,
+        gap: 1.5,
+        px: 1.5,
+        minHeight: 42,
         borderRadius: 1,
         textDecoration: "none",
         color: "text.primary",
-        fontWeight: 500,
+        fontWeight: 400,
         "&:hover": { bgcolor: "action.hover" },
         ...(current ? currentSx : {}),
       }}
@@ -116,7 +116,7 @@ function ThemeToggle() {
       <IconButton
         aria-label={label}
         onClick={() => setMode(isLight ? "dark" : "light")}
-        sx={{ border: 1, borderColor: "divider", borderRadius: 1, width: 36, height: 36 }}
+        sx={{ border: 1, borderColor: "divider", width: 40, height: 40 }}
       >
         <Icon sx={{ fontSize: 17 }} />
       </IconButton>
@@ -143,7 +143,7 @@ function NavSection({
   const [open, setOpen] = useState(true);
 
   return (
-    <Box sx={{ mt: 2.5 }}>
+    <Box sx={{ mt: 2 }}>
       <Stack
         direction="row"
         alignItems="center"
@@ -161,8 +161,8 @@ function NavSection({
           sx={{
             flex: 1,
             minWidth: 0,
-            px: 1,
-            py: 0.25,
+            px: 1.5,
+            py: 0.5,
             border: 0,
             bgcolor: "transparent",
             cursor: "pointer",
@@ -180,16 +180,7 @@ function NavSection({
               transform: open ? "none" : "rotate(-90deg)",
             }}
           />
-          <Typography
-            component="span"
-            sx={{
-              fontSize: 11.5,
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "inherit",
-            }}
-          >
+          <Typography component="span" sx={{ fontSize: 12, color: "inherit" }}>
             {title}
           </Typography>
         </Stack>
@@ -229,31 +220,29 @@ function MonthCard({ total, paid }: { total: number; paid: number }) {
   const today = new Date();
   const last = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   return (
-    <Stack
-      spacing={1.1}
-      sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.75, bgcolor: "background.default" }}
-    >
-      <Stack direction="row" justifyContent="space-between">
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-          {MONTHS[today.getMonth()]}
+    <Stack spacing={1.1} sx={{ bgcolor: "background.paper", borderRadius: 1.25, px: 2, py: 1.75 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+        <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
+          {MONTHS[today.getMonth()]} {today.getFullYear()}
         </Typography>
         <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
           {today.getDate()} / {last} j
         </Typography>
       </Stack>
-      <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
-        <Box component="strong" sx={{ fontSize: 18, color: "text.primary" }}>
-          {formatEuro(paid)}
-        </Box>{" "}
-        sur {formatEuro(total)}
-      </Typography>
       <LinearProgress
         variant="determinate"
         value={total > 0 ? (paid / total) * 100 : 0}
         aria-label="Part du mois déjà prélevée"
-        sx={{ height: 6, borderRadius: 999, bgcolor: "divider" }}
+        sx={{
+          height: 8,
+          borderRadius: 999,
+          bgcolor: "action.hover",
+          "& .MuiLinearProgress-bar": { borderRadius: 999, background: hatch("#2fa35f", "#46b874") },
+        }}
       />
       <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+        {formatEuro(paid)} prélevés sur {formatEuro(total)}
+        <br />
         Encore {formatEuro(total - paid)} d&apos;ici le {last}
       </Typography>
     </Stack>
@@ -276,7 +265,7 @@ const countSx = {
   fontVariantNumeric: "tabular-nums",
 } as const;
 
-const dotSx = { width: 10, height: 10, borderRadius: 0.75, flex: "none" } as const;
+const dotSx = { width: 10, height: 10, borderRadius: "50%", flex: "none" } as const;
 
 /**
  * Contenu de navigation, identique sur le rail desktop et dans le tiroir
@@ -307,22 +296,31 @@ export default function NavContent({
 
   return (
     <>
-    {/* Marque et création : portées par le rail sur desktop, par le tiroir sur mobile */}
-    <Stack spacing={2} sx={{ px: 2, pt: 2.5, pb: 1.5 }}>
-      <Box sx={{ px: 0.5 }}>
+    {/* Marque et mois en cours. Sur desktop la création vit dans l'en-tête
+        de page ; le tiroir mobile la garde sous la main. */}
+    <Stack spacing={2} sx={{ px: 1.5, pt: 2.5, pb: 1.5 }}>
+      <Box sx={{ px: 1 }}>
         <Logo withName />
       </Box>
-      <AddContractButton
-        variant="contained"
-        fullWidth
-        startIcon={<AddIcon />}
-        sx={{ borderRadius: 1, minHeight: 44, fontSize: 14 }}
-      >
-        Nouveau contrat
-      </AddContractButton>
+      {counts.monthTotal > 0 && (
+        <MonthCard total={counts.monthTotal} paid={counts.monthPaid} />
+      )}
+      {onNavigate && (
+        <AddContractButton
+          variant="contained"
+          fullWidth
+          startIcon={<AddIcon />}
+          sx={{ minHeight: 48, fontSize: 15 }}
+        >
+          Nouveau contrat
+        </AddContractButton>
+      )}
     </Stack>
 
     <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1.5, pb: 1.5 }}>
+      <Typography sx={{ fontSize: 12, color: "text.secondary", px: 1.5, pb: 0.75 }}>
+        Suivi
+      </Typography>
       <Stack spacing={0.25}>
         <NavLink
           onNavigate={onNavigate}
@@ -344,7 +342,10 @@ export default function NavContent({
             <NavLink onNavigate={onNavigate} key={l.id} href={`/calendar?liste=${l.id}`} current={isList(l.id)}>
               <Icon sx={{ fontSize: 18 }} />
               <Typography sx={textSx}>{l.label}</Typography>
-              <Typography sx={countSx}>{count}</Typography>
+              {/* Ce qui arrive est mis en avant ; les autres listes sont un simple total. */}
+              <Typography component="span" sx={l.id === "a-venir" ? countBadgeSx() : countSx}>
+                {count}
+              </Typography>
             </NavLink>
           );
         })}
@@ -370,9 +371,12 @@ export default function NavContent({
               href={`/calendar?categorie=${NO_CATEGORY.slug}`}
               current={!onSettings && active.categorie === NO_CATEGORY.slug}
             >
-              <Box sx={{ ...dotSx, bgcolor: NO_CATEGORY.color }} />
+              <Box sx={{ ...dotSx, border: "1.5px dashed", borderColor: "text.secondary" }} />
               <Typography sx={textSx}>{NO_CATEGORY.label}</Typography>
-              <Typography sx={countSx}>{counts.orphans}</Typography>
+              {/* À classer : demande une action, d'où la pastille d'alerte. */}
+              <Typography component="span" sx={countBadgeSx(true)}>
+                {counts.orphans}
+              </Typography>
             </NavLink>
           )}
 
@@ -402,10 +406,7 @@ export default function NavContent({
       </NavSection>
     </Box>
 
-    <Stack spacing={1.25} sx={{ p: 1.5, borderTop: 1, borderColor: "divider" }}>
-      {counts.monthTotal > 0 && (
-        <MonthCard total={counts.monthTotal} paid={counts.monthPaid} />
-      )}
+    <Stack spacing={1.25} sx={{ p: 1.5 }}>
       <Stack spacing={0.25}>
         <NavLink onNavigate={onNavigate} href="/reglages" current={onSettings}>
           <TuneIcon sx={{ fontSize: 18 }} />
@@ -420,7 +421,7 @@ export default function NavContent({
         direction="row"
         alignItems="center"
         spacing={1.25}
-        sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 1.25 }}
+        sx={{ bgcolor: "background.paper", borderRadius: 999, p: 1 }}
       >
         <UserMenu user={user} userInitials={getUserInitials(user.name)} />
         <Box sx={{ flex: 1, minWidth: 0 }}>

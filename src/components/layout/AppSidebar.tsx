@@ -23,13 +23,11 @@ export default function AppSidebar({
       component="nav"
       aria-label="Navigation"
       sx={{
-        width: 264,
+        // Posé sur le fond, sans panneau ni bordure : le contenu porte les cartes.
+        width: 272,
         flex: "none",
         display: { xs: "none", md: "flex" },
         flexDirection: "column",
-        bgcolor: "background.paper",
-        borderRight: 1,
-        borderColor: "divider",
         minHeight: 0,
       }}
     >

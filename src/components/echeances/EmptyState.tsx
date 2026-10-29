@@ -38,13 +38,13 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 const titleSx = {
-  fontWeight: 600,
-  fontSize: 15,
+  fontWeight: 400,
+  fontSize: 21,
 } as const;
 
 const textSx = {
   color: "text.secondary",
-  fontSize: 13,
+  fontSize: 14,
   maxWidth: "46ch",
   lineHeight: 1.55,
 } as const;
@@ -64,7 +64,7 @@ export default function EmptyState({
   if (totalContracts === 0) {
     return (
       <Shell>
-        <Typography sx={{ ...titleSx, fontSize: 18 }}>Bienvenue sur Klarity</Typography>
+        <Typography sx={{ ...titleSx, fontSize: 28, letterSpacing: "-0.02em" }}>Bienvenue sur Klarity</Typography>
         <Typography sx={textSx}>
           Ajoute tes abonnements et contrats : Klarity te montre ce qui sera
           prélevé, et quand. Commence par celui que tu paies le plus souvent,

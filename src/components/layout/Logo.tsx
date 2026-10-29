@@ -22,7 +22,7 @@ export default function Logo({ withName = false }: { withName?: boolean }) {
   return (
     <Stack direction="row" alignItems="center" spacing={1.25}>
       {mark}
-      <Typography sx={{ fontWeight: 700, fontSize: 18, letterSpacing: "-0.02em" }}>
+      <Typography sx={{ fontWeight: 500, fontSize: 21, letterSpacing: "-0.02em" }}>
         Klarity
       </Typography>
     </Stack>

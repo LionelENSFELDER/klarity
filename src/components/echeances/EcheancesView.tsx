@@ -36,6 +36,7 @@ import ContractDetailDialog from "@/components/contracts/ContractDetailDialog";
 import AddContractButton from "@/components/contracts/AddContractButton";
 import ContractAvatar from "@/components/contracts/ContractAvatar";
 import StatCard, { statGridSx } from "@/components/ui/StatCard";
+import { cardSx, insetSx, scrollBoxSx } from "@/components/ui/surface";
 import DebitRow from "./DebitRow";
 import EmptyState from "./EmptyState";
 import MonthGrid from "./MonthGrid";
@@ -85,13 +86,6 @@ const DAY_FORMAT = new Intl.DateTimeFormat("fr-FR", {
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const euro = (n: number) => formatEuro(Math.round(n * 100) / 100);
-
-const cardSx = {
-  bgcolor: "background.paper",
-  border: 1,
-  borderColor: "divider",
-  borderRadius: 1,
-} as const;
 
 export default function EcheancesView({
   contracts,
@@ -175,8 +169,31 @@ export default function EcheancesView({
   ];
 
   return (
-    <Box sx={{ minWidth: 0, flex: 1, minHeight: 0, overflowY: "auto" }}>
-      <Stack spacing={3} sx={{ px: { xs: 2, md: 4 }, pt: { xs: 2, md: 3.5 }, pb: 5 }}>
+    // À partir de md l'écran tient dans la fenêtre : la page ne défile pas,
+    // chaque boîte (liste, cartes latérales) défile seule. Sur mobile, la
+    // page défile normalement : des défilements imbriqués gênent au doigt.
+    <Box
+      sx={{
+        minWidth: 0,
+        flex: 1,
+        minHeight: 0,
+        // Filet : sur un écran trop bas, la page redéfile plutôt que d'écraser la liste.
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Stack
+        spacing={{ xs: 2, md: 2.5 }}
+        sx={{
+          px: { xs: 2, md: 3 },
+          pt: { xs: 1, md: 3 },
+          pb: { xs: 5, md: 3 },
+          flex: { md: 1 },
+          minHeight: 0,
+          "& > *": { flexShrink: 0 },
+        }}
+      >
         {/* En-tête : ce qu'on regarde, combien ça pèse, et les actions */}
         <Stack
           direction="row"
@@ -186,7 +203,8 @@ export default function EcheancesView({
           gap={2}
         >
           <Box sx={{ minWidth: 0 }}>
-            <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+            {/* Fil d'Ariane : où l'on est et quand. */}
+            <Typography sx={{ color: "text.secondary", fontSize: 14 }}>
               {isPlainTout
                 ? detail
                 : `${detail} · ${occurrences.length} échéance${occurrences.length > 1 ? "s" : ""}`}
@@ -197,7 +215,7 @@ export default function EcheancesView({
                   sx={{
                     width: 12,
                     height: 12,
-                    borderRadius: 1,
+                    borderRadius: "50%",
                     bgcolor: category.color,
                     flex: "none",
                   }}
@@ -207,8 +225,8 @@ export default function EcheancesView({
                 component="h1"
                 title={title}
                 sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: 22, md: 28 },
+                  fontWeight: 400,
+                  fontSize: { xs: 28, md: 32 },
                   letterSpacing: "-0.02em",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -222,7 +240,7 @@ export default function EcheancesView({
 
           <Stack direction="row" alignItems="center" spacing={1.25} flexWrap="wrap" useFlexGap>
             <Box sx={{ textAlign: "right", mr: 1 }}>
-              <Typography sx={{ fontWeight: 700, fontSize: 20, letterSpacing: "-0.02em" }}>
+              <Typography sx={{ fontWeight: 400, fontSize: 24, letterSpacing: "-0.02em" }}>
                 {euro(total)}
               </Typography>
               <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
@@ -234,25 +252,7 @@ export default function EcheancesView({
               exclusive
               value={params.vue}
               aria-label="Affichage"
-              sx={{
-                bgcolor: "action.hover",
-                p: 0.5,
-                borderRadius: 1,
-                "& .MuiToggleButton-root": {
-                  border: 0,
-                  borderRadius: "var(--mui-shape-borderRadius) !important",
-                  px: 1.75,
-                  gap: 0.75,
-                  textTransform: "none",
-                  fontWeight: 500,
-                  color: "text.primary",
-                },
-                "& .Mui-selected": {
-                  bgcolor: "background.paper !important",
-                  fontWeight: 600,
-                  boxShadow: 1,
-                },
-              }}
+              sx={{ height: 48, bgcolor: "rgba(0 0 0 / 0.05)", ".dark &": { bgcolor: "action.hover" } }}
             >
               <ToggleButton value="liste" component={Link} href={hrefWith(params, { vue: "liste" })}>
                 <ViewListIcon sx={{ fontSize: 17 }} />
@@ -273,7 +273,7 @@ export default function EcheancesView({
                 <IconButton
                   disabled
                   aria-label="Notifications (bientôt disponibles)"
-                  sx={{ border: 1, borderColor: "divider", borderRadius: 1, width: 44, height: 44 }}
+                  sx={{ bgcolor: "background.paper", width: 48, height: 48 }}
                 >
                   <NotificationsNoneIcon sx={{ fontSize: 20 }} />
                 </IconButton>
@@ -282,9 +282,9 @@ export default function EcheancesView({
             <AddContractButton
               variant="contained"
               startIcon={<AddIcon />}
-              sx={{ minHeight: 44, borderRadius: 1, px: 2 }}
+              sx={{ minHeight: 48, px: 2.5, fontSize: 15 }}
             >
-              Ajouter
+              Nouveau contrat
             </AddContractButton>
           </Stack>
         </Stack>
@@ -309,10 +309,32 @@ export default function EcheancesView({
             onSelect={setViewing}
           />
         ) : (
-          <Stack direction="row" flexWrap="wrap" gap={3} alignItems="flex-start">
-            <Box component="section" aria-label="Échéances" sx={{ flex: "999 1 560px", minWidth: 0, ...cardSx, overflow: "hidden" }}>
+          <Stack
+            direction="row"
+            flexWrap={{ xs: "wrap", md: "nowrap" }}
+            gap={2.5}
+            alignItems={{ xs: "flex-start", md: "stretch" }}
+            sx={{ flex: { md: "1 1 0" }, minHeight: { md: 420 } }}
+          >
+            <Box
+              component="section"
+              aria-label="Échéances"
+              sx={{
+                flex: "999 1 560px",
+                minWidth: 0,
+                minHeight: 0,
+                ...cardSx,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               {showHorizon && (
-                <Stack direction="row" spacing={0.75} sx={{ px: { xs: 1.5, sm: 2.5 }, py: 2 }}>
+                <Stack
+                  direction="row"
+                  spacing={0.25}
+                  sx={{ flex: "none", mx: { xs: 1.5, sm: 2.5 }, mt: 2.5, mb: 1, p: 0.5, borderRadius: 999, bgcolor: "action.hover", width: "fit-content" }}
+                >
                   {HORIZONS.map((h) => {
                     const selected = params.horizon === h;
                     return (
@@ -322,19 +344,15 @@ export default function EcheancesView({
                         href={hrefWith(params, { horizon: h })}
                         aria-current={selected ? "true" : undefined}
                         sx={{
-                          px: 1.75,
-                          py: 0.75,
-                          borderRadius: 1,
-                          border: 1,
-                          fontSize: 13,
+                          px: 2,
+                          py: 1,
+                          borderRadius: 999,
+                          fontSize: 14,
+                          fontWeight: 500,
                           textDecoration: "none",
-                          borderColor: selected ? "primary.dark" : "divider",
-                          bgcolor: selected
-                            ? "rgba(var(--mui-palette-primary-mainChannel) / 0.1)"
-                            : "transparent",
-                          color: selected ? "primary.dark" : "text.primary",
-                          fontWeight: selected ? 600 : 400,
-                          ".dark &": selected ? { color: "primary.light" } : {},
+                          bgcolor: selected ? "background.paper" : "transparent",
+                          boxShadow: selected ? "0 1px 2px rgba(20,22,18,0.08)" : "none",
+                          color: selected ? "text.primary" : "text.secondary",
                         }}
                       >
                         {h} mois
@@ -344,6 +362,12 @@ export default function EcheancesView({
                 </Stack>
               )}
 
+              {/* Les lignes défilent ; le choix de période et le pied restent en place. */}
+              <Box
+                tabIndex={0}
+                aria-label="Liste des échéances"
+                sx={{ ...scrollBoxSx, flex: 1, pb: 1 }}
+              >
               {isPlainTout ? (
                 contracts.length === 0 ? (
                   <EmptyState
@@ -400,18 +424,19 @@ export default function EcheancesView({
                             py: 1.25,
                             borderTop: 1,
                             borderColor: "divider",
-                            bgcolor: "background.default",
                           }}
                         >
-                          <Stack direction="row" spacing={1.25} alignItems="baseline">
-                            <Typography sx={{ fontWeight: 600, fontSize: 14 }}>
+                          {/* En-tête de groupe : point, jour, quand. */}
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "success.main" }} />
+                            <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
                               {cap(DAY_FORMAT.format(day.date))}
                             </Typography>
-                            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+                            <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
                               {relativeDay(day.date, today)}
                             </Typography>
                           </Stack>
-                          <Typography sx={{ fontSize: 13, fontWeight: 600, color: "text.secondary" }}>
+                          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
                             {euro(day.total)}
                           </Typography>
                         </Stack>
@@ -428,6 +453,24 @@ export default function EcheancesView({
                     ))}
                   </Box>
                 ))
+              )}
+              </Box>
+
+              {(isPlainTout ? contracts.length : occurrences.length) > 0 && (
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  sx={{ flex: "none", px: { xs: 1.5, sm: 2.5 }, py: 1.5, borderTop: 1, borderColor: "divider", fontSize: 14 }}
+                >
+                  <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
+                    {isPlainTout
+                      ? `${contracts.length} contrat${contracts.length > 1 ? "s" : ""}`
+                      : `${occurrences.length} échéance${occurrences.length > 1 ? "s" : ""}`}
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
+                    {euro(total)} {totalLabel}
+                  </Typography>
+                </Stack>
               )}
             </Box>
 
@@ -461,6 +504,14 @@ export default function EcheancesView({
   );
 }
 
+/** Carte latérale : se partage la hauteur restante et défile seule. */
+const sideScrollSx = {
+  ...scrollBoxSx,
+  flex: { md: "1 1 0" },
+  minHeight: { md: 140 },
+  "& > *": { flexShrink: 0 },
+} as const;
+
 function MonthHeading({ label, right }: { label: string; right: string }) {
   return (
     <Stack
@@ -469,23 +520,19 @@ function MonthHeading({ label, right }: { label: string; right: string }) {
       justifyContent="space-between"
       sx={{
         px: { xs: 1.5, sm: 2.5 },
-        py: 1.25,
-        borderTop: 1,
-        borderColor: "divider",
+        pt: 2.5,
+        pb: 1.5,
+        // Reste visible pendant le défilement de la liste.
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        bgcolor: "background.paper",
       }}
     >
-      <Typography
-        sx={{
-          fontWeight: 600,
-          fontSize: 12,
-          color: "text.secondary",
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-        }}
-      >
+      <Typography component="h2" sx={{ fontSize: 21, fontWeight: 400 }}>
         {label}
       </Typography>
-      <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{right}</Typography>
+      <Typography sx={{ fontSize: 15, color: "text.secondary" }}>{right}</Typography>
     </Stack>
   );
 }
@@ -507,13 +554,16 @@ function SidePanel({
   const loadTotal = loads.reduce((s, c) => s + c.monthlyCost, 0);
 
   return (
-    <Stack component="aside" spacing={2} sx={{ flex: "1 1 300px", minWidth: 0 }}>
+    <Stack
+      component="aside"
+      spacing={2}
+      sx={{ flex: { xs: "1 1 300px", md: "0 0 340px" }, minWidth: 0, minHeight: 0 }}
+    >
       {next && (
-        <Stack
-          spacing={1.75}
-          sx={{ borderRadius: 1, p: 2.5, bgcolor: "primary.contrastText", color: "common.white" }}
-        >
-          <Typography sx={{ fontSize: 13, color: "primary.light" }}>Prochain prélèvement</Typography>
+        <Stack spacing={2} sx={{ ...cardSx, p: 3, flex: "none" }}>
+          <Typography component="h2" sx={{ fontSize: 21, fontWeight: 400 }}>
+            Prochain prélèvement
+          </Typography>
           <Stack direction="row" spacing={1.5} alignItems="center">
             <ContractAvatar
               contract={next.contract}
@@ -521,15 +571,15 @@ function SidePanel({
               size={44}
             />
             <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ fontWeight: 600, fontSize: 16 }} noWrap>
+              <Typography sx={{ fontWeight: 500, fontSize: 16 }} noWrap>
                 {next.contract.name}
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "primary.light" }}>
+              <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
                 {cap(DAY_FORMAT.format(new Date(next.date)))} · {relativeDay(new Date(next.date), today).toLowerCase()}
               </Typography>
             </Box>
           </Stack>
-          <Typography sx={{ fontSize: 32, fontWeight: 700, letterSpacing: "-0.02em" }}>
+          <Typography sx={{ fontSize: 56, fontWeight: 400, letterSpacing: "-0.04em", lineHeight: 1 }}>
             {formatEuro(next.contract.amount)}
           </Typography>
           <Box
@@ -537,14 +587,15 @@ function SidePanel({
             type="button"
             onClick={() => onOpen(next.contract)}
             sx={{
-              height: 40,
+              height: 44,
               border: 0,
-              borderRadius: 1,
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
+              borderRadius: 999,
+              bgcolor: "action.hover",
+              color: "text.primary",
               font: "inherit",
-              fontWeight: 600,
+              fontWeight: 500,
               cursor: "pointer",
+              "&:hover": { bgcolor: "action.selected" },
             }}
           >
             Voir le contrat
@@ -553,9 +604,9 @@ function SidePanel({
       )}
 
       {renewals.length > 0 && (
-        <Stack spacing={1.75} sx={{ ...cardSx, p: 2.5 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography component="h2" sx={{ fontSize: 15, fontWeight: 600 }}>
+        <Stack spacing={1.25} sx={{ ...cardSx, ...sideScrollSx, p: 3 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: 0.5 }}>
+            <Typography component="h2" sx={{ fontSize: 21, fontWeight: 400 }}>
               Renouvellements à surveiller
             </Typography>
             <AutorenewIcon sx={{ fontSize: 18, color: "text.secondary" }} />
@@ -563,34 +614,33 @@ function SidePanel({
           {renewals.map((r) => {
             const date = new Date(r.date);
             return (
-              <Stack key={r.contract.id} direction="row" spacing={1.5} alignItems="center">
+              <Stack key={r.contract.id} direction="row" spacing={1.5} alignItems="center" sx={{ ...insetSx, p: 1.5 }}>
                 <Stack
                   sx={{
-                    width: 46,
+                    width: 48,
                     flex: "none",
                     alignItems: "center",
-                    border: 1,
-                    borderColor: "divider",
+                    bgcolor: "background.paper",
                     borderRadius: 1,
                     py: 0.5,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, color: "text.secondary", textTransform: "uppercase" }}>
-                    {MONTHS[date.getMonth()].slice(0, 4)}
-                  </Typography>
-                  <Typography sx={{ fontWeight: 700, fontSize: 16, lineHeight: 1.2 }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 18, lineHeight: 1.2 }}>
                     {date.getDate()}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+                    {MONTHS[date.getMonth()].slice(0, 4)}
                   </Typography>
                 </Stack>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 600 }} noWrap>
+                  <Typography sx={{ fontWeight: 500 }} noWrap>
                     {r.contract.name}
                   </Typography>
                   <Typography sx={{ fontSize: 12, color: "text.secondary" }} noWrap>
                     {r.contract.provider} · {relativeDay(date, today).toLowerCase()}
                   </Typography>
                 </Box>
-                <Typography sx={{ fontWeight: 600 }}>{formatEuro(r.contract.amount)}</Typography>
+                <Typography sx={{ fontWeight: 500 }}>{formatEuro(r.contract.amount)}</Typography>
               </Stack>
             );
           })}
@@ -598,22 +648,22 @@ function SidePanel({
       )}
 
       {loadTotal > 0 && (
-        <Stack spacing={1.75} sx={{ ...cardSx, p: 2.5 }}>
-          <Typography component="h2" sx={{ fontSize: 15, fontWeight: 600 }}>
+        <Stack spacing={1.75} sx={{ ...cardSx, ...sideScrollSx, p: 3 }}>
+          <Typography component="h2" sx={{ fontSize: 21, fontWeight: 400 }}>
             Coût mensuel par catégorie
           </Typography>
-          <Stack direction="row" spacing="2px" sx={{ height: 10, borderRadius: 999, overflow: "hidden" }} aria-hidden>
+          <Stack direction="row" spacing="2px" sx={{ height: 22, borderRadius: 999, overflow: "hidden" }} aria-hidden>
             {loads.map((c) => (
               <Box key={c.slug} sx={{ width: `${(c.monthlyCost / loadTotal) * 100}%`, bgcolor: c.color }} />
             ))}
           </Stack>
           {loads.map((c) => (
             <Stack key={c.slug} direction="row" spacing={1.25} alignItems="center">
-              <Box sx={{ width: 10, height: 10, borderRadius: 0.75, bgcolor: c.color, flex: "none" }} />
-              <Typography sx={{ flex: 1, fontSize: 13, color: "text.secondary" }} noWrap>
+              <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: c.color, flex: "none" }} />
+              <Typography sx={{ flex: 1, fontSize: 14 }} noWrap>
                 {c.label}
               </Typography>
-              <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{euro(c.monthlyCost)}</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{euro(c.monthlyCost)}</Typography>
             </Stack>
           ))}
         </Stack>

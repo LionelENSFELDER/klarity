@@ -17,9 +17,7 @@ const cardSx = {
   flex: "1 1 280px",
   minWidth: 0,
   bgcolor: "background.paper",
-  border: 1,
-  borderColor: "divider",
-  borderRadius: 1,
+  borderRadius: 2,
   p: 2.75,
 } as const;
 
@@ -30,7 +28,7 @@ function CardIcon({ children, tone }: { children: React.ReactNode; tone: "primar
       sx={{
         width: 40,
         height: 40,
-        borderRadius: 1,
+        borderRadius: "50%",
         display: "grid",
         placeItems: "center",
         bgcolor: `rgba(var(--mui-palette-${tone}-mainChannel) / 0.14)`,
@@ -56,7 +54,7 @@ export default function SupportPage() {
         >
           Version alpha
         </Box>
-        <Typography component="h1" sx={{ fontWeight: 700, fontSize: { xs: 26, md: 30 }, letterSpacing: "-0.02em" }}>
+        <Typography component="h1" sx={{ fontWeight: 400, fontSize: { xs: 26, md: 30 }, letterSpacing: "-0.02em" }}>
           Support
         </Typography>
         <Typography sx={{ fontSize: 15, lineHeight: 1.55, color: "text.secondary" }}>
@@ -68,7 +66,7 @@ export default function SupportPage() {
       <Stack direction="row" flexWrap="wrap" gap={2}>
         <Stack spacing={1.75} sx={cardSx}>
           <CardIcon tone="primary"><FactCheckIcon /></CardIcon>
-          <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
+          <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
             Avant de signaler
           </Typography>
           <Stack component="ol" spacing={1.5} sx={{ m: 0, p: 0, listStyle: "none" }}>
@@ -78,7 +76,7 @@ export default function SupportPage() {
               "Une échéance annuelle n'est visible que si l'horizon est assez large : passez le sélecteur à 12 mois.",
             ].map((t, i) => (
               <Stack key={i} component="li" direction="row" spacing={1.25}>
-                <Box sx={{ width: 22, height: 22, flex: "none", borderRadius: "50%", bgcolor: "action.hover", fontSize: 12, fontWeight: 700, display: "grid", placeItems: "center" }}>
+                <Box sx={{ width: 22, height: 22, flex: "none", borderRadius: "50%", bgcolor: "action.hover", fontSize: 12, fontWeight: 500, display: "grid", placeItems: "center" }}>
                   {i + 1}
                 </Box>
                 <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: "text.secondary" }}>{t}</Typography>
@@ -89,7 +87,7 @@ export default function SupportPage() {
 
         <Stack spacing={1.75} sx={cardSx}>
           <CardIcon tone="error"><ReportIcon /></CardIcon>
-          <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
+          <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
             Signaler un problème
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: "text.secondary" }}>
@@ -112,7 +110,7 @@ export default function SupportPage() {
 
         <Stack spacing={1.75} sx={cardSx}>
           <CardIcon tone="info"><LockIcon /></CardIcon>
-          <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17 }}>
+          <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
             Demandes sur vos données
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.55, color: "text.secondary" }}>
@@ -128,9 +126,9 @@ export default function SupportPage() {
       <Box
         component="section"
         aria-labelledby="limites"
-        sx={{ mt: 2, p: 2.75, borderRadius: 1, border: 1, borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)", bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)" }}
+        sx={{ mt: 2, p: 2.75, borderRadius: 2, bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.12)" }}
       >
-        <Typography id="limites" component="h2" sx={{ fontWeight: 600, fontSize: 15, mb: 1 }}>
+        <Typography id="limites" component="h2" sx={{ fontWeight: 400, fontSize: 21, mb: 1 }}>
           Limites connues
         </Typography>
         <Box component="ul" sx={{ m: 0, pl: 2.5, display: "flex", flexDirection: "column", gap: 0.75, lineHeight: 1.6, fontSize: 14 }}>

@@ -38,15 +38,13 @@ const Header = async () => {
         // Sur desktop le rail de gauche porte la marque, la navigation
         // et le profil : le header n'a plus de rôle.
         display: { xs: "flex", md: "none" },
-        bgcolor: "background.paper",
+        bgcolor: "background.default",
         color: "text.primary",
-        borderBottom: 1,
-        borderColor: "divider",
       }}
     >
-      <Toolbar sx={{ gap: 1.5 }}>
+      <Toolbar sx={{ gap: 1.5, px: 2 }}>
         <MobileNav categories={categories} counts={counts} user={session.user} />
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={{ flex: 1, minWidth: 0, display: "flex", justifyContent: "center" }}>
           <Logo withName />
         </Box>
         <UserMenu user={session.user} userInitials={getUserInitials(session.user?.name)} />

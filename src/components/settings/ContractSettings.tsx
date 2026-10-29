@@ -143,7 +143,7 @@ export default function ContractSettings({
         </Alert>
       )}
 
-      <Box sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden" }}>
+      <Box sx={{ bgcolor: "background.paper", borderRadius: 2, overflow: "hidden" }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={1.25}
@@ -173,23 +173,6 @@ export default function ContractSettings({
             aria-label="Statut"
             value={status}
             onChange={(_, v) => v && setStatus(v)}
-            sx={{
-              bgcolor: "action.hover",
-              p: 0.5,
-              borderRadius: 1,
-              "& .MuiToggleButton-root": {
-                border: 0,
-                borderRadius: "var(--mui-shape-borderRadius) !important",
-                px: 1.5,
-                textTransform: "none",
-                color: "text.primary",
-              },
-              "& .Mui-selected": {
-                bgcolor: "background.paper !important",
-                fontWeight: 600,
-                boxShadow: 1,
-              },
-            }}
           >
             <ToggleButton value="actifs">Actifs · {contracts.length - archivedCount}</ToggleButton>
             <ToggleButton value="archives">Archivés · {archivedCount}</ToggleButton>
@@ -273,7 +256,7 @@ export default function ContractSettings({
                       </Stack>
                       <Typography sx={{ fontSize: 12, color: "text.secondary", mt: "2px" }}>
                         {/* Sur mobile le montant passe ici : la colonne de droite manquait de place pour le nom. */}
-                        <Box component="span" sx={{ display: { sm: "none" }, fontWeight: 700, color: "text.primary" }}>
+                        <Box component="span" sx={{ display: { sm: "none" }, fontWeight: 500, color: "text.primary" }}>
                           {formatEuro(contract.amount)} ·{" "}
                         </Box>
                         {contract.provider} · {category.label} ·{" "}
@@ -304,7 +287,7 @@ export default function ContractSettings({
                       {category.label}
                     </Box>
 
-                    <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, fontWeight: 700, minWidth: 72, textAlign: "right", whiteSpace: "nowrap" }}>
+                    <Typography sx={{ display: { xs: "none", sm: "block" }, fontSize: 14, fontWeight: 500, minWidth: 72, textAlign: "right", whiteSpace: "nowrap" }}>
                       {formatEuro(contract.amount)}
                     </Typography>
 

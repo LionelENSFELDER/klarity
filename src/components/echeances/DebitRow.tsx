@@ -63,7 +63,7 @@ export default function DebitRow({
         border: 0,
         borderTop: 1,
         borderColor: "divider",
-        bgcolor: "background.paper",
+        bgcolor: "transparent",
         color: "text.primary",
         textAlign: "left",
         cursor: "pointer",
@@ -77,8 +77,8 @@ export default function DebitRow({
         <Typography
           title={contract.name}
           sx={{
-            fontSize: 14,
-            fontWeight: 600,
+            fontSize: 15,
+            fontWeight: 500,
             lineHeight: 1.35,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -95,7 +95,7 @@ export default function DebitRow({
         >
           <Typography
             sx={{
-              fontSize: 12,
+              fontSize: 13,
               color: "text.secondary",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -126,15 +126,17 @@ export default function DebitRow({
           alignItems: "center",
           gap: 0.75,
           flex: "none",
-          fontSize: 12,
+          fontSize: 13,
+          fontWeight: 500,
           px: 1.25,
           py: 0.5,
-          borderRadius: 1,
-          bgcolor: orphan ? "warning.light" : "action.hover",
-          color: orphan ? "warning.contrastText" : "text.primary",
+          borderRadius: 999,
+          border: 1,
+          borderColor: orphan ? "warning.main" : "divider",
+          color: "text.primary",
         }}
       >
-        <Box sx={{ width: 8, height: 8, borderRadius: 0.5, bgcolor: category.color }} />
+        <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: category.color }} />
         {category.label}
       </Box>
 
@@ -143,7 +145,7 @@ export default function DebitRow({
           minWidth: 84,
           textAlign: "right",
           fontSize: 15,
-          fontWeight: 700,
+          fontWeight: 500,
           whiteSpace: "nowrap",
         }}
       >

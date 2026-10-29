@@ -94,9 +94,7 @@ export default function LegalPage({
             minWidth: 0,
             maxWidth: 680,
             bgcolor: "background.paper",
-            border: 1,
-            borderColor: "divider",
-            borderRadius: 1,
+            borderRadius: 2,
             p: { xs: 2.5, md: 4.5 },
           }}
         >
@@ -106,7 +104,7 @@ export default function LegalPage({
           <Typography
             component="h1"
             sx={{
-              fontWeight: 700,
+              fontWeight: 400,
               fontSize: { xs: 26, md: 30 },
               letterSpacing: "-0.02em",
               textWrap: "balance",
@@ -127,7 +125,7 @@ export default function LegalPage({
           <Stack spacing={3.5} sx={{ mt: 4 }}>
             {withIds.map((section) => (
               <Box key={section.id} id={section.id} sx={{ scrollMarginTop: 24 }}>
-                <Typography component="h2" sx={{ fontWeight: 600, fontSize: 17, mb: 1 }}>
+                <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21, mb: 1 }}>
                   {section.title}
                 </Typography>
                 <Stack spacing={1.25}>

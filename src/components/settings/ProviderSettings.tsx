@@ -106,7 +106,7 @@ export default function ProviderSettings({
         </Alert>
       ))}
 
-      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden", px: 1 }}>
+      <Stack sx={{ bgcolor: "background.paper", borderRadius: 2, overflow: "hidden", px: 1 }}>
         {providers.map((p) => {
           if (editing === p.name) {
             return (

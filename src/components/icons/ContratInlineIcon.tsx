@@ -14,7 +14,7 @@ export function ContractInlineIcon({
 }: ContractInlineIconProps) {
   if (!iconValue || !iconType) {
     return (
-      <span style={{ fontSize: "10px", fontWeight: 700, color: "transparent" }}>
+      <span style={{ fontSize: "10px", fontWeight: 500, color: "transparent" }}>
         {name ? name.charAt(0).toUpperCase() : "?"}
       </span>
     );
@@ -44,7 +44,7 @@ export function ContractInlineIcon({
 
   // Fallback ultime : l'initiale
   return (
-    <span style={{ fontSize: "20px", fontWeight: 700, color: "inherit" }}>
+    <span style={{ fontSize: "20px", fontWeight: 500, color: "inherit" }}>
       {name ? name.charAt(0).toUpperCase() : "?"}
     </span>
   );

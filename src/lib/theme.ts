@@ -23,12 +23,12 @@ export const theme = createTheme({
           dark: "#2563eb",
         },
         background: {
-          default: "#0b0c10", // Fond sombre profond
-          paper: "#15161c",
+          default: "#0e0f0d",
+          paper: "#181a17",
         },
         text: {
-          primary: "#f1f5f9",
-          secondary: "#94a3b8",
+          primary: "#f1f2ee",
+          secondary: "#a3a89f",
         },
         success: {
           main: "#10b981", // Emerald
@@ -46,7 +46,7 @@ export const theme = createTheme({
           light: "#f87171",
           dark: "#dc2626",
         },
-        divider: "#262833",
+        divider: "#2c2f29",
       },
     },
     light: {
@@ -57,7 +57,7 @@ export const theme = createTheme({
         primary: {
           main: "#cafea7",
           light: "#eaffdb",
-          dark: "#3a7418", // 5,7:1 sur blanc
+          dark: "#16331d", // vert profond : texte, traits, action principale (13:1)
           contrastText: "#1a3a0a",
         },
         secondary: {
@@ -65,13 +65,14 @@ export const theme = createTheme({
           light: "#818cf8",
           dark: "#3730a3",
         },
+        // Fond chaud : le rail y est posé, le contenu vit en cartes blanches.
         background: {
-          default: "#f4f5f7",
+          default: "#ecebe6",
           paper: "#ffffff",
         },
         text: {
-          primary: "#111827",
-          secondary: "#5b6472",
+          primary: "#1a1c19",
+          secondary: "#5a5e57", // 4,6:1 sur le fond, 6,4:1 sur blanc
         },
         success: {
           main: "#10b981", // Emerald
@@ -89,36 +90,19 @@ export const theme = createTheme({
           light: "#f87171",
           dark: "#dc2626",
         },
-        divider: "#e6e8ec",
+        divider: "#e7e5e0",
       },
     },
   },
+  // Titres en graisse normale : la hiérarchie vient de la taille, pas du gras.
   typography: {
     fontFamily: "var(--font-sans), 'Inter', sans-serif",
-    h1: {
-      fontWeight: 700,
-      fontSize: "2.5rem",
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: "2rem",
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: "1.75rem",
-    },
-    h4: {
-      fontWeight: 600,
-      fontSize: "1.5rem",
-    },
-    h5: {
-      fontWeight: 600,
-      fontSize: "1.25rem",
-    },
-    h6: {
-      fontWeight: 600,
-      fontSize: "1rem",
-    },
+    h1: { fontWeight: 400, fontSize: "2rem", letterSpacing: "-0.02em" },
+    h2: { fontWeight: 400, fontSize: "1.75rem", letterSpacing: "-0.02em" },
+    h3: { fontWeight: 400, fontSize: "1.5rem", letterSpacing: "-0.01em" },
+    h4: { fontWeight: 400, fontSize: "1.3125rem" },
+    h5: { fontWeight: 400, fontSize: "1.125rem" },
+    h6: { fontWeight: 500, fontSize: "1rem" },
   },
   components: {
     MuiCssBaseline: {
@@ -127,13 +111,14 @@ export const theme = createTheme({
         body: { fontVariantNumeric: "tabular-nums" },
       },
     },
+    // Carte : blanche, rayon 28, ni bordure ni ombre (voir ui/surface).
     MuiCard: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: ({ theme }) => ({
           backgroundImage: "none",
           backgroundColor: theme.vars.palette.background.paper,
-          border: `1px solid ${theme.vars.palette.divider}`,
+          borderRadius: `calc(2 * ${theme.vars.shape.borderRadius})`,
         }),
       },
     },
@@ -144,19 +129,46 @@ export const theme = createTheme({
         },
       },
     },
-    // Texte et traits en couleur primaire : `main` (vert de marque) est
-    // illisible sur fond clair, `dark` porte le texte dans les deux thèmes.
+    MuiDialog: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          borderRadius: `calc(2 * ${theme.vars.shape.borderRadius})`,
+        }),
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: ({ theme }) => ({ borderRadius: theme.vars.shape.borderRadius }),
+      },
+    },
+    // Boutons en pilule. Une seule action pleine par écran : en clair elle est
+    // vert profond (le vert de marque est illisible en texte), en sombre elle
+    // reprend le vert de marque.
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: "none",
-          fontWeight: 600,
+          fontWeight: 500,
           boxShadow: "none",
+          borderRadius: 999,
+          paddingInline: 18,
+          "&:hover": { boxShadow: "none" },
         },
+        containedPrimary: ({ theme }) => ({
+          backgroundColor: theme.vars.palette.primary.dark,
+          color: theme.vars.palette.common.white,
+          "&:hover": { backgroundColor: "#0e2414" },
+          ...theme.applyStyles("dark", {
+            backgroundColor: theme.vars.palette.primary.main,
+            color: theme.vars.palette.primary.contrastText,
+            "&:hover": { backgroundColor: theme.vars.palette.primary.light },
+          }),
+        }),
         textPrimary: ({ theme }) => ({ color: theme.vars.palette.primary.dark }),
         outlinedPrimary: ({ theme }) => ({
           color: theme.vars.palette.primary.dark,
-          borderColor: theme.vars.palette.primary.dark,
+          borderColor: theme.vars.palette.divider,
+          backgroundColor: theme.vars.palette.background.paper,
         }),
       },
     },
@@ -165,28 +177,81 @@ export const theme = createTheme({
         root: ({ theme }) => ({ color: theme.vars.palette.primary.dark }),
       },
     },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({ theme }) => ({ backgroundColor: theme.vars.palette.background.paper }),
+      },
+    },
+    // Onglets et bascules : contrôle segmenté, l'élément choisi devient une
+    // pilule blanche sur un rail gris.
+    MuiTabs: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          minHeight: 0,
+          padding: 4,
+          borderRadius: 999,
+          backgroundColor: theme.vars.palette.action.hover,
+          display: "inline-flex",
+          maxWidth: "100%",
+        }),
+        indicator: { display: "none" },
+      },
+    },
     MuiTab: {
       styleOverrides: {
         root: ({ theme }) => ({
-          "&.Mui-selected": { color: theme.vars.palette.primary.dark },
+          minHeight: 40,
+          borderRadius: 999,
+          textTransform: "none",
+          fontWeight: 500,
+          fontSize: 14,
+          color: theme.vars.palette.text.secondary,
+          "&.Mui-selected": {
+            color: theme.vars.palette.text.primary,
+            backgroundColor: theme.vars.palette.background.paper,
+            boxShadow: "0 1px 2px rgba(20,22,18,0.08)",
+          },
         }),
       },
     },
-    MuiTabs: {
-      styleOverrides: {
-        indicator: ({ theme }) => ({ backgroundColor: theme.vars.palette.primary.dark }),
-      },
-    },
-    MuiChip: {
+    MuiToggleButtonGroup: {
       styleOverrides: {
         root: ({ theme }) => ({
-          borderRadius: theme.vars.shape.borderRadius,
+          padding: 4,
+          gap: 2,
+          borderRadius: 999,
+          backgroundColor: theme.vars.palette.action.hover,
         }),
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          border: 0,
+          borderRadius: "999px !important",
+          paddingInline: 14,
+          gap: 6,
+          textTransform: "none",
+          fontWeight: 500,
+          color: theme.vars.palette.text.secondary,
+          "&.Mui-selected, &.Mui-selected:hover": {
+            color: theme.vars.palette.text.primary,
+            backgroundColor: theme.vars.palette.background.paper,
+            boxShadow: "0 1px 2px rgba(20,22,18,0.08)",
+          },
+        }),
+      },
+    },
+    // Étiquette d'état : pilule, contour discret.
+    MuiChip: {
+      styleOverrides: {
+        root: { borderRadius: 999, fontWeight: 500 },
       },
     },
   },
-  // Rayon unique de l'app : dans `sx`, `borderRadius: 1` vaut cette valeur.
+  // Rayon de base : `borderRadius: 1` vaut 14 (entrées, champs, blocs),
+  // `borderRadius: 2` vaut 28 (cartes). Les pilules utilisent 999.
   shape: {
-    borderRadius: 8,
+    borderRadius: 14,
   },
 });

@@ -184,7 +184,7 @@ export default function ContractFormDialog({
       scroll="paper"
       slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 1 } } }}
     >
-      <DialogTitle sx={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em", px: { xs: 2.5, sm: 4 }, pt: 3 }}>
+      <DialogTitle sx={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.02em", px: { xs: 2.5, sm: 4 }, pt: 3 }}>
         {mode === "edit" ? "Modifier le contrat" : "Ajouter un contrat"}
       </DialogTitle>
       <DialogContent dividers sx={{ px: { xs: 2.5, sm: 4 }, py: 3 }}>

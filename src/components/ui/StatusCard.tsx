@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
+import { cardSx } from "./surface";
 
 interface StatusCardProps {
   icon: React.ReactNode;
@@ -31,10 +32,7 @@ export default function StatusCard({ icon, tone, title, message, actions, footno
         sx={{
           width: "100%",
           maxWidth: 460,
-          bgcolor: "background.paper",
-          border: 1,
-          borderColor: "divider",
-          borderRadius: 1,
+          ...cardSx,
           p: { xs: 3, sm: 4 },
         }}
       >
@@ -43,7 +41,7 @@ export default function StatusCard({ icon, tone, title, message, actions, footno
           sx={{
             width: 48,
             height: 48,
-            borderRadius: 1,
+            borderRadius: "50%",
             bgcolor: `rgba(var(--mui-palette-${tone}-mainChannel) / 0.12)`,
             color: `${tone}.main`,
             display: "grid",
@@ -53,7 +51,7 @@ export default function StatusCard({ icon, tone, title, message, actions, footno
           {icon}
         </Box>
         <Box>
-          <Typography id="status-title" component="h1" sx={{ fontSize: 22, fontWeight: 700 }}>
+          <Typography id="status-title" component="h1" sx={{ fontSize: 26, fontWeight: 400, letterSpacing: "-0.02em" }}>
             {title}
           </Typography>
           <Typography sx={{ color: "text.secondary", mt: 0.75 }}>{message}</Typography>

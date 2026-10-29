@@ -100,7 +100,7 @@ export default function CategorySettings({
         </Alert>
       )}
 
-      <Stack sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 1, overflow: "hidden", px: 1 }}>
+      <Stack sx={{ bgcolor: "background.paper", borderRadius: 2, overflow: "hidden", px: 1 }}>
         {categories.map((cat) => {
           const stats = usage[cat.slug] ?? { count: 0, monthlyCost: 0 };
 

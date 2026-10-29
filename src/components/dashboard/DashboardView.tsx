@@ -17,6 +17,7 @@ import type {
 } from "@/modules/contracts/dashboard";
 import ContractAvatar from "@/components/contracts/ContractAvatar";
 import StatCard, { statGridSx } from "@/components/ui/StatCard";
+import { cardSx, hatch } from "@/components/ui/surface";
 import SankeyChart from "./SankeyChart";
 
 const MONTHS = [
@@ -86,7 +87,7 @@ export default function DashboardView({ data }: { data: DashboardData }) {
   const hasData = contractCount > 0;
 
   return (
-    <Stack spacing={2.5} sx={{ pt: 3, pb: 5 }}>
+    <Stack spacing={2.5} sx={{ pt: 2.5, pb: 5 }}>
       <Box component="section" aria-label="Indicateurs" sx={statGridSx}>
         <StatCard
           label="Coût mensuel lissé"
@@ -151,7 +152,7 @@ export default function DashboardView({ data }: { data: DashboardData }) {
 // Couleurs des graphiques, prises au thème : le socle suit l'accent (trait
 // lisible sur la carte dans les deux thèmes), les échéances ponctuelles
 // l'ambre. Les deux diffèrent aussi en luminosité, pas seulement en teinte.
-const CHART_BASE = "primary.main";
+const CHART_BASE = "success.main";
 const CHART_EXTRA = "primary.dark";
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -190,15 +191,12 @@ function Card({
       sx={{
         flex: 1,
         minWidth: 0,
-        bgcolor: "background.paper",
-        border: 1,
-        borderColor: "divider",
-        borderRadius: 1,
-        p: flush ? 0 : { xs: 2, sm: 2.75 },
+        ...cardSx,
+        p: flush ? 0 : { xs: 2.25, sm: 3 },
         overflow: "hidden",
       }}
     >
-      <Box sx={{ p: flush ? { xs: 2, sm: 2.75 } : 0, pb: flush ? 1.5 : 0 }}>
+      <Box sx={{ p: flush ? { xs: 2.25, sm: 3 } : 0, pb: flush ? 1.5 : 0 }}>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -207,7 +205,7 @@ function Card({
           gap={1.5}
           sx={{ mb: 0.75 }}
         >
-          <Typography component="h2" sx={{ fontWeight: 600, fontSize: 16 }}>
+          <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
             {title}
           </Typography>
           {legend}
@@ -215,7 +213,7 @@ function Card({
         {intro && (
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: 14,
               color: "text.secondary",
               lineHeight: 1.55,
               mb: 2.25,
@@ -242,9 +240,9 @@ function Swatch({
     <Stack direction="row" alignItems="center" spacing={0.75}>
       <Box
         sx={{
-          width: 10,
-          height: 10,
-          borderRadius: 0.75,
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
           bgcolor: color,
           flex: "none",
         }}
@@ -418,14 +416,14 @@ function CategoryChart({
                 >
                   <Box
                     sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: 0.75,
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
                       bgcolor: c.color,
                       flex: "none",
                     }}
                   />
-                  <Typography sx={{ fontSize: 13 }} noWrap title={c.label}>
+                  <Typography sx={{ fontSize: 14 }} noWrap title={c.label}>
                     {c.label}
                   </Typography>
                   <Typography
@@ -448,17 +446,18 @@ function CategoryChart({
               </Stack>
               <Box
                 sx={{
-                  height: 8,
+                  height: 14,
                   bgcolor: "action.hover",
                   borderRadius: 999,
                   overflow: "hidden",
                 }}
               >
+                {/* Barre hachurée à la couleur de la catégorie. */}
                 <Box
                   sx={{
                     height: "100%",
                     width: `${(c.monthlyCost / max) * 100}%`,
-                    bgcolor: CHART_BASE,
+                    background: hatch(c.color, `color-mix(in srgb, ${c.color} 72%, white)`),
                     borderRadius: 999,
                   }}
                 />
@@ -651,12 +650,10 @@ function RenewalList({
           sx={{
             mt: 1.75,
             p: 1.5,
-            borderRadius: 1,
-            fontSize: 12,
+            borderRadius: 1.5,
+            fontSize: 13,
             lineHeight: 1.55,
-            border: 1,
-            borderColor: "rgba(var(--mui-palette-warning-mainChannel) / 0.45)",
-            bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.08)",
+            bgcolor: "rgba(var(--mui-palette-warning-mainChannel) / 0.12)",
           }}
         >
           <b>
@@ -813,7 +810,7 @@ function TopTable({
                       px: 1.5,
                       pr: { xs: 2, sm: 2.75 },
                       fontSize: 14,
-                      fontWeight: 700,
+                      fontWeight: 500,
                       textAlign: "right",
                     }}
                   >

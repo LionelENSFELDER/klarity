@@ -12,6 +12,7 @@ import {
 import { getFrequencyLabel } from "@/modules/contracts/categories";
 import { findCategory, type Category } from "@/modules/categories/model";
 import ContractAvatar from "@/components/contracts/ContractAvatar";
+import { cardSx, insetSx, scrollBoxSx } from "@/components/ui/surface";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const MONTHS = [
@@ -25,12 +26,6 @@ const MAX_AVATARS = 3;
 
 const euro = (n: number) => formatEuro(Math.round(n * 100) / 100);
 
-const cardSx = {
-  bgcolor: "background.paper",
-  border: 1,
-  borderColor: "divider",
-  borderRadius: 1,
-} as const;
 
 interface MonthGridProps {
   contracts: CalendarContract[];
@@ -87,11 +82,19 @@ export default function MonthGrid({
   const maxDay = Math.max(0, ...debitDays.map(totalOf));
 
   return (
-    <Stack direction="row" flexWrap="wrap" gap={2.5} alignItems="flex-start">
+    // Même règle que la liste : à partir de md, la grille et le détail du
+    // jour se partagent la hauteur de l'écran et défilent chacun seul.
+    <Stack
+      direction="row"
+      flexWrap={{ xs: "wrap", md: "nowrap" }}
+      gap={2.5}
+      alignItems={{ xs: "flex-start", md: "stretch" }}
+      sx={{ flex: { md: "1 1 0" }, minHeight: { md: 420 } }}
+    >
       <Box
         component="section"
         aria-label={`Calendrier de ${MONTHS[month]} ${year}`}
-        sx={{ ...cardSx, flex: "999 1 560px", minWidth: 0, p: { xs: 1.5, md: 2.25 } }}
+        sx={{ ...cardSx, ...scrollBoxSx, flex: "999 1 560px", minWidth: 0, p: { xs: 1.5, md: 3 } }}
       >
         <Stack
           direction="row"
@@ -101,7 +104,7 @@ export default function MonthGrid({
           gap={1.5}
           sx={{ mb: 1.75 }}
         >
-          <Typography component="h2" sx={{ fontSize: 18, fontWeight: 700, textTransform: "capitalize" }}>
+          <Typography component="h2" sx={{ fontSize: 21, fontWeight: 400, textTransform: "capitalize" }}>
             {MONTHS[month]} {year}
           </Typography>
           <Stack direction="row" flexWrap="wrap" columnGap={2.25} rowGap={0.5} sx={{ fontSize: 13, color: "text.secondary" }}>
@@ -192,8 +195,9 @@ export default function MonthGrid({
                       placeItems: "center",
                       fontSize: 13,
                       fontWeight: 600,
-                      bgcolor: isToday ? "primary.main" : "transparent",
-                      color: isToday ? "primary.contrastText" : past ? "text.secondary" : "text.primary",
+                      bgcolor: isToday ? "primary.dark" : "transparent",
+                      color: isToday ? "common.white" : past ? "text.secondary" : "text.primary",
+                      ".dark &": isToday ? { bgcolor: "primary.main", color: "primary.contrastText" } : {},
                     }}
                   >
                     {day}
@@ -229,7 +233,7 @@ export default function MonthGrid({
                       <Typography
                         sx={{
                           fontSize: 14,
-                          fontWeight: 700,
+                          fontWeight: 500,
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -274,6 +278,13 @@ export default function MonthGrid({
   );
 }
 
+const dayPanelSx = {
+  ...scrollBoxSx,
+  flex: { xs: "1 1 280px", md: "0 0 340px" },
+  minWidth: 0,
+  "& > *": { flexShrink: 0 },
+} as const;
+
 function DayPanel({
   day,
   year,
@@ -295,7 +306,7 @@ function DayPanel({
 }) {
   if (day === null) {
     return (
-      <Box component="aside" aria-label="Détail du jour" sx={{ ...cardSx, flex: "1 1 280px", minWidth: 0, p: 2.5 }}>
+      <Box component="aside" aria-label="Détail du jour" sx={{ ...cardSx, ...dayPanelSx, p: 3 }}>
         <Typography sx={{ color: "text.secondary", fontSize: 14 }}>
           Aucun prélèvement ce mois-ci.
         </Typography>
@@ -311,28 +322,27 @@ function DayPanel({
       component="aside"
       aria-label="Détail du jour"
       spacing={2}
-      sx={{ ...cardSx, flex: "1 1 280px", minWidth: 0, p: 2.5 }}
+      sx={{ ...cardSx, ...dayPanelSx, p: 3 }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
         <Box>
           <Typography sx={{ fontSize: 13, color: "text.secondary", textTransform: "capitalize" }}>
             {WEEKDAY_FORMAT.format(date)}
           </Typography>
-          <Typography component="h2" sx={{ fontSize: 22, fontWeight: 700 }}>
+          <Typography component="h2" sx={{ fontSize: 24, fontWeight: 400, letterSpacing: "-0.02em" }}>
             {day} {MONTHS[month]}
           </Typography>
         </Box>
         <Box
           component="span"
           sx={{
-            fontSize: 12,
-            fontWeight: 600,
+            fontSize: 13,
+            fontWeight: 500,
             px: 1.25,
             py: 0.5,
-            borderRadius: 1,
-            bgcolor: "rgba(var(--mui-palette-primary-mainChannel) / 0.1)",
-            color: "primary.dark",
-            ".dark &": { color: "primary.light" },
+            borderRadius: 999,
+            border: 1,
+            borderColor: "divider",
           }}
         >
           {relativeDay(date, today)}
@@ -343,10 +353,10 @@ function DayPanel({
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ borderRadius: 1, bgcolor: "background.default", px: 2, py: 1.75 }}
+        sx={{ ...insetSx, px: 2, py: 1.75 }}
       >
         <Typography sx={{ color: "text.secondary" }}>Total du jour</Typography>
-        <Typography sx={{ fontSize: 22, fontWeight: 700 }}>{euro(total)}</Typography>
+        <Typography sx={{ fontSize: 28, fontWeight: 400, letterSpacing: "-0.02em" }}>{euro(total)}</Typography>
       </Stack>
 
       <Stack spacing={0.5}>
@@ -383,7 +393,7 @@ function DayPanel({
                 {getFrequencyLabel(contract.frequency).toLowerCase()}
               </Typography>
             </Box>
-            <Typography sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+            <Typography sx={{ fontWeight: 500, whiteSpace: "nowrap" }}>
               {formatEuro(contract.amount)}
             </Typography>
           </Stack>
@@ -395,7 +405,7 @@ function DayPanel({
           <Box sx={{ height: "1px", bgcolor: "divider" }} />
           <Typography
             component="h3"
-            sx={{ fontSize: 12, fontWeight: 600, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.04em" }}
+            sx={{ fontSize: 13, color: "text.secondary" }}
           >
             Ensuite
           </Typography>
