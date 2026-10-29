@@ -9,8 +9,8 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  // Icônes de marque (simple-icons) et avatars des comptes Google.
-  "img-src 'self' data: blob: https://cdn.simpleicons.org https://lh3.googleusercontent.com",
+  // Avatars des comptes Google.
+  "img-src 'self' data: blob: https://lh3.googleusercontent.com",
   "font-src 'self' data:",
   `connect-src 'self'${isDev ? " ws:" : ""}`,
   "frame-ancestors 'none'",

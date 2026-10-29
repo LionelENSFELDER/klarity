@@ -20,12 +20,6 @@ vi.mock("@/modules/categories/actions", () => ({
   CreateCategory: vi.fn(async () => ({ success: true })),
 }));
 
-// Le vrai sélecteur importe tout `@mui/icons-material` (des milliers de
-// modules) : hors de propos ici et coûteux à transformer dans les tests.
-vi.mock("@/components/icons/FullIconSearchSelector", () => ({
-  default: () => null,
-}));
-
 const contract: CalendarContract = {
   id: "contract-1",
   name: "Netflix",
@@ -38,8 +32,6 @@ const contract: CalendarContract = {
   anchorMonth: null,
   startDate: null,
   renewalDate: "2027-01-15T00:00:00.000Z",
-  iconType: "brand",
-  iconValue: "netflix",
 };
 
 describe("ContractFormDialog – mode édition", () => {

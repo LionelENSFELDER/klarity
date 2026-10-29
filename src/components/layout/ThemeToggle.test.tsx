@@ -10,10 +10,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }),
 }));
 
-vi.mock("@/components/icons/FullIconSearchSelector", () => ({
-  default: () => null,
-}));
-
 function renderNav() {
   render(
     <MuiThemeProvider>

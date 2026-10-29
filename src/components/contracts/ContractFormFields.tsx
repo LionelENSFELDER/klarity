@@ -25,9 +25,6 @@ import {
   resolveAnchorMonth,
   type CalendarContract,
 } from "@/modules/contracts/calendar";
-import FullIconSearchSelector, {
-  IconOption,
-} from "@/components/icons/FullIconSearchSelector";
 import ContractAvatar from "./ContractAvatar";
 import { insetSx } from "@/components/ui/surface";
 
@@ -50,8 +47,6 @@ interface ContractFormFieldsProps {
   onContractNumberChange: (value: string) => void;
   renewalDate: string;
   onRenewalDateChange: (value: string) => void;
-  selectedIcon: IconOption | null;
-  onSelectedIconChange: (value: IconOption | null) => void;
   /** Mois de référence (0-11) d'un trimestriel ou d'un annuel. */
   anchorMonth: number | null;
   onAnchorMonthChange: (value: number) => void;
@@ -130,8 +125,6 @@ export default function ContractFormFields({
   onContractNumberChange,
   renewalDate,
   onRenewalDateChange,
-  selectedIcon,
-  onSelectedIconChange,
   anchorMonth,
   onAnchorMonthChange,
 }: ContractFormFieldsProps) {
@@ -168,8 +161,6 @@ export default function ContractFormFields({
               fullWidth
             />
           </Stack>
-
-          <FullIconSearchSelector value={selectedIcon} onChange={onSelectedIconChange} />
 
           <Box>
             <Typography id="category-label" sx={{ fontWeight: 500, mb: 1 }}>
@@ -364,7 +355,6 @@ export default function ContractFormFields({
         frequency={frequency}
         debitDay={debitDay}
         debitDate={debitDate}
-        selectedIcon={selectedIcon}
         anchorMonth={anchorMonth}
       />
     </Box>
@@ -463,7 +453,6 @@ function Preview({
   frequency,
   debitDay,
   debitDate,
-  selectedIcon,
   anchorMonth,
 }: {
   name: string;
@@ -473,7 +462,6 @@ function Preview({
   frequency: string;
   debitDay: number | null;
   debitDate: string;
-  selectedIcon: IconOption | null;
   anchorMonth: number | null;
 }) {
   const categories = useCategories();
@@ -497,8 +485,6 @@ function Preview({
     anchorMonth: resolveAnchorMonth(frequency, anchorMonth, today),
     startDate: isOnce && debitDate ? new Date(debitDate).toISOString() : null,
     renewalDate: null,
-    iconType: selectedIcon?.type ?? null,
-    iconValue: selectedIcon?.slugOrName ?? null,
   };
   const upcoming = day !== null ? getUpcomingDebits([draft], today, 13).slice(0, 3) : [];
   const perMonth = monthlyCost(draft);

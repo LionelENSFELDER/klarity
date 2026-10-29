@@ -13,10 +13,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }),
 }));
 
-vi.mock("@/components/icons/FullIconSearchSelector", () => ({
-  default: () => null,
-}));
-
 const categories: Category[] = [
   { id: "1", slug: "energie", label: "Énergie", color: "#fbbf24", position: 0 },
   { id: "2", slug: "abonnement", label: "Abonnement", color: "#f472b6", position: 1 },

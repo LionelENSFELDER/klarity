@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import type { CalendarContract } from "@/modules/contracts/calendar";
 import { categoryTint, type Category } from "@/modules/categories/model";
-import ContractInlineIcon from "@/components/icons/ContratInlineIcon";
 
 function initials(name: string): string {
   const letters = name
@@ -13,8 +12,7 @@ function initials(name: string): string {
 }
 
 /**
- * Pastille d'un contrat : son icône si elle en a une, sinon ses initiales,
- * sur la teinte de sa catégorie. Les deux thèmes sont posés en CSS (classe
+ * Pastille d'un contrat : ses initiales sur la teinte de sa catégorie. Les deux thèmes sont posés en CSS (classe
  * `.dark` sur <html>) : pas de lecture du mode côté client, pas d'écart
  * d'hydratation.
  */
@@ -23,13 +21,12 @@ export default function ContractAvatar({
   category,
   size = 40,
 }: {
-  contract: Pick<CalendarContract, "name" | "iconType" | "iconValue">;
+  contract: Pick<CalendarContract, "name">;
   category: Category;
   size?: number;
 }) {
   const light = categoryTint(category.color, "light");
   const dark = categoryTint(category.color, "dark");
-  const hasIcon = Boolean(contract.iconType && contract.iconValue);
 
   return (
     <Box
@@ -48,15 +45,7 @@ export default function ContractAvatar({
         ".dark &": { bgcolor: dark.bg, color: dark.ink },
       }}
     >
-      {hasIcon ? (
-        <ContractInlineIcon
-          iconType={contract.iconType}
-          iconValue={contract.iconValue}
-          name={contract.name}
-        />
-      ) : (
-        initials(contract.name)
-      )}
+      {initials(contract.name)}
     </Box>
   );
 }

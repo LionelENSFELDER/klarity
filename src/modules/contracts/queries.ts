@@ -29,8 +29,6 @@ export const getCalendarContracts = cache(async (): Promise<CalendarContract[]> 
     anchorMonth: c.anchorMonth,
     startDate: c.startDate?.toISOString() ?? null,
     renewalDate: c.renewalDate?.toISOString() ?? null,
-    iconType: c.iconType,
-    iconValue: c.iconValue,
   }));
 });
 
@@ -113,8 +111,6 @@ export async function getAllContracts(): Promise<ManagedContract[]> {
     anchorMonth: c.anchorMonth,
     startDate: c.startDate?.toISOString() ?? null,
     renewalDate: c.renewalDate?.toISOString() ?? null,
-    iconType: c.iconType,
-    iconValue: c.iconValue,
     status: c.status,
     createdAt: c.createdAt.toISOString(),
   }));

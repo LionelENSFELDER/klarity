@@ -17,7 +17,6 @@ import { CreateSubscription, EditSubscription } from "@/modules/contracts/action
 import type { CalendarContract } from "@/modules/contracts/calendar";
 import ContractFormFields from "./ContractFormFields";
 import { useNotify } from "@/components/providers/NotifyProvider";
-import type { IconOption } from "@/components/icons/FullIconSearchSelector";
 
 type ContractFormDialogProps =
   | { open: boolean; mode: "create"; contract?: null; onClose: () => void }
@@ -35,7 +34,6 @@ const EMPTY_STATE = {
   anchorMonth: null as number | null,
   contractNumber: "",
   renewalDate: "",
-  selectedIcon: null as IconOption | null,
 };
 
 // Popup de création / édition d'un contrat. En mode édition, elle est
@@ -66,9 +64,6 @@ export default function ContractFormDialog({
   const [anchorMonth, setAnchorMonth] = useState<number | null>(EMPTY_STATE.anchorMonth);
   const [contractNumber, setContractNumber] = useState(EMPTY_STATE.contractNumber);
   const [renewalDate, setRenewalDate] = useState(EMPTY_STATE.renewalDate);
-  const [selectedIcon, setSelectedIcon] = useState<IconOption | null>(
-    EMPTY_STATE.selectedIcon,
-  );
 
   useEffect(() => {
     if (!open) return;
@@ -92,15 +87,6 @@ export default function ContractFormDialog({
       setRenewalDate(
         contract.renewalDate ? contract.renewalDate.slice(0, 10) : "",
       );
-      setSelectedIcon(
-        contract.iconType === "brand" || contract.iconType === "generic"
-          ? {
-              type: contract.iconType,
-              slugOrName: contract.iconValue ?? "",
-              label: contract.iconValue ?? "",
-            }
-          : null,
-      );
     } else {
       setName(EMPTY_STATE.name);
       setProvider(EMPTY_STATE.provider);
@@ -112,7 +98,6 @@ export default function ContractFormDialog({
       setAnchorMonth(new Date().getMonth());
       setContractNumber(EMPTY_STATE.contractNumber);
       setRenewalDate(EMPTY_STATE.renewalDate);
-      setSelectedIcon(EMPTY_STATE.selectedIcon);
     }
   }, [open, mode, contract]);
 
@@ -148,10 +133,6 @@ export default function ContractFormDialog({
     if (contractNumber.trim())
       formData.set("contractNumber", contractNumber.trim());
     if (renewalDate) formData.set("renewalDate", renewalDate);
-    if (selectedIcon) {
-      formData.set("iconType", selectedIcon.type);
-      formData.set("iconValue", selectedIcon.slugOrName);
-    }
 
     try {
       const result =
@@ -209,8 +190,6 @@ export default function ContractFormDialog({
             onContractNumberChange={setContractNumber}
             renewalDate={renewalDate}
             onRenewalDateChange={setRenewalDate}
-            selectedIcon={selectedIcon}
-            onSelectedIconChange={setSelectedIcon}
             anchorMonth={anchorMonth}
             onAnchorMonthChange={setAnchorMonth}
           />

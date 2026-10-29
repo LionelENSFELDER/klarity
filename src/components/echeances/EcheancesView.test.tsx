@@ -17,11 +17,6 @@ vi.mock("@/modules/contracts/actions", () => ({
   DeleteContract: vi.fn(),
 }));
 
-// Le vrai sélecteur importe tout `@mui/icons-material` : hors sujet ici.
-vi.mock("@/components/icons/FullIconSearchSelector", () => ({
-  default: () => null,
-}));
-
 const categories: Category[] = [
   { id: "1", slug: "abonnement", label: "Abonnement", color: "#f472b6", position: 0 },
   { id: "2", slug: "energie", label: "Énergie", color: "#fbbf24", position: 1 },

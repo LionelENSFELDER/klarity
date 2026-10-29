@@ -62,10 +62,6 @@ const subscriptionSchema = z
     debitDate: z.string().max(32).optional(), // date complète pour "une fois"
     contractNumber: z.string().trim().max(TEXT_MAX, TOO_LONG).optional(),
     renewalDate: z.string().max(32).optional(),
-    iconType: z.enum(["brand", "generic"]).optional().nullable(),
-    // Une icône de marque est chargée depuis cdn.simpleicons.org/<slug> :
-    // seul un slug (lettres et chiffres) peut entrer dans l'URL.
-    iconValue: z.string().regex(/^[A-Za-z0-9]{1,64}$/, "Icône invalide").optional().nullable(),
   })
   .refine(
     (data) =>
@@ -102,8 +98,6 @@ export async function CreateSubscription(formData: FormData) {
     debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
-    iconType: formData.get("iconType") ?? undefined,
-    iconValue: formData.get("iconValue") ?? undefined,
   });
 
   if (!parsed.success) {
@@ -138,8 +132,6 @@ export async function CreateSubscription(formData: FormData) {
       renewalDate: parseDate(data.renewalDate),
       monthlyAmount: data.frequency === "monthly" ? data.amount : null,
       annualAmount: data.frequency === "annual" ? data.amount : null,
-      iconType: data.iconType || null,
-      iconValue: data.iconValue || null,
     },
   });
 
@@ -166,8 +158,6 @@ export async function EditSubscription(id: string, formData: FormData) {
     debitDate: formData.get("debitDate") ?? undefined,
     contractNumber: formData.get("contractNumber") ?? undefined,
     renewalDate: formData.get("renewalDate") ?? undefined,
-    iconType: formData.get("iconType") ?? undefined,
-    iconValue: formData.get("iconValue") ?? undefined,
   });
 
   if (!parsed.success) {
@@ -206,8 +196,6 @@ export async function EditSubscription(id: string, formData: FormData) {
       renewalDate: parseDate(data.renewalDate),
       monthlyAmount: data.frequency === "monthly" ? data.amount : null,
       annualAmount: data.frequency === "annual" ? data.amount : null,
-      iconType: data.iconType || null,
-      iconValue: data.iconValue || null,
       updatedAt: new Date(),
     },
   });

@@ -23,10 +23,6 @@ vi.mock("@/modules/contracts/actions", () => ({
   EditSubscription: vi.fn(),
 }));
 
-vi.mock("@/components/icons/FullIconSearchSelector", () => ({
-  default: () => null,
-}));
-
 const categories: Category[] = [
   { id: "1", slug: "abonnement", label: "Abonnement", color: "#f472b6", position: 0 },
   { id: "2", slug: "energie", label: "Énergie", color: "#fbbf24", position: 1 },
