@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmberRounded";
 import StatusCard from "@/components/ui/StatusCard";
+import { reportError } from "@/lib/reportError";
 
 // En production, Next masque le message d'une erreur serveur : seul le digest
 // permet de la retrouver dans les logs.
@@ -17,6 +18,7 @@ export default function ErrorPage({
 }) {
   useEffect(() => {
     console.error(error);
+    reportError(error);
   }, [error]);
 
   return (

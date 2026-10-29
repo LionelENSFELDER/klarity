@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { reportError } from "@/lib/reportError";
+
 // Remplace le layout racine quand celui-ci plante : ni thème MUI ni providers
 // ici, d'où les styles en ligne.
 export default function GlobalError({
@@ -9,6 +12,8 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => reportError(error), [error]);
+
   return (
     <html lang="fr">
       <body style={{ margin: 0, fontFamily: "system-ui, sans-serif", display: "grid", placeItems: "center", minHeight: "100dvh", padding: 16, boxSizing: "border-box" }}>
