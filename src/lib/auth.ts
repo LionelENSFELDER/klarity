@@ -2,7 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+import { checkPassword } from "@/modules/auth/checkPassword";
 import { prisma } from "./db";
 import { normalizeEmail } from "./email";
 import { clientIp, isLimited, recordAttempt } from "./rateLimit";
@@ -74,16 +74,14 @@ export const authOptions: NextAuthOptions = {
           where: { email },
         });
 
-        if (!user || !user.password) {
-          return fail();
-        }
-
-        const isPasswordValid = await bcrypt.compare(
+        // Toujours une comparaison bcrypt, compte ou pas : le temps de
+        // réponse ne trahit pas les adresses inscrites.
+        const isPasswordValid = await checkPassword(
           credentials.password as string,
-          user.password
+          user?.password,
         );
 
-        if (!isPasswordValid) {
+        if (!user || !isPasswordValid) {
           return fail();
         }
 
