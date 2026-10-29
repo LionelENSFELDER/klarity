@@ -103,6 +103,11 @@ function SignInContent() {
           autoComplete="current-password"
           error={Boolean(error)}
         />
+        <Box sx={{ mt: "-8px !important", textAlign: "right" }}>
+          <MuiLink component={Link} href="/auth/mot-de-passe-oublie" underline="hover" fontSize={14}>
+            Mot de passe oublié ?
+          </MuiLink>
+        </Box>
 
         <Button type="submit" variant="contained" fullWidth disabled={loading} sx={pill}>
           {loading ? "Connexion..." : "Se connecter"}

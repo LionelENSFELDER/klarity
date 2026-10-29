@@ -15,6 +15,7 @@ import CategorySettings from "@/components/settings/CategorySettings";
 import ProviderSettings from "@/components/settings/ProviderSettings";
 import ContractSettings from "@/components/settings/ContractSettings";
 import AccountSettings from "@/components/settings/AccountSettings";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,14 @@ export default async function ReglagesPage({
     entry.monthlyCost += monthlyCost(c);
     usage[c.category] = entry;
   }
+
+  // Un compte créé avec Google n'a pas de mot de passe à changer.
+  const hasPassword =
+    onglet === "compte" &&
+    Boolean(
+      (await prisma.user.findUnique({ where: { id: session.user.id }, select: { password: true } }))
+        ?.password,
+    );
 
   const counts = buildSidebarCounts(contracts, categories, providers, 3, new Date());
   const tabCounts: Record<Onglet, number | null> = {
@@ -124,7 +133,7 @@ export default async function ReglagesPage({
             <ProviderSettings providers={providers} />
           )}
           {onglet === "compte" && (
-            <AccountSettings email={session.user.email ?? ""} />
+            <AccountSettings email={session.user.email ?? ""} hasPassword={hasPassword} />
           )}
         </Box>
       </Box>

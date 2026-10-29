@@ -1,7 +1,27 @@
 import { normalizeEmail } from "@/lib/email";
 
-export const PASSWORD_MIN_LENGTH = 8;
+// 12 caractères : recommandation de l'ANSSI sans double authentification.
+export const PASSWORD_MIN_LENGTH = 12;
 export const PASSWORD_MAX_LENGTH = 72;
+
+/**
+ * Règle commune à l'inscription, la réinitialisation et le changement de mot
+ * de passe. Renvoie le message d'erreur, ou null si le mot de passe convient.
+ *
+ * La borne haute compte des octets : bcrypt ignore tout au-delà de 72 octets,
+ * et un caractère accentué ou un emoji en occupe plusieurs. Elle évite aussi
+ * de faire hacher une chaîne énorme au serveur.
+ */
+export function validatePassword(password: unknown): string | null {
+  if (typeof password !== "string" || !password) return "Mot de passe requis";
+  if (new TextEncoder().encode(password).length > PASSWORD_MAX_LENGTH) {
+    return `Le mot de passe doit contenir au plus ${PASSWORD_MAX_LENGTH} octets (environ ${PASSWORD_MAX_LENGTH} caractères sans accents)`;
+  }
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return `Le mot de passe doit contenir au moins ${PASSWORD_MIN_LENGTH} caractères`;
+  }
+  return null;
+}
 
 /** Message affiché sur la page de connexion après une inscription réussie. */
 export const REGISTRATION_SUCCESS_MESSAGE = "Compte créé. Connectez-vous pour commencer.";
@@ -43,25 +63,12 @@ export function validateRegistration(
     return { ok: false, error: "Adresse e-mail invalide" };
   }
 
-  // bcrypt ne lit que les 72 premiers octets, et hacher une chaîne énorme
-  // coûte du CPU au serveur : on borne avant.
-  if (rawPassword.length > PASSWORD_MAX_LENGTH) {
-    return {
-      ok: false,
-      error: `Le mot de passe doit contenir au plus ${PASSWORD_MAX_LENGTH} caractères`,
-    };
-  }
-
   if (email.length > 254 || rawName.length > 100) {
     return { ok: false, error: "Nom ou adresse e-mail trop long" };
   }
 
-  if (rawPassword.length < PASSWORD_MIN_LENGTH) {
-    return {
-      ok: false,
-      error: `Le mot de passe doit contenir au moins ${PASSWORD_MIN_LENGTH} caractères`,
-    };
-  }
+  const passwordError = validatePassword(rawPassword);
+  if (passwordError) return { ok: false, error: passwordError };
 
   return {
     ok: true,

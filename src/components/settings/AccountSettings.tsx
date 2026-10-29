@@ -2,7 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { signOut } from "next-auth/react";
-import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
+import Link from "next/link";
+import { Alert, Box, Button, Link as MuiLink, Stack, TextField, Typography } from "@mui/material";
+import PasswordField from "@/components/auth/PasswordField";
+import { ChangePassword } from "@/modules/auth/password";
+import { PASSWORD_MIN_LENGTH } from "@/modules/auth/registration";
 import { DeleteAccount, SignOutEverywhere } from "@/modules/account/actions";
 import { ACTION_FAILED } from "@/lib/messages";
 
@@ -11,6 +15,77 @@ const cardSx = {
   borderRadius: 2,
   p: { xs: 2, sm: 2.75 },
 } as const;
+
+/** Changement de mot de passe ; ferme ensuite toutes les sessions. */
+function PasswordCard({ hasPassword }: { hasPassword: boolean }) {
+  const [pending, startTransition] = useTransition();
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [error, setError] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    startTransition(async () => {
+      const result = await ChangePassword(current, next).catch(() => ({ error: ACTION_FAILED }));
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      await signOut({
+        callbackUrl: `/auth/signin?message=${encodeURIComponent("Mot de passe modifié. Reconnecte-toi avec le nouveau.")}`,
+      });
+    });
+  };
+
+  return (
+    <Stack spacing={1.25} sx={cardSx}>
+      <Typography component="h2" sx={{ fontWeight: 400, fontSize: 21 }}>
+        Mot de passe
+      </Typography>
+      {hasPassword ? (
+        <Stack component="form" onSubmit={submit} spacing={1.5} sx={{ maxWidth: 420 }}>
+          {error && <Alert severity="error">{error}</Alert>}
+          <PasswordField
+            label="Mot de passe actuel"
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+            required
+            autoComplete="current-password"
+            size="small"
+          />
+          <PasswordField
+            label="Nouveau mot de passe"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+            required
+            autoComplete="new-password"
+            size="small"
+            helperText={`${PASSWORD_MIN_LENGTH} caractères minimum. Toutes les sessions seront fermées.`}
+          />
+          <Box>
+            <Button
+              type="submit"
+              variant="outlined"
+              disabled={pending || !current || next.length < PASSWORD_MIN_LENGTH}
+            >
+              {pending ? "Enregistrement…" : "Changer le mot de passe"}
+            </Button>
+          </Box>
+        </Stack>
+      ) : (
+        <Typography sx={{ fontSize: 14, color: "text.secondary", lineHeight: 1.55 }}>
+          Tu te connectes avec Google. Pour te connecter aussi par e-mail, définis un mot
+          de passe avec{" "}
+          <MuiLink component={Link} href="/auth/mot-de-passe-oublie">
+            « Mot de passe oublié »
+          </MuiLink>
+          .
+        </Typography>
+      )}
+    </Stack>
+  );
+}
 
 /** Ferme les sessions de tous les appareils, celle-ci comprise. */
 function SessionsCard() {
@@ -48,7 +123,13 @@ function SessionsCard() {
   );
 }
 
-export default function AccountSettings({ email }: { email: string }) {
+export default function AccountSettings({
+  email,
+  hasPassword = true,
+}: {
+  email: string;
+  hasPassword?: boolean;
+}) {
   const [pending, startTransition] = useTransition();
   const [confirming, setConfirming] = useState(false);
   const [typed, setTyped] = useState("");
@@ -82,6 +163,8 @@ export default function AccountSettings({ email }: { email: string }) {
           </Button>
         </Box>
       </Stack>
+
+      <PasswordCard hasPassword={hasPassword} />
 
       <SessionsCard />
 
